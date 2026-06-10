@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My AI Buddy</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sidebar-bg: #171717;
+      --main-bg:    #212121;
+      --bubble-bg:  #2f2f2f;
+      --input-bg:   #2f2f2f;
+      --text:       #ececec;
+      --muted:      #8e8ea0;
+      --accent:     #10a37f;
+      --border:     #2e2e2e;
+      --hover:      #2a2a2a;
+    }
+
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--main-bg); color: var(--text); overflow: hidden; }
+
+    #app { display: flex; height: 100vh; }
+
+    /* ── Sidebar ── */
+    #sidebar { width: 260px; min-width: 260px; background: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid var(--border); }
+
+    #sidebar-header { padding: 14px 14px 10px; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 9px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 28px; height: 28px; border-radius: 7px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+
+    #new-chat-btn { margin: 10px 10px 4px; padding: 9px 12px; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text); cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; transition: background 0.15s; }
+    #new-chat-btn:hover { background: var(--hover); }
+
+    #chat-list { flex: 1; overflow-y: auto; padding: 0 6px 8px; }
+    #chat-list::-webkit-scrollbar { width: 4px; }
+    #chat-list::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 4px; }
+
+    .group-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; padding: 14px 8px 4px; }
+
+    .chat-item { padding: 8px 10px; border-radius: 7px; cursor: pointer; font-size: 13px; color: var(--text); transition: background 0.15s; display: flex; align-items: center; gap: 7px; position: relative; }
+    .chat-item:hover { background: var(--hover); }
+    .chat-item.active { background: var(--bubble-bg); }
+    .chat-item-title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .chat-dots-btn { display: none; background: none; border: none; color: var(--muted); cursor: pointer; padding: 1px 5px; border-radius: 4px; font-size: 16px; line-height: 1; flex-shrink: 0; }
+    .chat-item:hover .chat-dots-btn { display: block; }
+    .chat-dots-btn:hover { color: var(--text); background: #3a3a3a; }
+    .chat-dropdown { position: fixed; background: #2a2a2a; border: 1px solid var(--border); border-radius: 8px; padding: 4px; z-index: 1000; min-width: 140px; box-shadow: 0 4px 12px rgba(0,0,0,.4); }
+    .chat-dropdown button { display: block; width: 100%; background: none; border: none; color: var(--text); cursor: pointer; padding: 7px 12px; text-align: left; font-size: 13px; border-radius: 5px; }
+    .chat-dropdown button:hover { background: var(--hover); }
+    .chat-dropdown .delete-btn { color: #e87070; }
+    .chat-dropdown .delete-btn:hover { background: rgba(232,112,112,.1); color: #e87070; }
+    .rename-input { flex: 1; background: transparent; border: none; border-bottom: 1px solid var(--accent); color: var(--text); font-size: 13px; outline: none; padding: 0 2px; min-width: 0; }
+
+    /* ── User info / login area at bottom of sidebar ── */
+    #sidebar-footer { border-top: 1px solid var(--border); padding: 10px; flex-shrink: 0; }
+
+    #user-info { display: flex; align-items: center; gap: 9px; padding: 6px 4px; }
+    #user-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    #user-name { font-size: 13px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #logout-btn { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 12px; padding: 4px 6px; border-radius: 5px; transition: background .15s; flex-shrink: 0; }
+    #logout-btn:hover { background: var(--hover); color: var(--text); }
+
+    #login-btn { width: 100%; padding: 9px 12px; background: white; color: #333; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
+    #login-btn:hover { opacity: .88; }
+    #login-btn img { width: 16px; height: 16px; }
+
+    /* ── Main ── */
+    #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    #welcome { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+    .welcome-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 26px; }
+    #welcome h2 { font-size: 22px; }
+    #welcome p { font-size: 14px; color: var(--muted); }
+
+    #messages { flex: 1; overflow-y: auto; padding: 20px 0 4px; display: none; }
+    #messages::-webkit-scrollbar { width: 6px; }
+    #messages::-webkit-scrollbar-thumb { background: #383838; border-radius: 4px; }
+
+    .msg-row { display: flex; gap: 12px; padding: 6px 28px; max-width: 860px; margin: 0 auto; width: 100%; }
+    .msg-row.user { justify-content: flex-end; }
+
+    .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; margin-top: 3px; }
+    .avatar.bot  { background: var(--accent); }
+    .avatar.user-av { background: #5436da; }
+
+    .bubble { font-size: 14px; line-height: 1.65; max-width: 75%; }
+    .msg-row.user .bubble { background: var(--bubble-bg); padding: 10px 15px; border-radius: 16px 16px 4px 16px; white-space: pre-wrap; word-break: break-word; }
+    .msg-row.assistant .bubble { padding: 2px 0; }
+
+    .bubble h1,.bubble h2,.bubble h3 { margin: 14px 0 6px; }
+    .bubble h1 { font-size: 18px; } .bubble h2 { font-size: 16px; } .bubble h3 { font-size: 14px; }
+    .bubble p { margin-bottom: 10px; } .bubble p:last-child { margin-bottom: 0; }
+    .bubble ul,.bubble ol { margin: 4px 0 10px 22px; } .bubble li { margin-bottom: 4px; }
+    .bubble code { background: #1c1c1c; padding: 2px 6px; border-radius: 4px; font-size: 12.5px; font-family: 'Menlo','Monaco','Consolas',monospace; }
+    .bubble pre { background: #161616; border-radius: 8px; padding: 14px 16px; overflow-x: auto; margin: 10px 0; border: 1px solid var(--border); }
+    .bubble pre code { background: none; padding: 0; font-size: 12.5px; }
+    .bubble strong { color: #fff; }
+    .bubble a { color: #58a6ff; text-decoration: none; } .bubble a:hover { text-decoration: underline; }
+    .bubble blockquote { border-left: 3px solid var(--accent); padding-left: 12px; color: var(--muted); margin: 8px 0; }
+    .bubble table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 13px; }
+    .bubble th,.bubble td { border: 1px solid var(--border); padding: 6px 12px; }
+    .bubble th { background: #1c1c1c; }
+
+    /* ── User bubble edit ── */
+    .user-bubble-wrap { display: flex; flex-direction: column; align-items: flex-end; max-width: 75%; }
+    .user-bubble-wrap .bubble { max-width: 100%; }
+    .edit-btn-row { display: none; justify-content: flex-end; padding-top: 3px; }
+    .msg-row.user:hover .edit-btn-row { display: flex; }
+    .edit-btn { background: none; border: none; color: #606060; cursor: pointer; padding: 2px 4px; border-radius: 3px; display: flex; align-items: center; line-height: 1; }
+    .edit-btn:hover { color: #909090; }
+    .edit-textarea { width: 100%; background: var(--bubble-bg); border: 1px solid #555; border-radius: 10px; color: var(--text); font-size: 14px; font-family: inherit; padding: 8px 12px; resize: none; outline: none; min-height: 56px; line-height: 1.55; }
+    .edit-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+    .cancel-edit-btn, .save-edit-btn { padding: 5px 12px; border-radius: 7px; font-size: 12px; cursor: pointer; border: none; }
+    .cancel-edit-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .cancel-edit-btn:hover { color: var(--text); }
+    .save-edit-btn { background: var(--accent); color: white; }
+    .save-edit-btn:hover { background: #0c9068; }
+
+    /* Thinking animation */
+    .thinking-wrap { display: flex; flex-direction: column; gap: 6px; padding: 8px 0; }
+    .thinking { display: flex; align-items: center; gap: 5px; }
+    .dot { width: 7px; height: 7px; background: var(--muted); border-radius: 50%; animation: bounce 1.3s ease-in-out infinite; }
+    .dot:nth-child(2) { animation-delay: .18s; }
+    .dot:nth-child(3) { animation-delay: .36s; }
+    @keyframes bounce { 0%,60%,100% { transform: translateY(0); opacity:.45; } 30% { transform: translateY(-6px); opacity:1; } }
+    .thinking-msg { font-size: 12px; color: var(--muted); font-style: italic; }
+    .stopped-hint { text-align: center; font-size: 11px; color: var(--muted); padding: 6px 0 2px; font-style: italic; }
+
+    /* ── Input bar ── */
+    #input-wrapper { padding: 10px 28px 20px; border-top: 1px solid var(--border); background: var(--main-bg); flex-shrink: 0; }
+    #input-inner { max-width: 800px; margin: 0 auto; }
+    #model-row { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+    #model-select { background: var(--bubble-bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; font-size: 12px; cursor: pointer; outline: none; }
+    #model-select:hover { border-color: #555; }
+    #input-box { display: flex; align-items: flex-end; gap: 8px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; transition: border-color .15s; }
+    #input-box:focus-within { border-color: #555; }
+    #msg-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-size: 14px; resize: none; min-height: 24px; max-height: 200px; line-height: 1.55; font-family: inherit; }
+    #msg-input::placeholder { color: var(--muted); }
+    #send-btn { width: 34px; height: 34px; background: var(--accent); border: none; border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; transition: background .15s, opacity .15s; }
+    #send-btn:hover:not(:disabled) { background: #0c9068; }
+    #send-btn:disabled { opacity: .35; cursor: not-allowed; }
+    #send-btn.stop { background: #c0392b; }
+    #send-btn.stop:hover:not(:disabled) { background: #e74c3c; }
+    #send-btn svg { width: 16px; height: 16px; }
+    #hint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
+
+    /* ── Login nudge modal ── */
+    #nudge-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: none; align-items: center; justify-content: center; z-index: 100; }
+    #nudge-overlay.show { display: flex; }
+    #nudge-box { background: #2a2a2a; border: 1px solid var(--border); border-radius: 14px; padding: 28px 30px; max-width: 360px; width: 90%; text-align: center; }
+    #nudge-box h3 { font-size: 17px; margin-bottom: 8px; }
+    #nudge-box p { font-size: 13px; color: var(--muted); margin-bottom: 22px; line-height: 1.5; }
+    .nudge-login-btn { display: inline-flex; align-items: center; gap: 8px; background: white; color: #333; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity .15s; }
+    .nudge-login-btn:hover { opacity: .88; }
+    .nudge-login-btn img { width: 16px; height: 16px; }
+    #nudge-dismiss { display: block; margin-top: 12px; background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; }
+    #nudge-dismiss:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── Sidebar ── -->
+  <aside id="sidebar">
+    <div id="sidebar-header">
+      <div class="logo-icon">🤖</div>
+      My AI Buddy
+    </div>
+
+    <button id="new-chat-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Chat
+    </button>
+
+    <div id="chat-list"></div>
+
+    <div id="sidebar-footer">
+      <!-- shown when logged in -->
+      <div id="user-info" style="display:none">
+        <img id="user-avatar" src="" alt="" referrerpolicy="no-referrer">
+        <span id="user-name"></span>
+        <button id="logout-btn" title="Log out">Sign out</button>
+      </div>
+      <!-- shown when logged out -->
+      <button id="login-btn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">
+        Sign in with Google
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main id="main">
+    <div id="welcome">
+      <div class="welcome-icon">🤖</div>
+      <h2>My AI Buddy</h2>
+      <p>Start a new chat, or pick one from the sidebar.</p>
+    </div>
+
+    <div id="messages"></div>
+
+    <div id="input-wrapper">
+      <div id="input-inner">
+        <div id="model-row">
+          <select id="model-select">
+            <option value="supermind-agent-v1">supermind-agent-v1</option>
+            <option value="grok-4-fast">grok-4-fast</option>
+            <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+            <option value="gemini-3-flash-preview">gemini-3-flash-preview</option>
+            <option value="deepseek-v4-flash">deepseek-v4-flash</option>
+            <option value="deepseek-v4-pro">deepseek-v4-pro</option>
+            <option value="deepseek">deepseek</option>
+            <option value="kimi-k2.5">kimi-k2.5</option>
+            <option value="gpt-5">gpt-5</option>
+          </select>
+        </div>
+        <div id="input-box">
+          <textarea id="msg-input" rows="1" placeholder="Message My AI Buddy…"></textarea>
+          <button id="send-btn" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"/>
+              <polyline points="5 12 12 5 19 12"/>
+            </svg>
+          </button>
+        </div>
+        <div id="hint">Enter to send · Shift+Enter for new line</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ── Login nudge modal ── -->
+<div id="nudge-overlay">
+  <div id="nudge-box">
+    <h3>Save your chat history</h3>
+    <p>Sign in with Google to save your conversations and access them from any device.</p>
+    <button class="nudge-login-btn" onclick="window.location='/auth/google'">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">
+      Sign in with Google
+    </button>
+    <button id="nudge-dismiss">Continue without signing in</button>
+  </div>
+</div>
+
+<script>
+// ── Constants ─────────────────────────────────────────────────
+const LS_KEY       = 'aibc_chats_v1';
+const LS_MIGRATED  = 'aibc_migrated';
+const NUDGE_AFTER  = 3;  // show login nudge after this many guest messages
+
+marked.use({ breaks: true, gfm: true });
+
+// ── State ─────────────────────────────────────────────────────
+let currentUser  = null;   // null = guest
+let chats        = [];     // [{id, title, model, createdAt, messages?}]
+let activeId     = null;
+let isWaiting    = false;
+let guestMsgCount = 0;
+let chatAbortController = null;
+
+// ── DOM refs ──────────────────────────────────────────────────
+const welcomeEl   = document.getElementById('welcome');
+const messagesEl  = document.getElementById('messages');
+const chatListEl  = document.getElementById('chat-list');
+const newChatBtn  = document.getElementById('new-chat-btn');
+const msgInput    = document.getElementById('msg-input');
+const sendBtn     = document.getElementById('send-btn');
+const modelSel    = document.getElementById('model-select');
+const loginBtn    = document.getElementById('login-btn');
+const userInfoEl  = document.getElementById('user-info');
+const userAvatar  = document.getElementById('user-avatar');
+const userNameEl  = document.getElementById('user-name');
+const logoutBtn   = document.getElementById('logout-btn');
+const nudgeOverlay= document.getElementById('nudge-overlay');
+const nudgeDismiss= document.getElementById('nudge-dismiss');
+
+// ── Boot ──────────────────────────────────────────────────────
+async function boot() {
+  const me = await fetch('/auth/me').then(r => r.json());
+
+  if (me.authenticated) {
+    currentUser = me;
+    showUserInfo(me);
+    await maybemigrate();
+    await loadChatsFromServer();
+  } else {
+    showLoginBtn();
+    loadChatsFromLocalStorage();
+  }
+}
+
+// ── Auth UI ───────────────────────────────────────────────────
+function showUserInfo(me) {
+  userInfoEl.style.display = 'flex';
+  loginBtn.style.display   = 'none';
+  userAvatar.src  = me.picture || '';
+  userNameEl.textContent = me.name || me.email;
+}
+
+function showLoginBtn() {
+  userInfoEl.style.display = 'none';
+  loginBtn.style.display   = 'flex';
+}
+
+loginBtn.addEventListener('click', () => window.location = '/auth/google');
+
+logoutBtn.addEventListener('click', async () => {
+  await fetch('/auth/logout', { method: 'POST' });
+  window.location.reload();
+});
+
+// ── Login nudge ───────────────────────────────────────────────
+function maybeShowNudge() {
+  if (currentUser) return;
+  guestMsgCount++;
+  if (guestMsgCount === NUDGE_AFTER) nudgeOverlay.classList.add('show');
+}
+
+nudgeDismiss.addEventListener('click', () => nudgeOverlay.classList.remove('show'));
+
+// ── localStorage (guest mode) ─────────────────────────────────
+function lsLoad() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
+  catch { return []; }
+}
+function lsSave() {
+  if (!currentUser) localStorage.setItem(LS_KEY, JSON.stringify(chats));
+}
+
+function loadChatsFromLocalStorage() {
+  chats = lsLoad();
+  renderSidebar();
+  if (chats.length > 0) openChat(chats[0].id);
+}
+
+// ── Server (authenticated mode) ───────────────────────────────
+async function loadChatsFromServer() {
+  const data = await fetch('/api/chats').then(r => r.json());
+  chats = data.map(c => ({ ...c, messages: null })); // messages loaded lazily
+  renderSidebar();
+  if (chats.length > 0) openChat(chats[0].id);
+}
+
+async function maybemigrate() {
+  if (localStorage.getItem(LS_MIGRATED)) return;
+  const local = lsLoad();
+  if (!local.length) { localStorage.setItem(LS_MIGRATED, '1'); return; }
+
+  await fetch('/api/migrate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chats: local }),
+  });
+  localStorage.removeItem(LS_KEY);
+  localStorage.setItem(LS_MIGRATED, '1');
+  console.log(`[Migration] Imported ${local.length} chat(s) from localStorage`);
+}
+
+// ── Sidebar ───────────────────────────────────────────────────
+function renderSidebar() {
+  chatListEl.innerHTML = '';
+  if (!chats.length) return;
+
+  const lbl = document.createElement('div');
+  lbl.className = 'group-label';
+  lbl.textContent = 'Recents';
+  chatListEl.appendChild(lbl);
+
+  chats.forEach(chat => {
+    const el = document.createElement('div');
+    el.className = 'chat-item' + (chat.id === activeId ? ' active' : '');
+    el.dataset.chatId = chat.id;
+    el.innerHTML = `<span class="chat-item-title">${escHtml(chat.title)}</span><button class="chat-dots-btn" title="More options">⋮</button>`;
+    el.addEventListener('click', e => { if (e.target.closest('.chat-dots-btn')) return; openChat(chat.id); });
+    el.querySelector('.chat-dots-btn').addEventListener('click', e => { e.stopPropagation(); showChatMenu(chat.id, e.currentTarget); });
+    chatListEl.appendChild(el);
+  });
+}
+
+// ── Open chat ─────────────────────────────────────────────────
+async function openChat(id) {
+  activeId = id;
+  const chat = chats.find(c => c.id === id);
+  if (!chat) return;
+
+  modelSel.value = chat.model || 'supermind-agent-v1';
+  welcomeEl.style.display  = 'none';
+  messagesEl.style.display = 'block';
+  messagesEl.innerHTML = '';
+
+  // Load messages if not yet fetched (server mode)
+  if (currentUser && chat.messages === null) {
+    const msgs = await fetch(`/api/chats/${id}/messages`).then(r => r.json());
+    chat.messages = msgs;
+  }
+
+  (chat.messages || []).forEach((m, i) => addBubble(m.role, m.content, i));
+  scrollBottom();
+  renderSidebar();
+}
+
+// ── New chat ──────────────────────────────────────────────────
+async function createNewChat() {
+  const model = modelSel.value;
+
+  if (currentUser) {
+    const data = await fetch('/api/chats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'New Chat', model }),
+    }).then(r => r.json());
+    chats.unshift({ ...data, messages: [] });
+  } else {
+    chats.unshift({ id: Date.now().toString(), title: 'New Chat', model, messages: [], createdAt: Date.now() });
+    lsSave();
+  }
+  return chats[0];
+}
+
+newChatBtn.addEventListener('click', async () => {
+  const chat = await createNewChat();
+  openChat(chat.id);
+});
+
+// ── Messages UI ───────────────────────────────────────────────
+function addBubble(role, content, msgIndex = -1) {
+  const row = document.createElement('div');
+  row.className = `msg-row ${role}`;
+
+  if (role === 'assistant') {
+    const av = document.createElement('div');
+    av.className = 'avatar bot'; av.textContent = '🤖';
+    const bub = document.createElement('div');
+    bub.className = 'bubble';
+    bub.innerHTML = marked.parse(content);
+    bub.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+    row.append(av, bub);
+  } else {
+    const wrap = document.createElement('div');
+    wrap.className = 'user-bubble-wrap';
+    const bub = document.createElement('div');
+    bub.className = 'bubble'; bub.textContent = content;
+    const editRow = document.createElement('div');
+    editRow.className = 'edit-btn-row';
+    const editBtn = document.createElement('button');
+    editBtn.className = 'edit-btn';
+    editBtn.title = 'Edit message';
+    editBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`;
+    editBtn.addEventListener('click', () => startEdit(row, msgIndex));
+    editRow.appendChild(editBtn);
+    wrap.append(bub, editRow);
+    const av = document.createElement('div');
+    av.className = 'avatar user-av'; av.textContent = '👤';
+    row.append(wrap, av);
+  }
+
+  messagesEl.appendChild(row);
+}
+
+function showThinking() {
+  const row = document.createElement('div');
+  row.className = 'msg-row assistant'; row.id = 'thinking';
+  row.innerHTML = `
+    <div class="avatar bot">🤖</div>
+    <div class="bubble">
+      <div class="thinking-wrap">
+        <div class="thinking"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <span class="thinking-msg">Thinking...</span>
+      </div>
+    </div>`;
+  messagesEl.appendChild(row);
+  scrollBottom();
+}
+function updateThinkingMsg(msg) {
+  const el = document.querySelector('#thinking .thinking-msg');
+  if (el) el.textContent = msg;
+}
+function hideThinking() { document.getElementById('thinking')?.remove(); }
+function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
+
+// ── Send ──────────────────────────────────────────────────────
+async function send(editText = null) {
+  const text = editText ?? msgInput.value.trim();
+  if (!text || isWaiting) return;
+
+  // Ensure there's an active chat
+  if (!activeId) {
+    const chat = await createNewChat();
+    activeId = chat.id;
+    welcomeEl.style.display  = 'none';
+    messagesEl.style.display = 'block';
+  }
+
+  const chat = chats.find(c => c.id === activeId);
+  chat.model = modelSel.value;
+
+  if (!chat.messages) chat.messages = [];
+
+  // Auto-title on first message (guest: truncate locally; auth: LLM async after reply)
+  const isFirst = chat.messages.length === 0;
+  if (isFirst && !currentUser) chat.title = text.length > 16 ? text.slice(0, 16) + '…' : text;
+
+  // Build history for LLM context
+  const history = chat.messages
+    .filter(m => m.role === 'user' || m.role === 'assistant')
+    .map(({ role, content }) => ({ role, content }));
+
+  // Optimistically add user message locally
+  chat.messages.push({ role: 'user', content: text });
+  if (!currentUser) lsSave();
+
+  addBubble('user', text, chat.messages.length - 1);
+  scrollBottom();
+  if (!editText) { msgInput.value = ''; autoResize(); }
+  setWaiting(true);
+  showThinking();
+  renderSidebar();
+  chatAbortController = new AbortController();
+
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, model: chat.model, history }),
+      signal: chatAbortController.signal,
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    // Consume SSE stream
+    const reader  = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let reply  = null;
+
+    outer: while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const parts = buffer.split('\n\n');
+      buffer = parts.pop(); // keep incomplete tail
+      for (const part of parts) {
+        if (!part.startsWith('data: ')) continue;
+        const event = JSON.parse(part.slice(6));
+        if (event.type === 'status') {
+          updateThinkingMsg(event.message);
+        } else if (event.type === 'done') {
+          reply = event.reply;
+          break outer;
+        } else if (event.type === 'error') {
+          throw new Error(event.detail);
+        }
+      }
+    }
+
+    if (!reply) throw new Error('No reply received');
+
+    hideThinking();
+    chat.messages.push({ role: 'assistant', content: reply });
+
+    if (currentUser) {
+      await fetch(`/api/chats/${activeId}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            { role: 'user', content: text },
+            { role: 'assistant', content: reply },
+          ],
+        }),
+      });
+      if (isFirst) generateTitle(activeId, text, chat.model);
+    } else {
+      lsSave();
+      maybeShowNudge();
+    }
+
+    addBubble('assistant', reply);
+    scrollBottom();
+  } catch (e) {
+    hideThinking();
+    if (e.name === 'AbortError') {
+      // Remove the unsaved user message from in-memory history
+      if (chat.messages.length > 0 && chat.messages[chat.messages.length - 1].role === 'user') {
+        chat.messages.pop();
+      }
+      if (!currentUser) lsSave();
+      showStoppedHint();
+    } else {
+      addBubble('assistant', `⚠️ **Error:** ${escHtml(e.message)}`);
+    }
+  } finally {
+    chatAbortController = null;
+    setWaiting(false);
+    msgInput.focus();
+    renderSidebar();
+  }
+}
+
+function showStoppedHint() {
+  const hint = document.createElement('div');
+  hint.className = 'stopped-hint';
+  hint.textContent = 'Response stopped.';
+  messagesEl.appendChild(hint);
+  scrollBottom();
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+const SEND_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>`;
+const STOP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" fill="currentColor" rx="2"/></svg>`;
+
+function setWaiting(on) {
+  isWaiting = on;
+  msgInput.disabled = on;
+  if (on) {
+    sendBtn.disabled = false;
+    sendBtn.classList.add('stop');
+    sendBtn.innerHTML = STOP_SVG;
+  } else {
+    sendBtn.classList.remove('stop');
+    sendBtn.disabled = msgInput.value.trim() === '';
+    sendBtn.innerHTML = SEND_SVG;
+  }
+}
+function autoResize() {
+  msgInput.style.height = 'auto';
+  msgInput.style.height = Math.min(msgInput.scrollHeight, 200) + 'px';
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Events ────────────────────────────────────────────────────
+msgInput.addEventListener('input', () => {
+  autoResize();
+  sendBtn.disabled = msgInput.value.trim() === '' || isWaiting;
+});
+msgInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+});
+sendBtn.addEventListener('click', () => {
+  if (isWaiting && chatAbortController) chatAbortController.abort();
+  else send();
+});
+
+// ── Edit message ──────────────────────────────────────────────
+function startEdit(row, index) {
+  if (isWaiting) return;
+  const wrap = row.querySelector('.user-bubble-wrap');
+  const bub = wrap.querySelector('.bubble');
+  const original = bub.textContent;
+
+
+  bub.innerHTML = '';
+  const ta = document.createElement('textarea');
+  ta.className = 'edit-textarea';
+  ta.value = original;
+  ta.rows = Math.max(2, original.split('\n').length);
+
+  const actions = document.createElement('div');
+  actions.className = 'edit-actions';
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'cancel-edit-btn';
+  cancelBtn.textContent = 'Cancel';
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'save-edit-btn';
+  saveBtn.textContent = 'Save & Send';
+
+  actions.append(cancelBtn, saveBtn);
+  bub.append(ta, actions);
+  wrap.querySelector('.edit-btn-row').style.display = 'none';
+  ta.focus();
+  ta.setSelectionRange(ta.value.length, ta.value.length);
+
+  cancelBtn.addEventListener('click', () => {
+    bub.innerHTML = '';
+    bub.textContent = original;
+    wrap.querySelector('.edit-btn-row').style.display = '';
+  });
+
+  saveBtn.addEventListener('click', async () => {
+    const newText = ta.value.trim();
+    if (!newText) return;
+    await saveEditMessage(index, newText);
+  });
+
+  ta.addEventListener('keydown', e => { if (e.key === 'Escape') cancelBtn.click(); });
+}
+
+async function saveEditMessage(index, newText) {
+  const chat = chats.find(c => c.id === activeId);
+  if (!chat) return;
+
+  chat.messages = chat.messages.slice(0, index);
+
+  if (currentUser) {
+    await fetch(`/api/chats/${activeId}/messages/from/${index}`, { method: 'DELETE' });
+  } else {
+    lsSave();
+  }
+
+  messagesEl.innerHTML = '';
+  chat.messages.forEach((m, i) => addBubble(m.role, m.content, i));
+  scrollBottom();
+
+  await send(newText);
+}
+
+// ── LLM title generation ──────────────────────────────────────
+async function generateTitle(chatId, message, model) {
+  try {
+    const data = await fetch(`/api/chats/${chatId}/title`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, model }),
+    }).then(r => r.json());
+    const chat = chats.find(c => c.id === chatId);
+    if (chat && data.title) { chat.title = data.title; renderSidebar(); }
+  } catch (e) { console.warn('Title generation failed:', e); }
+}
+
+// ── Chat menu ─────────────────────────────────────────────────
+let activeDropdown = null;
+
+function showChatMenu(chatId, btn) {
+  closeChatMenu();
+  const dd = document.createElement('div');
+  dd.className = 'chat-dropdown';
+
+  const renameBtn = document.createElement('button');
+  renameBtn.textContent = 'Rename';
+  renameBtn.addEventListener('click', () => { closeChatMenu(); startRenameChat(chatId); });
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'delete-btn';
+  deleteBtn.textContent = 'Delete';
+  deleteBtn.addEventListener('click', () => { closeChatMenu(); deleteChatSession(chatId); });
+
+  dd.append(renameBtn, deleteBtn);
+  document.body.appendChild(dd);
+
+  const rect = btn.getBoundingClientRect();
+  const ddW = 140;
+  let left = rect.right - ddW;
+  if (left < 4) left = 4;
+  const top = rect.bottom + 4;
+  dd.style.cssText = `top:${top}px;left:${left}px`;
+  activeDropdown = dd;
+}
+
+function closeChatMenu() {
+  if (activeDropdown) { activeDropdown.remove(); activeDropdown = null; }
+}
+
+function startRenameChat(chatId) {
+  const item = chatListEl.querySelector(`[data-chat-id="${chatId}"]`);
+  if (!item) return;
+  const titleSpan = item.querySelector('.chat-item-title');
+  const original = titleSpan.textContent;
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'rename-input';
+  input.value = original;
+  titleSpan.replaceWith(input);
+  input.focus();
+  input.select();
+
+  const commit = async () => {
+    const newTitle = input.value.trim() || original;
+    const chat = chats.find(c => c.id === chatId);
+    if (chat) chat.title = newTitle;
+    if (currentUser && newTitle !== original) {
+      fetch(`/api/chats/${chatId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: newTitle }),
+      });
+    } else if (!currentUser) {
+      lsSave();
+    }
+    renderSidebar();
+  };
+
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+    if (e.key === 'Escape') { input.value = original; input.blur(); }
+  });
+}
+
+async function deleteChatSession(chatId) {
+  if (!confirm('Delete this chat?')) return;
+  if (currentUser) {
+    await fetch(`/api/chats/${chatId}`, { method: 'DELETE' });
+  }
+  chats = chats.filter(c => c.id !== chatId);
+  if (!currentUser) lsSave();
+  if (activeId === chatId) {
+    activeId = null;
+    messagesEl.style.display = 'none';
+    messagesEl.innerHTML = '';
+    welcomeEl.style.display = '';
+  }
+  renderSidebar();
+}
+
+document.addEventListener('click', e => {
+  if (activeDropdown && !activeDropdown.contains(e.target) && !e.target.closest('.chat-dots-btn')) {
+    closeChatMenu();
+  }
+});
+
+// ── Start ─────────────────────────────────────────────────────
+boot();
+</script>
+</body>
+</html>

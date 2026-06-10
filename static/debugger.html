@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Context Debugger</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --page-bg:        #060d17;
+      --card-bg:        #0d1b2e;
+      --card-border:    #1e3550;
+      --inner-bg:       #070f1a;
+      --user-tint:      #071f20;
+      --user-border:    #0d5a5a;
+      --tc-bg:          #060f06;
+      --tc-border:      #1a3010;
+      --tr-bg:          #0d0720;
+      --tr-border:      #2a1550;
+      --final-bg:       #060f06;
+      --final-border:   #1a3510;
+      --text:           #c9d1d9;
+      --muted:          #7d8590;
+      --green:          #3fb950;
+      --amber:          #d29922;
+      --purple:         #a78bfa;
+      --blue:           #58a6ff;
+      --red:            #f85149;
+      --border:         #1e2b3a;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+    }
+
+    /* ── Header ── */
+    #header {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--card-border);
+    }
+    #header h1 {
+      font-size: 12px; font-weight: 700; letter-spacing: .12em;
+      color: var(--blue); text-transform: uppercase;
+    }
+    #header a {
+      font-size: 11px; color: var(--muted); text-decoration: none;
+    }
+    #header a:hover { color: var(--text); }
+
+    /* ── Input area ── */
+    #input-area {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--card-border);
+      background: var(--card-bg);
+    }
+    #model-sel {
+      flex-shrink: 0;
+      background: var(--inner-bg); border: 1px solid var(--card-border);
+      color: var(--text); padding: 7px 10px; border-radius: 6px;
+      font-size: 12px; cursor: pointer;
+    }
+    #msg-input {
+      flex: 1;
+      background: var(--inner-bg); border: 1px solid var(--card-border);
+      color: var(--text); padding: 7px 12px; border-radius: 6px;
+      font-size: 13px; font-family: inherit; resize: none; min-height: 36px;
+    }
+    #msg-input:focus { outline: none; border-color: var(--blue); }
+    #run-btn {
+      flex-shrink: 0;
+      background: var(--blue); border: none; color: white;
+      padding: 7px 20px; border-radius: 6px;
+      font-size: 12px; font-weight: 700; letter-spacing: .06em; cursor: pointer;
+    }
+    #run-btn:hover { background: #4a93e8; }
+    #run-btn:disabled { opacity: .35; cursor: not-allowed; }
+    #run-btn.stop { background: var(--red); }
+    #run-btn.stop:hover { background: #cc2222; }
+
+    /* ── Status bar ── */
+    #status-bar {
+      padding: 6px 24px; font-size: 11px; color: var(--muted);
+      min-height: 28px; display: flex; align-items: center; gap: 6px;
+    }
+
+    /* ── Trace / Regen layout ── */
+    #main-area {
+      max-width: 860px; margin: 0 auto;
+      padding: 16px 24px 48px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+
+    /* ── Turn block (outer card) ── */
+    .turn-block {
+      border-radius: 10px; border: 1px solid var(--card-border);
+      background: var(--card-bg); overflow: hidden;
+      transition: opacity .2s;
+    }
+    .turn-block.user-block  { border-color: var(--user-border); }
+    .turn-block.disabled    { opacity: .38; }
+
+    .turn-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .turn-meta { display: flex; flex-direction: column; gap: 2px; }
+    .turn-label {
+      font-size: 9px; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .turn-id { font-size: 11px; color: var(--muted); font-family: monospace; }
+
+    .hdr-actions { display: flex; gap: 7px; align-items: center; }
+    .hdr-btn {
+      font-size: 10px; font-weight: 600; letter-spacing: .05em;
+      padding: 4px 12px; border-radius: 5px; cursor: pointer;
+      border: 1px solid var(--card-border); background: transparent; color: var(--text);
+    }
+    .hdr-btn:hover { background: var(--inner-bg); }
+    .hdr-btn.accent { border-color: var(--blue); color: var(--blue); }
+    .hdr-btn.accent:hover { background: rgba(88,166,255,.08); }
+    .hdr-btn.danger { border-color: #3a1a1a; color: var(--red); }
+    .hdr-btn.danger:hover { background: rgba(248,81,73,.08); }
+
+    .turn-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── USER INPUT inner card ── */
+    .user-inner {
+      border-radius: 7px; border: 1px solid var(--user-border);
+      background: var(--user-tint); overflow: hidden;
+    }
+    .inner-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 11px;
+    }
+    .inner-label {
+      font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .inner-label.user  { color: #4dd0c4; }
+    .inner-label.tc    { color: var(--green); }
+    .inner-label.tr    { color: var(--purple); }
+    .inner-label.tool  { color: var(--amber); }
+
+    .badge-row { display: flex; gap: 5px; align-items: center; }
+    .badge {
+      font-size: 9px; font-weight: 700; letter-spacing: .07em;
+      padding: 2px 7px; border-radius: 8px; text-transform: lowercase;
+    }
+    .badge.active   { border: 1px solid #0ea5e9; color: #0ea5e9; }
+    .badge.inactive { border: 1px solid var(--muted); color: var(--muted); }
+    .badge-btn {
+      font-size: 10px; font-weight: 600;
+      padding: 2px 8px; border-radius: 8px; cursor: pointer;
+      border: 1px solid var(--border); background: transparent; color: var(--text);
+    }
+    .badge-btn:hover { background: #1a2535; }
+
+    .inner-content {
+      padding: 9px 11px; font-size: 13px; line-height: 1.6;
+      white-space: pre-wrap; word-break: break-word;
+    }
+
+    /* ── Tool outer card ── */
+    .tool-card {
+      border-radius: 7px; border: 1px solid var(--border);
+      background: var(--inner-bg); overflow: hidden;
+    }
+    .tool-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 11px;
+    }
+
+    /* ── TOOL CALL section ── */
+    .tc-section {
+      margin: 0 8px 8px; border-radius: 6px;
+      background: var(--tc-bg); border: 1px solid var(--tc-border);
+      padding: 9px 11px;
+    }
+    .tc-tool-name {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em;
+      color: var(--amber); text-transform: uppercase; margin-bottom: 8px;
+    }
+    .json-pre {
+      background: #050c12; border-radius: 5px; border: 1px solid #111d28;
+      padding: 7px 10px; font-size: 11.5px; font-family: 'Menlo','Monaco','Consolas',monospace;
+      white-space: pre; overflow-x: auto; cursor: pointer; color: #e6edf3;
+      margin-bottom: 7px; line-height: 1.5;
+    }
+    .json-pre:hover { border-color: #2a4060; }
+    .json-pre[contenteditable="true"] { outline: 1px solid var(--blue); cursor: text; }
+    .status-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    }
+    .status-badge.succeed { color: var(--green); }
+    .status-badge.error   { color: var(--red); }
+
+    /* ── TOOL RESULT section ── */
+    .tr-section {
+      margin: 0 8px 8px; border-radius: 6px;
+      background: var(--tr-bg); border: 1px solid var(--tr-border);
+      padding: 9px 11px;
+    }
+    .tr-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .result-text {
+      font-size: 11.5px; font-family: 'Menlo','Monaco','Consolas',monospace;
+      line-height: 1.55; white-space: pre-wrap; word-break: break-all;
+      color: var(--text); max-height: 180px; overflow-y: auto;
+    }
+    .result-text::-webkit-scrollbar { width: 3px; }
+    .result-text::-webkit-scrollbar-thumb { background: #2a3a4a; border-radius: 3px; }
+
+    /* ── Inline edit textarea ── */
+    .edit-ta {
+      display: block; width: 100%;
+      background: #050c12; border: 1px solid var(--blue);
+      color: var(--text); border-radius: 5px;
+      padding: 8px 10px; font-size: 12px;
+      font-family: 'Menlo','Monaco','Consolas',monospace;
+      resize: vertical; min-height: 80px; outline: none; line-height: 1.55;
+      margin-top: 6px;
+    }
+    .edit-actions {
+      display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px;
+    }
+    .save-btn {
+      padding: 4px 12px; border-radius: 5px; border: none;
+      background: var(--green); color: #000; font-size: 11px; font-weight: 700; cursor: pointer;
+    }
+    .cancel-btn {
+      padding: 4px 10px; border-radius: 5px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); font-size: 11px; cursor: pointer;
+    }
+
+    /* ── Insert form ── */
+    .insert-form {
+      border-radius: 7px; border: 1px dashed #1e4080;
+      background: rgba(88,166,255,.04); padding: 12px;
+    }
+    .insert-form label {
+      display: block; font-size: 10px; color: var(--muted);
+      margin-bottom: 4px; margin-top: 10px;
+    }
+    .insert-form label:first-child { margin-top: 0; }
+    .insert-form select,
+    .insert-form textarea {
+      width: 100%;
+      background: var(--inner-bg); border: 1px solid var(--border);
+      color: var(--text); border-radius: 5px;
+      padding: 6px 8px; font-size: 12px; font-family: monospace;
+    }
+    .insert-form textarea { resize: vertical; min-height: 70px; }
+    .insert-form-actions { display: flex; gap: 7px; margin-top: 10px; }
+    .ins-confirm {
+      padding: 5px 14px; border-radius: 5px; border: none;
+      background: var(--blue); color: white; font-size: 11px; font-weight: 700; cursor: pointer;
+    }
+    .ins-cancel {
+      padding: 5px 10px; border-radius: 5px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); font-size: 11px; cursor: pointer;
+    }
+
+    /* ── Assistant content (response / thinking) ── */
+    .assistant-content {
+      border-radius: 7px; border: 1px solid var(--card-border);
+      background: var(--inner-bg); padding: 9px 11px;
+    }
+    .assistant-content-hdr {
+      font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--blue); margin-bottom: 7px;
+    }
+    .assistant-content-text {
+      font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-break: break-word;
+    }
+
+    /* ── Final reply block ── */
+    .final-block {
+      border-radius: 10px; border: 1px solid var(--final-border);
+      background: var(--final-bg); padding: 12px 14px;
+    }
+    .final-label {
+      font-size: 9px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 8px;
+    }
+    .final-content { font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+
+    /* ── Regenerate area ── */
+    #regen-btn {
+      width: 100%; padding: 11px; cursor: pointer;
+      background: transparent; border: 1px solid var(--blue);
+      color: var(--blue); border-radius: 8px;
+      font-size: 12px; font-weight: 700; letter-spacing: .08em;
+    }
+    #regen-btn:hover { background: rgba(88,166,255,.07); }
+    #regen-btn:disabled { opacity: .28; cursor: not-allowed; }
+
+    #regen-result {
+      border-radius: 10px; border: 1px solid var(--blue);
+      background: #060d1a; padding: 12px 14px;
+    }
+    .regen-label {
+      font-size: 9px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 8px;
+    }
+    #regen-content { font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+
+    /* ── Spinner ── */
+    .spin {
+      display: inline-block; width: 12px; height: 12px;
+      border: 2px solid var(--muted); border-top-color: var(--blue);
+      border-radius: 50%; animation: spin .65s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div id="header">
+  <h1>Context Debugger</h1>
+  <a href="/">← Back to App</a>
+</div>
+
+<div id="input-area">
+  <select id="model-sel">
+    <option value="supermind-agent-v1">supermind-agent-v1</option>
+    <option value="grok-4-fast">grok-4-fast</option>
+    <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+    <option value="gemini-3-flash-preview">gemini-3-flash-preview</option>
+    <option value="deepseek-v4-flash">deepseek-v4-flash</option>
+    <option value="deepseek-v4-pro">deepseek-v4-pro</option>
+    <option value="deepseek">deepseek</option>
+    <option value="kimi-k2.5">kimi-k2.5</option>
+    <option value="gpt-5">gpt-5</option>
+  </select>
+  <textarea id="msg-input" rows="1" placeholder="Enter a message to debug…"></textarea>
+  <button id="run-btn">RUN</button>
+</div>
+
+<div id="status-bar"></div>
+<div id="main-area"></div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────
+let state = null;
+let abortController = null;
+
+// ── DOM ────────────────────────────────────────────────────────
+const mainEl   = document.getElementById('main-area');
+const statusEl = document.getElementById('status-bar');
+const runBtn   = document.getElementById('run-btn');
+const msgInput = document.getElementById('msg-input');
+const modelSel = document.getElementById('model-sel');
+
+// ── Helpers ────────────────────────────────────────────────────
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const uid = () => Math.random().toString(36).slice(2, 10);
+const setStatus = html => { statusEl.innerHTML = html; };
+
+// ── Run ────────────────────────────────────────────────────────
+runBtn.addEventListener('click', () => {
+  if (abortController) abortController.abort();
+  else runDebug();
+});
+msgInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!abortController) runDebug(); }
+});
+msgInput.addEventListener('input', () => {
+  msgInput.style.height = 'auto';
+  msgInput.style.height = Math.min(msgInput.scrollHeight, 160) + 'px';
+});
+
+async function runDebug() {
+  const userMsg = msgInput.value.trim();
+  if (!userMsg) return;
+
+  state = { model: modelSel.value, userMessage: userMsg, history: [], rounds: [] };
+  mainEl.innerHTML = '';
+  renderAll();
+  setRunning(true);
+  setStatus('<span class="spin"></span> Starting…');
+  abortController = new AbortController();
+
+  try {
+    const res = await fetch('/debug/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: userMsg, model: modelSel.value, history: [] }),
+      signal: abortController.signal,
+    });
+    if (!res.ok) throw new Error(await res.text());
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const parts = buffer.split('\n\n');
+      buffer = parts.pop();
+      for (const part of parts) {
+        if (!part.startsWith('data: ')) continue;
+        handleDebugEvent(JSON.parse(part.slice(6)));
+      }
+    }
+  } catch (e) {
+    if (e.name === 'AbortError') {
+      const n = state?.rounds?.length ?? 0;
+      setStatus(`Stopped — ${n} round(s) completed`);
+    } else {
+      setStatus(`<span style="color:var(--red)">Error: ${esc(e.message)}</span>`);
+    }
+  } finally {
+    abortController = null;
+    setRunning(false);
+  }
+}
+
+function handleDebugEvent(event) {
+  if (event.type === 'status') {
+    setStatus('<span class="spin"></span> ' + esc(event.message));
+  } else if (event.type === 'round') {
+    const r = event.data;
+    state.rounds.push({
+      id: 'r_' + uid(),
+      roundNum: r.round,
+      active: true,
+      isInserted: false,
+      assistantMessage: r.assistantMessage,
+      toolResults: r.toolResults.map(tr => ({
+        id: tr.id, name: tr.name, arguments: tr.arguments,
+        content: tr.content, status: tr.status,
+        active: true, editedArguments: null, editedContent: null,
+      })),
+      finalReply: r.finalReply,
+    });
+    renderAll();
+  } else if (event.type === 'final') {
+    if (state.rounds.length > 0) {
+      state.rounds[state.rounds.length - 1].finalReply = event.reply;
+      renderAll();
+    }
+  } else if (event.type === 'done') {
+    const toolRounds = state.rounds.filter(r => r.toolResults.length > 0).length;
+    setStatus(`Done — ${state.rounds.length} round(s), ${toolRounds} with tool calls`);
+  } else if (event.type === 'error') {
+    setStatus(`<span style="color:var(--red)">Error: ${esc(event.detail)}</span>`);
+  }
+}
+
+function setRunning(running) {
+  runBtn.textContent = running ? '■ STOP' : 'RUN';
+  runBtn.classList.toggle('stop', running);
+}
+
+// ── Render all ─────────────────────────────────────────────────
+function renderAll() {
+  mainEl.innerHTML = '';
+  mainEl.appendChild(renderUserBlock());
+
+  state.rounds.forEach((round, i) => {
+    mainEl.appendChild(renderAIBlock(i));
+    // Only show separate Final Reply card for MAX_TURNS exhaustion:
+    // that's the one case where a round has BOTH tool results AND a finalReply.
+    if (round.finalReply !== null && round.toolResults.length > 0) {
+      mainEl.appendChild(renderFinalBlock(round.finalReply));
+    }
+  });
+
+  const hasTools = state.rounds.some(r => r.toolResults.length > 0 || r.isInserted);
+  if (hasTools) {
+    mainEl.appendChild(renderRegenSection());
+  }
+}
+
+// ── USER block ─────────────────────────────────────────────────
+function renderUserBlock() {
+  const block = el('div', 'turn-block user-block');
+
+  // Header
+  const hdr = el('div', 'turn-header');
+  const meta = el('div', 'turn-meta');
+  meta.innerHTML = `<div class="turn-label">USER</div><div class="turn-id">turn_${uid()}</div>`;
+  hdr.appendChild(meta);
+  const regenTurnBtn = btn('REGENERATE TURN', 'hdr-btn accent', () => {
+    msgInput.value = state?.userMessage ?? '';
+    if (abortController) abortController.abort();
+    else runDebug();
+  });
+  hdr.appendChild(regenTurnBtn);
+  block.appendChild(hdr);
+
+  // Body
+  const body = el('div', 'turn-body');
+  const inner = el('div', 'user-inner');
+
+  const innerHdr = el('div', 'inner-hdr');
+  innerHdr.appendChild(span('USER INPUT', 'inner-label user'));
+  const badges = el('div', 'badge-row');
+  const editBtn = btn('Edit', 'badge-btn');
+  badges.appendChild(editBtn);
+  badges.appendChild(span('active', 'badge active'));
+  innerHdr.appendChild(badges);
+  inner.appendChild(innerHdr);
+
+  const content = el('div', 'inner-content');
+  content.textContent = state.userMessage;
+  inner.appendChild(content);
+
+  editBtn.onclick = () => startEditText(inner, content, editBtn, newVal => {
+    state.userMessage = newVal;
+    msgInput.value = newVal;
+  });
+
+  body.appendChild(inner);
+  block.appendChild(body);
+  return block;
+}
+
+// ── AI block ───────────────────────────────────────────────────
+function renderAIBlock(roundIdx) {
+  const round = state.rounds[roundIdx];
+  const block = el('div', 'turn-block ai-block' + (round.active ? '' : ' disabled'));
+
+  // Header
+  const hdr = el('div', 'turn-header');
+  const meta = el('div', 'turn-meta');
+  meta.innerHTML = `
+    <div class="turn-label">AI${round.isInserted ? ' · inserted' : ''}</div>
+    <div class="turn-id">round_${round.roundNum}${round.isInserted ? '_ins' : ''}</div>`;
+  hdr.appendChild(meta);
+
+  const actions = el('div', 'hdr-actions');
+
+  const toggleBtn = btn(round.active ? 'Disable' : 'Enable', 'hdr-btn', () => {
+    round.active = !round.active;
+    renderAll();
+  });
+  actions.appendChild(toggleBtn);
+
+  const insertBtn = btn('+ INSERT CARD', 'hdr-btn', () => {
+    showInsertForm(body, roundIdx);
+  });
+  actions.appendChild(insertBtn);
+
+  if (round.isInserted) {
+    const removeBtn = btn('Remove', 'hdr-btn danger', () => {
+      state.rounds.splice(roundIdx, 1);
+      renderAll();
+    });
+    actions.appendChild(removeBtn);
+  }
+
+  hdr.appendChild(actions);
+  block.appendChild(hdr);
+
+  const body = el('div', 'turn-body');
+
+  // Show the assistant's text content if present (response text or thinking before tool calls)
+  const msgContent = round.assistantMessage?.content;
+  if (msgContent) {
+    const contentWrap = el('div', 'assistant-content');
+    const contentHdr = el('div', 'assistant-content-hdr');
+    contentHdr.textContent = round.toolResults.length === 0 ? 'RESPONSE' : 'THINKING';
+    const contentText = el('div', 'assistant-content-text');
+    contentText.textContent = msgContent;
+    contentWrap.append(contentHdr, contentText);
+    body.appendChild(contentWrap);
+  }
+
+  round.toolResults.forEach((_, trIdx) => body.appendChild(renderToolCard(roundIdx, trIdx)));
+  block.appendChild(body);
+  return block;
+}
+
+// ── Tool card ──────────────────────────────────────────────────
+function renderToolCard(roundIdx, trIdx) {
+  const tr = state.rounds[roundIdx].toolResults[trIdx];
+
+  const card = el('div', 'tool-card');
+  card.style.opacity = tr.active ? '1' : '.35';
+
+  // Tool header
+  const toolHdr = el('div', 'tool-hdr');
+  toolHdr.appendChild(span(tr.name.toUpperCase(), 'inner-label tool'));
+  toolHdr.appendChild(span(tr.active ? 'active' : 'inactive', 'badge ' + (tr.active ? 'active' : 'inactive')));
+  card.appendChild(toolHdr);
+
+  // TOOL CALL section
+  const tcSec = el('div', 'tc-section');
+  tcSec.appendChild(span('TOOL CALL', 'inner-label tc'));
+  const toolNameEl = el('div', 'tc-tool-name');
+  toolNameEl.textContent = tr.name.toUpperCase();
+  tcSec.appendChild(toolNameEl);
+
+  const argsEl = el('pre', 'json-pre');
+  argsEl.title = 'Click to edit arguments';
+  argsEl.textContent = JSON.stringify(tr.editedArguments ?? tr.arguments, null, 2);
+  argsEl.onclick = () => makeEditable(argsEl, roundIdx, trIdx);
+  tcSec.appendChild(argsEl);
+
+  const statusEl2 = el('div', 'status-badge ' + tr.status);
+  statusEl2.textContent = tr.status === 'succeed' ? 'SUCCEEDED' : 'ERROR';
+  tcSec.appendChild(statusEl2);
+  card.appendChild(tcSec);
+
+  // TOOL RESULT section
+  const trSec = el('div', 'tr-section');
+  const trTop = el('div', 'tr-top');
+  trTop.appendChild(span('TOOL RESULT', 'inner-label tr'));
+
+  const trBadges = el('div', 'badge-row');
+  const toggleResultBtn = btn(tr.active ? 'Active' : 'Inactive', 'badge-btn', () => {
+    tr.active = !tr.active;
+    renderAll();
+  });
+  trBadges.appendChild(toggleResultBtn);
+
+  const editResultBtn = btn('Edit', 'badge-btn');
+  trBadges.appendChild(editResultBtn);
+  trTop.appendChild(trBadges);
+  trSec.appendChild(trTop);
+
+  const resultText = el('div', 'result-text');
+  resultText.textContent = tr.editedContent ?? tr.content;
+  trSec.appendChild(resultText);
+
+  editResultBtn.onclick = () => startEditText(trSec, resultText, editResultBtn, newVal => {
+    tr.editedContent = newVal;
+  });
+
+  card.appendChild(trSec);
+  return card;
+}
+
+// ── Edit args (contenteditable JSON) ──────────────────────────
+function makeEditable(pre, roundIdx, trIdx) {
+  if (pre.contentEditable === 'true') return;
+  const tr = state.rounds[roundIdx].toolResults[trIdx];
+  pre.contentEditable = 'true';
+  pre.focus();
+
+  const commit = () => {
+    pre.contentEditable = 'false';
+    try {
+      tr.editedArguments = JSON.parse(pre.textContent);
+      pre.style.borderColor = '';
+    } catch {
+      pre.style.borderColor = 'var(--red)';
+    }
+  };
+  pre.onblur = commit;
+  pre.onkeydown = e => { if (e.key === 'Escape') pre.blur(); };
+}
+
+// ── Inline text edit (user msg / tool result) ──────────────────
+function startEditText(container, displayEl, triggerBtn, onSave) {
+  if (container.querySelector('.edit-ta')) return;
+  const original = displayEl.textContent;
+  displayEl.style.display = 'none';
+  triggerBtn.style.display = 'none';
+
+  const ta = el('textarea', 'edit-ta');
+  ta.value = original;
+  container.appendChild(ta);
+
+  const acts = el('div', 'edit-actions');
+  const saveB = btn('Save', 'save-btn', () => {
+    onSave(ta.value);
+    displayEl.textContent = ta.value;
+    ta.remove(); acts.remove();
+    displayEl.style.display = '';
+    triggerBtn.style.display = '';
+  });
+  const cancelB = btn('Cancel', 'cancel-btn', () => {
+    ta.remove(); acts.remove();
+    displayEl.style.display = '';
+    triggerBtn.style.display = '';
+  });
+  acts.append(saveB, cancelB);
+  container.append(ta, acts);
+  ta.focus();
+  ta.onkeydown = e => { if (e.key === 'Escape') cancelB.click(); };
+}
+
+// ── Insert card form ───────────────────────────────────────────
+function showInsertForm(body, afterRoundIdx) {
+  if (body.querySelector('.insert-form')) return;
+  const synId = 'ins_' + uid();
+
+  const form = el('div', 'insert-form');
+  form.innerHTML = `
+    <label>Tool Name</label>
+    <select class="ins-name">
+      <option value="web_search">web_search</option>
+      <option value="read_page">read_page</option>
+    </select>
+    <label>Arguments (JSON)</label>
+    <textarea class="ins-args" rows="3">{}</textarea>
+    <label>Tool Result Content</label>
+    <textarea class="ins-result" rows="4"></textarea>
+  `;
+
+  const formActs = el('div', 'insert-form-actions');
+  const confirmB = btn('Insert Card', 'ins-confirm', () => {
+    let args = {};
+    try { args = JSON.parse(form.querySelector('.ins-args').value); } catch {}
+    const name    = form.querySelector('.ins-name').value;
+    const content = form.querySelector('.ins-result').value;
+
+    state.rounds.splice(afterRoundIdx + 1, 0, {
+      id: 'r_' + uid(),
+      roundNum: afterRoundIdx + 1,
+      active: true,
+      isInserted: true,
+      assistantMessage: null,
+      toolResults: [{
+        id: synId,
+        name,
+        arguments: args,
+        content,
+        status: 'succeed',
+        active: true,
+        editedArguments: null,
+        editedContent: null,
+      }],
+      finalReply: null,
+    });
+    renderAll();
+  });
+  const cancelB = btn('Cancel', 'ins-cancel', () => form.remove());
+  formActs.append(confirmB, cancelB);
+  form.appendChild(formActs);
+  body.appendChild(form);
+}
+
+// ── Final reply block ──────────────────────────────────────────
+function renderFinalBlock(reply) {
+  const block = el('div', 'final-block');
+  const lbl = el('div', 'final-label');
+  lbl.textContent = 'Final Reply';
+  const content = el('div', 'final-content');
+  content.textContent = reply;
+  block.append(lbl, content);
+  return block;
+}
+
+// ── Regenerate section ─────────────────────────────────────────
+function renderRegenSection() {
+  const wrap = el('div', '');
+  wrap.style.cssText = 'display:flex;flex-direction:column;gap:12px';
+
+  const regenBtn = el('button', '');
+  regenBtn.id = 'regen-btn';
+  regenBtn.textContent = 'REGENERATE WITH MODIFIED CONTEXT';
+  wrap.appendChild(regenBtn);
+
+  const resultBox = el('div', '');
+  resultBox.id = 'regen-result';
+  resultBox.style.display = 'none';
+  const regenLbl = el('div', 'regen-label');
+  regenLbl.textContent = 'Regenerated Reply';
+  const regenContent = el('div', '');
+  regenContent.id = 'regen-content';
+  resultBox.append(regenLbl, regenContent);
+  wrap.appendChild(resultBox);
+
+  regenBtn.onclick = async () => {
+    regenBtn.disabled = true;
+    resultBox.style.display = 'none';
+    setStatus('<span class="spin"></span> Regenerating…');
+
+    const messages = buildMessages();
+    try {
+      const res = await fetch('/debug/regenerate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: state.model, messages }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      regenContent.textContent = data.reply;
+      resultBox.style.display = 'block';
+      setStatus('Regenerated.');
+    } catch (e) {
+      setStatus(`<span style="color:var(--red)">Error: ${esc(e.message)}</span>`);
+    } finally {
+      regenBtn.disabled = false;
+    }
+  };
+
+  return wrap;
+}
+
+// ── Build messages for regenerate ─────────────────────────────
+function buildMessages() {
+  const msgs = [...state.history, { role: 'user', content: state.userMessage }];
+
+  for (const round of state.rounds) {
+    if (!round.active) continue;
+    // Skip final-answer rounds (no tool calls, not inserted) — LLM will regenerate
+    if (round.finalReply !== null && !round.isInserted && round.toolResults.length === 0) continue;
+
+    if (round.isInserted) {
+      const tr = round.toolResults[0];
+      if (!tr?.active) continue;
+      const args    = tr.editedArguments ?? tr.arguments;
+      const content = tr.editedContent ?? tr.content;
+      msgs.push({
+        role: 'assistant', content: null,
+        tool_calls: [{ id: tr.id, type: 'function',
+          function: { name: tr.name, arguments: JSON.stringify(args) } }],
+      });
+      msgs.push({ role: 'tool', tool_call_id: tr.id, content });
+      continue;
+    }
+
+    const active = round.toolResults.filter(tr => tr.active);
+    if (!active.length) continue;
+
+    const activeIds = new Set(active.map(tr => tr.id));
+    const aMsg = JSON.parse(JSON.stringify(round.assistantMessage));
+    if (aMsg.tool_calls) {
+      aMsg.tool_calls = aMsg.tool_calls.filter(tc => activeIds.has(tc.id));
+      for (const tc of aMsg.tool_calls) {
+        const tr = active.find(r => r.id === tc.id);
+        if (tr?.editedArguments !== null) {
+          tc.function.arguments = JSON.stringify(tr.editedArguments);
+        }
+      }
+    }
+    if (aMsg.tool_calls?.length) {
+      msgs.push(aMsg);
+      for (const tr of active) {
+        msgs.push({ role: 'tool', tool_call_id: tr.id,
+          content: tr.editedContent ?? tr.content });
+      }
+    }
+  }
+
+  return msgs;
+}
+
+// ── DOM helpers ────────────────────────────────────────────────
+function el(tag, cls) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  return e;
+}
+function span(text, cls) {
+  const s = el('span', cls);
+  s.textContent = text;
+  return s;
+}
+function btn(text, cls, onclick) {
+  const b = el('button', cls);
+  b.textContent = text;
+  if (onclick) b.onclick = onclick;
+  return b;
+}
+</script>
+</body>
+</html>
