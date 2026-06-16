@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 1 Technical Report — Sliding Window + Rolling Summary</title>
+<style>
+  :root {
+    --bg:#0d1117; --card:#161b22; --border:#21262d; --text:#c9d1d9; --muted:#8b949e;
+    --blue:#58a6ff; --green:#3fb950; --red:#f85149; --amber:#d29922; --purple:#bc8cff;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+  .wrap { max-width:820px; margin:0 auto; padding:48px 24px 80px; }
+  header { border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:36px; }
+  h1 { font-size:30px; line-height:1.3; margin:0 0 12px; color:#f0f6fc; }
+  h2 { font-size:22px; margin:44px 0 14px; color:#f0f6fc; padding-top:10px; border-top:1px solid var(--border); }
+  h3 { font-size:17px; margin:28px 0 8px; color:var(--blue); }
+  .meta { color:var(--muted); font-size:14px; }
+  .meta span { margin-right:16px; }
+  .langswitch { float:right; font-size:13px; color:var(--muted); }
+  .langswitch a { color:var(--blue); text-decoration:none; }
+  p { margin:14px 0; }
+  code { background:#1f2530; padding:2px 6px; border-radius:4px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13.5px; color:#e6edf3; }
+  pre { background:#010409; border:1px solid var(--border); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.55; }
+  pre code { background:none; padding:0; }
+  .lead { font-size:18px; color:var(--text); }
+  blockquote { margin:18px 0; padding:12px 18px; border-left:3px solid var(--blue); background:rgba(88,166,255,.06); border-radius:0 6px 6px 0; }
+  blockquote.warn { border-left-color:var(--amber); background:rgba(210,153,34,.07); }
+  blockquote.win { border-left-color:var(--green); background:rgba(63,185,80,.07); }
+  table { border-collapse:collapse; width:100%; margin:18px 0; font-size:14px; }
+  th,td { border:1px solid var(--border); padding:8px 12px; text-align:right; font-variant-numeric:tabular-nums; }
+  th:first-child,td:first-child { text-align:left; }
+  thead th { background:var(--card); color:var(--muted); font-weight:600; }
+  td.good { color:var(--green); font-weight:600; }
+  td.bad { color:var(--red); font-weight:600; }
+  td.strike { color:var(--muted); text-decoration:line-through; }
+  .tag { display:inline-block; font-size:12px; padding:2px 9px; border-radius:20px; font-weight:600; }
+  .tag.dev { background:rgba(88,166,255,.15); color:var(--blue); }
+  .tag.sci { background:rgba(188,140,255,.15); color:var(--purple); }
+  .tag.rev { background:rgba(210,153,34,.15); color:var(--amber); }
+  ul { padding-left:22px; } li { margin:6px 0; }
+  .footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--border); color:var(--muted); font-size:13px; }
+  .kicker { color:var(--blue); font-size:13px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="langswitch"><a href="phase1_window_summary.html">中文</a> · English</div>
+  <div class="kicker">My AI Buddy · Context Management · Phase Retrospective</div>
+  <h1>Phase 1: Sliding Window + Rolling Summary — and a bug the eval harness caught in itself</h1>
+  <div class="meta">
+    <span>📅 2026-06-15</span>
+    <span>🏷 strategy=<code>window_summary</code></span>
+    <span>📊 long tier · 24 probes</span>
+  </div>
+</header>
+
+<p class="lead">This is the retrospective for the first of three phases in the context-window management roadmap. The one-line result: rolling summarization trades <b>~57% fewer tokens</b> for about <b>9 points</b> of answer accuracy and <b>zero</b> increase in hallucination — but the part more worth writing down is that the first time the eval harness graded a real summary, it exposed a blind spot in <b>its own measurement logic</b>.</p>
+
+<h2>1. Background: build the ruler before building the thing</h2>
+<p>The app used to brute-force concatenate the entire session history into every LLM call. Two pains: lots of irrelevant context wasting tokens; and long replies filling the context window fast, driving hallucination. The plan was layered context management — Phase 1 sliding window + rolling summary, Phase 2 pgvector RAG retrieval, Phase 3 cross-session retrieval + memory.</p>
+<p>But before touching any of that, we built a <b>measurement system</b>: a needle-in-conversation dataset (known-fact "needles" planted in scripted long conversations), a batch runner with two-level judging (context-hit / answer-hit, plus negative probes for hallucination), and a visualization in the debugger. Without that ruler, "how many tokens did the new strategy actually save, and did answers get worse" is pure vibes. <code>concat</code> (full concatenation) is kept as the always-perfect ceiling baseline that every new strategy is compared against.</p>
+
+<h2>2. The strategy: window keeps the recent, summary keeps the distant</h2>
+<p>The context assembled for each request has three segments:</p>
+<pre><code>[system prompt]
+[rolling summary]    ← older history (outside the window) compressed to one block (≤400 tok)
+[last N turns verbatim]  ← N=6, preserves coreference ("it", "that thing") and recency
+[current user message]</code></pre>
+<p>Key designs: the <b>window must be verbatim</b> (coreference resolution can only rely on the original text); the <b>summary updates incrementally</b> (old summary + the few newly-evicted turns → new summary, one cheap LLM call, not a full recompute each time); the summary persists in <code>Chat.summary</code>. Short conversations (≤N turns) have an empty summary and degrade to concat automatically — zero summarization cost.</p>
+<p>A structural prerequisite shared by all phases also landed here: <b>context assembly moved from the frontend to the backend</b>. The frontend used to send the full history; now it sends only <code>chat_id</code> and the backend assembles per <code>strategy</code>. <code>/chat</code> (production, reads DB) and <code>/debug/run</code> (eval, stateless, takes history) share one <code>assemble_context</code> — otherwise the eval would measure something different from production, and lose its meaning.</p>
+
+<h2>3. How it was built: multi-agent collaboration</h2>
+<p>This phase was driven by four subagents working in parallel with review loops:</p>
+<ul>
+  <li><span class="tag dev">dev</span> implemented <code>window_summary</code> per the Phase 1 plan (strategy, backend assembly, model summary columns, context_report summary layer).</li>
+  <li><span class="tag sci">scientist</span> extended the long-tier dataset per the eval plans (probes 15→24: early precise-value needles to test summary fidelity, low-surface-overlap paraphrase needles to test semantic retrieval).</li>
+  <li><span class="tag rev">code-reviewer</span> reviewed dev's code diff; <span class="tag rev">dsreviewer</span> reviewed scientist's dataset diff.</li>
+</ul>
+<p>dev and scientist touched fully disjoint files (code vs JSON), so they shared a working tree in parallel. Both reviewers returned PASS-WITH-FIXES; each iterated to clean before the eval ran. code-reviewer caught two BLOCKING items that would distort the comparison (compression ratio omitting summary tokens; ctx_hit substring matching too easily on short numeric needles), which dev fixed; dsreviewer had the dataset's bare-number regexes add digit boundaries.</p>
+<blockquote class="warn"><b>An integration bug caught mid-orchestration:</b> <code>models.py</code> used <code>str | None</code> (Python 3.10+ syntax) while this environment is 3.9 — the server simply wouldn't start. <code>py_compile</code> doesn't flag it (the annotation is evaluated at runtime), and the no-Bash reviewer couldn't run anything — <b>only actually starting the server exposed it</b>. Ironically this exact pitfall was already recorded in reflections, but the cold subagent never read it.</blockquote>
+
+<h2>4. First run: the numbers were lying</h2>
+<p>The eval finished and window_summary looked like a disaster at first glance:</p>
+<table>
+<thead><tr><th>Metric</th><th>concat</th><th>window_summary (first run)</th></tr></thead>
+<tbody>
+<tr><td>ctx-hit</td><td>100%</td><td class="bad">9%</td></tr>
+<tr><td>ans-hit</td><td>100%</td><td>77%</td></tr>
+<tr><td>hallucination</td><td>0%</td><td class="bad">71%</td></tr>
+<tr><td>input/probe</td><td>5539</td><td>2672</td></tr>
+</tbody>
+</table>
+<p>ctx-hit 9%, hallucination 71% — taken at face value, the conclusion would be "the summary threw away the context and is fabricating wildly." But one thing didn't add up: <b>ans-hit was 77%</b>. If the context truly retained nothing, how did the model answer three-quarters of the questions? That contradiction is the thread that unravels the artifact.</p>
+
+<h2>5. Root cause: two measurement bugs</h2>
+
+<h3>Bug ①: exact substring match is guaranteed to false-negative against a summary that reformats</h3>
+<p><code>ctx_hit</code> judged a summary-absorbed needle by checking whether the needle's content string was a <b>literal substring</b> of the summary text. But a rolling summary <b>reformats</b> facts. A concrete case:</p>
+<pre><code>Needle:   HybridRetrieverV2（retrieval/service.py）     ← full-width parens
+Summary:  …the retrieval entry class is `HybridRetrieverV2`, located at `retrieval/service.py`.
+Model:    "Register the new recall path on `HybridRetrieverV2` (file retrieval/service.py)" ✓ correct</code></pre>
+<p>The information was <b>fully preserved</b> and the model <b>answered correctly</b>, but the summary added backticks and used "located at" + a comma instead of parentheses — so the exact substring <code>HybridRetrieverV2（retrieval/service.py）</code> is <b>not found</b> in the summary, and it scored a miss. A summary naturally rewords, re-punctuates, and reformats, so this judging massively <b>false-negatives</b> on preserved facts, crushing ctx-hit to 9%.</p>
+<blockquote>code-reviewer did look at <code>ctx_hit</code> — but at the <b>opposite</b> direction: short numeric needles (like <code>242</code>) substring-matching too loosely (a false positive inside <code>2425</code>), which we fixed with digit boundaries. The real killer was the <b>false-negative</b> direction, and it only shows up when you grade a real summary.</blockquote>
+
+<h3>Bug ②: a correct answer was being scored as a hallucination</h3>
+<p>The hallucination logic was: a negative probe that fabricates → hallucination; or "context-miss and the model gave a confident specific answer" → run the fabrication judge. The flaw: it ran the judge on any context-miss <b>regardless of whether the answer was right</b>, and the fabrication judge only sees question+reply (not ground truth), so it labels a fact correctly recalled <i>from the summary</i> as "fabrication." Stacked on Bug ①'s false context-misses, 14 of 22 needle probes were <b>"answered correctly but flagged as hallucination" — pure false positives</b>. The real hallucination test is the 2 negative probes — both window_summary runs correctly declined.</p>
+<blockquote class="warn"><b>The deeper realization: a correct answer can never be a hallucination.</b> The original logic was missing that guard.</blockquote>
+
+<h2>6. The fix</h2>
+<p>Don't hand-edit the result JSON (that would falsify the experimental record) — fix the measurement code and re-run, so the corrected numbers are real measured data.</p>
+<pre><code># Bug ②: a correct answer isn't a hallucination — one guard
+- elif hit_ctx is False:
++ elif hit_ctx is False and not hit_ans:
+
+# Bug ①: ctx_hit becomes  substring fast-path + LLM fallback
+#  · verbatim needles still judged by position (concat stays on this path:
+#    zero LLM cost, identical result)
+#  · summary-absorbed needle: a substring/boundary match = definitely present
+#    (fast-path, no LLM)
+#  · on substring failure, fall back to an LLM: "is this fact retained in the
+#    summary (different wording/format still counts)?"</code></pre>
+<p>The LLM judge only fires when the substring fails, so the cost is bounded; concat, whose needles are all verbatim, never reaches the summary branch — unaffected and with no added LLM calls.</p>
+
+<h2>7. Corrected results</h2>
+<table>
+<thead><tr><th>Metric</th><th>concat</th><th class="strike">ws (buggy)</th><th>ws (fixed)</th></tr></thead>
+<tbody>
+<tr><td>ctx-hit</td><td>100%</td><td class="strike">9%</td><td class="good">91%</td></tr>
+<tr><td>ans-hit</td><td>100%</td><td class="strike">77%</td><td class="good">91%</td></tr>
+<tr><td>hallucination</td><td>0%</td><td class="strike">71%</td><td class="good">0%</td></tr>
+<tr><td>input/probe</td><td>5539</td><td>2672</td><td>2394</td></tr>
+<tr><td>compression</td><td>1.0</td><td>0.37</td><td>0.38</td></tr>
+<tr><td>latency</td><td>1.7s</td><td>16.4s</td><td>16.4s</td></tr>
+</tbody>
+</table>
+<blockquote class="win"><b>The real Phase 1 trade-off:</b> window_summary spends ~57% fewer tokens for about 9 points of accuracy (100%→91%) and zero increase in hallucination. Far more favorable than the artifact-laden first read suggested.</blockquote>
+<p>The remaining genuine misses are all explainable and, crucially, <b>none are hallucinations</b>: one run's summary genuinely failed to keep a class name and the model correctly declined; another scored a ctx-miss yet the model answered the gist correctly (the summary kept enough to answer, but not enough for the ctx judge to call it "fully retained"); and one had the info in the summary (ctx-hit) but the answer wrapped the value in <code>**8**</code> markdown bold that the regex didn't match (a dataset-level brittleness).</p>
+<p>The 16.4s latency should be discounted: the stateless eval recomputes the summary from scratch for every probe; production <code>/chat</code> keeps a persisted rolling summary updated incrementally, so per-question latency is far lower. Also the summary is an LLM call, so there is run-to-run variance (under a different random summary before the fix, ans-hit was 77%; this run 91%) — serious comparison should average several runs.</p>
+
+<h2>8. Takeaways</h2>
+<ul>
+  <li><b>End-to-end evaluation surfaces blind spots in the measurement system itself.</b> This ruler exists to score strategies; the first time it measured a real summary, it measured the flaws in its own <code>ctx_hit</code>/hallucination judging — which is exactly why you build the ruler.</li>
+  <li><b>For systems that reformat content, exact substring matching is the wrong judge.</b> For summaries / RAG / rewriting, facts get reworded; "is this fact present?" is a semantic question — use an LLM judge (and keep substring as a cheap positive shortcut).</li>
+  <li><b>A correct answer is never a hallucination.</b> The hallucination check must be predicated on the answer being wrong.</li>
+  <li><b>Integration testing &gt; compile + static review.</b> The <code>str | None</code> crash on 3.9 wasn't caught by <code>py_compile</code> or a no-Bash reviewer — only by actually starting the server. And cold subagents miss already-documented pitfalls, so "actually run it" is non-skippable.</li>
+  <li><b>Diagnose from the contradiction.</b> "ctx 9% but ans 77%" — the inconsistency was the entry point to unmasking the artifact. When metrics disagree with each other, suspect the measurement first.</li>
+</ul>
+
+<h2>9. What's next</h2>
+<p>Phase 2: pgvector RAG retrieval — for each new question, retrieve the most relevant past fragments and inject only those. The long tier's paraphrase probes and mid-reply needles in long assistant messages are built precisely for its two soft spots (semantic retrieval, chunking). See <code>docs/phase2_pgvector_rag.md</code>.</p>
+
+<div class="footer">
+  Archived under <code>docs/reports/</code> · Related: <code>docs/phase1_sliding_window_summary.md</code> (implementation plan), <code>docs/eval_plan.md</code> (eval system), <code>docs/design.md</code> (roadmap) · Result files: <code>eval/results/2026-06-15_1846_concat_long.json</code>, <code>eval/results/2026-06-15_2052_window_summary_long.json</code>
+</div>
+</div>
+</body>
+</html>

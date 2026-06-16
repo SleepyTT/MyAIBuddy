@@ -257,7 +257,7 @@ A structural prerequisite shared by all three phases — **context assembly move
 
 | Phase | Strategy value | Status | One-line idea | Detailed plan |
 |---|---|---|---|---|
-| **Phase 1** | `window_summary` | ✅ implemented (2026-06-15) | Keep the last N turns verbatim; compress older turns into a rolling LLM summary kept near the system prompt. Cheap, immediately caps token growth, forced the frontend→backend assembly move. | [`phase1_sliding_window_summary.md`](phase1_sliding_window_summary.md) · [report](reports/phase1_window_summary.html) |
+| **Phase 1** | `window_summary` | ✅ implemented (2026-06-15) | Keep the last N turns verbatim; compress older turns into a rolling LLM summary kept near the system prompt. Cheap, immediately caps token growth, forced the frontend→backend assembly move. | [`phase1_sliding_window_summary.md`](phase1_sliding_window_summary.md) · report [中文](reports/phase1_window_summary.html) / [EN](reports/phase1_window_summary_en.html) |
 | **Phase 2** | `rag` | planned | Embed every message into pgvector; for each new question retrieve the top-k relevant past messages/chunks (hybrid vector + keyword, recency-decayed) and inject only those. Adds a `retrieved` layer to `context_report`. | [`phase2_pgvector_rag.md`](phase2_pgvector_rag.md) |
 | **Phase 3** | `rag_xsession` | planned | Widen retrieval from one chat to all of a user's chats; add async extraction of durable facts into memory entries injected every turn. Tests cross-session recall and multi-topic interference. | [`phase3_cross_session_memory.md`](phase3_cross_session_memory.md) |
 
