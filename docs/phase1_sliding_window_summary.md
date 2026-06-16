@@ -93,7 +93,15 @@ python eval/run.py --strategy window_summary --tier long --model grok-4-fast
 - 准确度：ans 命中率 ≥ 85%；ctx 命中率单独看——被摘要吸收的针，"ctx 命中"的判定需要调整（见下）。
 - 幻觉率：不高于 concat 基线 + 5 个百分点。
 
-> **判定口径调整**：现有 `ctx_hit` 是"needle 所在原始消息 position 是否进入 context"。摘要策略下，被吸收进摘要的针其原始 position 不在 context 里，但信息可能在摘要文本里。Phase 1 实施时要扩展 `ctx_hit`：对落在摘要覆盖区间（`covers_positions`）内的针，改判"针的关键词是否出现在摘要文本中"。这是 `eval/run.py` 的 `ctx_hit()` 需要随 Phase 1 一起改的点。
+> **判定口径调整（已实施，2026-06-15）**：原 `ctx_hit` 是"needle 所在原始消息 position 是否进入 context"。摘要策略下，被吸收进摘要的针其原始 position 不在 context 里，但信息可能在摘要文本里。
+>
+> 首版实现用"针的关键词是否子串出现在摘要文本中"——**实测证明这个口径不可靠**：滚动摘要会改写事实（加反引号、用"位于"代替括号、数字写法微调），精确子串匹配对保留下来的事实大量假阴性（首跑 ctx 命中被压到 9%，连带"ctx-miss + 自信回答"的幻觉判定误报到 71%，而模型其实答对了）。
+>
+> 修正后的口径（`eval/run.py` `ctx_hit`，现为 async）：① verbatim 针仍按 position 判定（concat 全走这条，零 LLM 开销、结果不变）；② 被摘要吸收的针，先用子串/数字边界做"命中即确定"的快速路径，子串失败时回退 LLM 判定"这条事实在摘要里是否得到保留（措辞格式不同也算）"。LLM 只在子串失败时触发，开销可控。
+>
+> 同时修正幻觉判定的一个根本 bug：**答对的回答永远不是幻觉**。原逻辑在 ctx-miss 时无视回答对错就调编造裁判，给"从摘要正确回忆"误扣幻觉。加 `and not hit_ans` 守卫后，幻觉只在"ctx-miss 且回答错误"或负向探针编造时计数。
+
+**实测基线（2026-06-15，修正口径后）**：strategy=window_summary，model=grok-4-fast，judge=kimi-k2.5，long tier（24 探针）→ **ctx 命中 91% · ans 命中 91% · 幻觉 0% · 平均 input 2394 tok（压缩比 0.38，相对 concat 省 57%）· 延迟 16.4s**。对照 concat 基线（同数据集）100%/100%/0%/5539 tok。结论：window_summary 用 ~57% 的 token 节省换约 9 个百分点的准确度、幻觉零增长，权衡相当有利；延迟升高来自每问的摘要 LLM 调用（无状态 eval 每次重算，线上持久化增量更新后远低于此）。注：window_summary 的摘要是 LLM 调用，结果有轮间方差（首次修正前 ans 命中在另一次随机摘要下为 77%），严肃对比宜多跑几次取均值或固定随机性。
 
 ## 7. 风险与回退
 - 摘要是有损压缩，错了不可逆——这是策略的固有上限，靠 long tier 的更新型/精确值针量化它有多糟，用数据决定 N 和 SUMMARY_MAX_TOKENS。

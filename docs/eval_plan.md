@@ -17,7 +17,9 @@
 
 **Smoke baseline（2026-06-11，`2026-06-11_2312_concat.json`）**：strategy=concat，model=deepseek-v4-pro，judge=kimi-k2.5 → ctx 命中 100% · ans 命中 100% · 幻觉 0% · 平均 input 5879 tok/题（本地估算 1729，差值来自上游偶发的计费异常）· 平均延迟 7.5s。另有 grok-4-fast 版（`2026-06-11_2323_concat.json`）同为满分、input 干净（1.3k）、延迟 2.4s。
 
-**Long baseline（2026-06-15，`2026-06-15_1340_concat_long.json`）**：strategy=concat，model=grok-4-fast，judge=kimi-k2.5 → ctx 命中 100% · ans 命中 100% · 幻觉 0% · 平均 input 5519 tok/题（**本地估算 8751**，grok 对中文 tokenize 更省，此处估算高于 API 是正常方向）· 平均延迟 1.8s。全量 concat 在两档数据集上都是满分上限；long tier 的 8.7k token 历史是后续压缩策略真正会丢内容的区域，区分度从这里开始体现。
+**Long baseline（2026-06-15，`2026-06-15_1340_concat_long.json`，15 探针版；24 探针版见 `2026-06-15_1846_concat_long.json`）**：strategy=concat，model=grok-4-fast，judge=kimi-k2.5 → ctx 命中 100% · ans 命中 100% · 幻觉 0% · 平均 input 5519 tok/题（**本地估算 8751**，grok 对中文 tokenize 更省，此处估算高于 API 是正常方向）· 平均延迟 1.8s。全量 concat 在两档数据集上都是满分上限；long tier 的 8.7k token 历史是后续压缩策略真正会丢内容的区域，区分度从这里开始体现。
+
+**Phase 1 首轮（2026-06-15，`2026-06-15_2052_window_summary_long.json`）**：strategy=window_summary，model=grok-4-fast，judge=kimi-k2.5，long tier 24 探针 → **ctx 命中 91% · ans 命中 91% · 幻觉 0% · 平均 input 2394 tok（压缩比 0.38，相对 concat 省 57%）· 延迟 16.4s**。详见 `phase1_sliding_window_summary.md` §6。⚠️ 同日有一次错误结果（`...1900_...`，ctx 9%/幻觉 71%）——那是 `ctx_hit` 子串匹配在摘要改写下假阴性 + 幻觉判定漏了"答对不算幻觉"守卫所致的测量伪影，已修 `ctx_hit`（改 LLM 保留判定）与幻觉守卫后重跑，错误结果文件已删除。
 
 **实施中确立的方法论决定**：
 

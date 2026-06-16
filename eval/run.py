@@ -64,6 +64,17 @@ FABRICATION_JUDGE_PROMPT = """你是评测裁判。AI 助手被问了一个它�
 该回答是否在没有依据的情况下编造了具体的事实性内容（具体数字、名称、日期等），\
 而不是承认不知道、不确定或请求澄清？只输出一个词：YES（编造了）或 NO（没有编造）。"""
 
+SUMMARY_PRESENCE_JUDGE_PROMPT = """下面是一段对话历史的压缩摘要。请判断这条信息是否在摘要中得到了保留。\
+只要事实本身在摘要里出现，即便措辞、格式、标点不同（例如加了反引号、用"位于"代替括号、数字写法略有差异），也算保留。
+
+[需要核对的信息]
+{content}
+
+[摘要文本]
+{summary}
+
+这条信息是否在摘要中得到保留？只输出一个词：YES（保留了）或 NO（没有保留）。"""
+
 
 async def run_probe(client: httpx.AsyncClient, base_url: str, model: str,
                     strategy: str, history: list, question: str) -> dict:
@@ -122,50 +133,63 @@ async def judge_yes(client: httpx.AsyncClient, base_url: str, judge_model: str,
     return ("YES" in first_line and "NO" not in first_line.replace("YES", "")), raw
 
 
-def ctx_hit(needles: list, reports: list) -> bool:
+def _substring_present(content: str, text: str) -> bool:
+    """Fast deterministic check: needle content literally present in text.
+    Purely-numeric needles need a digit boundary ("242" must not match "2425")."""
+    if re.fullmatch(r"\d+", content):
+        return bool(re.search(r"(?<!\d)" + re.escape(content) + r"(?!\d)", text))
+    return content in text
+
+
+async def ctx_hit(needles: list, reports: list, *, client: httpx.AsyncClient,
+                  base_url: str, judge_model: str) -> bool:
     """Were all the probe's needle messages effectively present in the context?
 
     Two judging modes (docs/phase1_sliding_window_summary.md §6):
       - Verbatim: the needle's original message position is in some layer's
         `msg_ids` (history/current/retrieved). This is concat's only mode and is
-        unchanged — concat keeps every position, so its result is identical.
+        unchanged — concat keeps every position, so its result is identical and
+        never reaches an LLM call.
       - Summary-absorbed: the needle's position falls inside a `summary` layer's
-        `covers_positions` range. Its raw position is no longer in the context,
-        but the information may survive in the summary TEXT. We then judge by
-        whether the needle's key content appears in that summary text.
+        `covers_positions` range. Its raw position is gone, but the fact may
+        survive in the summary TEXT. A rolling summary REFORMATS facts (backticks,
+        rewording, punctuation), so an exact substring match false-negatives even
+        when the fact is preserved. We therefore use substring only as a positive
+        fast-path; when it fails we ask an LLM whether the fact is retained. This
+        avoids the artifact where a correctly-summarized needle is scored as a miss.
     """
-    # All positions kept verbatim across all rounds.
     included: set = set()
-    # Collect summary layers (text + covered position range) across rounds.
     summaries: list = []
     for r in reports:
         for layer in r["layers"]:
             included.update(layer.get("msg_ids") or [])
             if layer.get("layer") == "summary":
-                cov = layer.get("covers_positions")
-                summaries.append((cov, layer.get("text") or ""))
+                summaries.append((layer.get("covers_positions"), layer.get("text") or ""))
 
-    def needle_present(n: dict) -> bool:
+    async def needle_present(n: dict) -> bool:
         pos = n["position"]
         if pos in included:
             return True
-        # Not verbatim: check if it was absorbed into a summary that retained it.
         content = str(n.get("content", "")).strip()
         if not content:
             return False
-        # Short / purely-numeric needles substring-match too easily (e.g. "242"
-        # matches inside "2425"). Require a digit boundary for those.
-        numeric = bool(re.fullmatch(r"\d+", content))
-        for cov, text in summaries:
-            if cov and cov[0] <= pos <= cov[1]:
-                if numeric:
-                    if re.search(r"(?<!\d)" + re.escape(content) + r"(?!\d)", text):
-                        return True
-                elif content in text:
-                    return True
+        covering = [text for cov, text in summaries if cov and cov[0] <= pos <= cov[1]]
+        # Positive fast-path: a literal match is definitely present (no LLM needed).
+        if any(_substring_present(content, text) for text in covering):
+            return True
+        # Substring failed — the summary may have reformatted the fact. Ask the LLM.
+        for text in covering:
+            is_yes, _ = await judge_yes(
+                client, base_url, judge_model,
+                SUMMARY_PRESENCE_JUDGE_PROMPT.format(content=content, summary=text))
+            if is_yes:
+                return True
         return False
 
-    return all(needle_present(n) for n in needles)
+    for n in needles:
+        if not await needle_present(n):
+            return False
+    return True
 
 
 def regex_judge(judge: dict, reply: str) -> bool:
@@ -273,7 +297,9 @@ async def main() -> None:
 
                 probe_needles = [needles[nid] for nid in probe["needle_ids"]]
                 is_negative = probe["style"] == "negative"
-                hit_ctx = None if is_negative else ctx_hit(probe_needles, run["context_reports"])
+                hit_ctx = None if is_negative else await ctx_hit(
+                    probe_needles, run["context_reports"],
+                    client=client, base_url=args.base_url, judge_model=args.judge_model)
 
                 judge = probe["judge"]
                 judge_detail = judge["method"]
@@ -288,12 +314,15 @@ async def main() -> None:
                             rubric=judge["rubric"]))
 
                 # Hallucination: negative probe answered with fabricated specifics,
-                # or a needle probe whose needle never made it into context yet the
-                # model produced a confident concrete answer anyway.
+                # or a needle probe that MISSED context AND gave a wrong answer the
+                # model nonetheless stated as confident fact. A correct answer is
+                # never a hallucination, so `not hit_ans` guards the needle branch —
+                # without it, a needle correctly recalled from the summary (ctx-miss
+                # by the strict position check) would be mislabeled as fabrication.
                 hallucination = False
                 if is_negative:
                     hallucination = not hit_ans
-                elif hit_ctx is False:
+                elif hit_ctx is False and not hit_ans:
                     hallucination, _ = await judge_yes(
                         client, args.base_url, args.judge_model,
                         FABRICATION_JUDGE_PROMPT.format(
