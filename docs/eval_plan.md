@@ -172,10 +172,57 @@ input/output **分开报告**（已定稿）：context 策略几乎只影响 inp
   - 采用 **augment 而非 replace**，保持纵向可比；结果 JSON 带 `dataset_version` 字段（`eval/run.py` 中的 `DATASET_VERSIONS` 映射，换 set 必须 bump），不同版本的分数不可直接对比；`run_id` 含 tier 后缀。
 - **long tier 评审（2026-06-15）**：经独立 reviewer subagent 审计，首轮 ACCEPT WITH FIXES，5 项必修已逐一修复并脚本复核通过——核心两点是（a）每个用例结尾的总结性复述会把 needle 泄漏给 recency-only 策略，已改为"详见前文"式不复述具体值；（b）needle 载体回复原本只有 smoke 量级长度，已扩写到 800+ 字并把针压到回复中段，否则 chunking 压测形同虚设。脚本验证：尾部 25% 区间无 needle 泄漏、各针型/载体/问法覆盖达标。
 
-### 6.7 用例文件格式
+### 6.7 工具结果维度与四 tier 矩阵（2026-06-16 设计，未实施）
+
+到目前为止的 smoke / long 数据集都**不含工具调用**——脚本对话只有 user/assistant,实跑时探针也不触发工具(`avg_rounds=1.0`)。这忠实于"过去轮次的工具中间结果不持久化"的应用行为(DB 只存最终回答),但留下一个真实盲点:**单次提问的 agentic loop 内部**,工具结果(尤其 `read_page` 一次可达 `PAGE_TEXT_LIMIT=5000` 字符)是最大的 context 膨胀源,对应最初的痛点 #2,而我们从没测过它。
+
+#### 两轴矩阵:历史长度 × 工具有无
+
+数据集按两条正交轴铺开,填有用的格子:
+
+| | 无工具 | 有工具 |
+|---|---|---|
+| **短历史** | smoke（管道/模型/裁判自检） | — |
+| **中历史** | — | **tool-medium**（一般小任务:几次搜索/读页） |
+| **长历史** | long（压缩/chunking,隔离历史维度） | **research**（深度调研:长历史 + loop 内多轮工具) |
+
+#### 两类用途:诊断型 vs 集成型(这是单一变量原则的关键)
+
+- **诊断型(单一变量,隔离一个维度)**:smoke、long、**tool-medium**。每个只变一个量,作用是**定位策略为什么挂**——是历史压缩没搞定,还是工具结果处理没搞定。`tool-medium` 保持**中等历史**,把变量隔离在"工具轮"上,不要又长历史又大工具结果(那会变回混合 tier、归因又糊)。
+- **集成/真实型(多变量,还原真实压力)**:**research**(长历史 + loop 内多轮工具,对应用户深度调研场景)。它**不隔离变量**,作用是回答"最难的真实场景下整体扛不扛得住",是验收测试不是诊断。
+- 两类**配合用,不是二选一**:research 发现"出问题了",再回到 tool-medium / long 去**归因**。前者发现、后者定位。所以加 research 不破坏干净归因,而是它的上层——前提是诊断型 tier 都在。
+
+#### 工具结果的确定性机制:真实捕获 + 冻结回放(方案 A)
+
+为保证确定性(`read_page` 实时结果每次不同会破坏跨运行可比):
+
+1. **生成时真实捕获**:构造数据集时真的调 `web_search`/`read_page`,把返回**按应用实际工具格式**写进用例(见 §6.8 格式),`read_page` 取真实截断后的 5000 字正文。想测膨胀就挑会产生接近上限的页面。
+2. **eval 时冻结回放(方案 A 预置 loop)**:不重新执行工具。哪一轮在生成时决定了调用,eval 就**当它必然按预置的调用和结果走**——harness 直接把冻结的 `[assistant tool_call, tool result]` 塞进 loop,再让模型出最终答案。完全确定,且只测 context 管理对工具结果的处理(膨胀、carry、针存活),不掺入"模型是否决定调工具"的方差。
+3. **忠实性约束**:冻结工具轮只挂在**当前被评测探针自己的 loop** 里,不进脚本历史——因为生产里过去的工具结果不持久化。所以 `carrier=tool` 的针测的是"round 1 的工具结果能不能进 round 2+ 的 context",不是"从过去某轮检索回来"。
+4. **后端改动**:`/debug/run` 加可选 replay/预置参数;实现见 §10 排期。
+
+#### 分级门控(便宜门控贵,非对称跳过)
+
+eval 流水线按成本递增:smoke(秒级)→ long / tool-medium(分钟级)→ research(最贵)。门控**非对称**:
+- "上游便宜 tier 已挂 → 跳过下游贵 tier" 成立(别在已知差的策略上烧资源);
+- 但 "long 过了 ≠ tool 一定过"——策略可能文本处理好却栽在 5000 字工具结果膨胀上,所以对**通过的 finalist** 仍需真跑 tool/research。
+
+#### 区分力与排期
+
+`tool-medium` / `research` 的区分力**主要在 Phase 2+**:Phase 1 窗口/摘要对 loop 内工具结果**原样保鲜**(不压缩),所以这两 tier 上 concat≈window_summary,Phase 1 阶段只量个膨胀基线;真正拉开差距要等 Phase 2 对工具结果做 chunk/检索(深度调研里几个 5000 字结果叠起来,正是 concat 爆炸、RAG 价值最大化处)。
+
+**实现优先级**:`tool-medium` 排 Phase 2 一开始(信号最干净、最便宜,直接服务 chunking 调参);`research` 排 Phase 2 中后段(构造和跑都最贵,塔尖、只对 finalist 跑、跑得最少)。
+
+**一个实现依赖**:当前 `MAX_TURNS=3` 上限,"loop 内多轮工具"最多两三轮就被强制收尾。`research` 的深度调研多工具场景可能需要调高 `MAX_TURNS`,否则模拟不出真正的多轮累积——Phase 2 实现 research 时一并考虑。
+
+#### tier 登记
+
+`DATASET_VERSIONS` 扩为 `{smoke, long, tool-medium, research}`,各自 `v1-*`;`--tier` 已支持;`run_id` 含 tier 后缀。
+
+### 6.8 用例文件格式
 
 ```jsonc
-// eval/cases/needle_001.json
+// eval/cases/<tier>/needle_001.json — smoke / long(无工具)
 {
   "id": "needle_001",
   "topic": "stocks",
@@ -188,6 +235,34 @@ input/output **分开报告**（已定稿）：context 策略几乎只影响 inp
       "judge": { "method": "regex", "pattern": "5433" }, "style": "implicit" },
     { "question": "我之前给过你 API key 吗？是什么？", "needle_ids": [],
       "judge": { "method": "llm", "rubric": "正确行为是表示没有/不记得" }, "style": "negative" }
+  ]
+}
+```
+
+工具 tier（tool-medium / research）的探针多一个 `tool_rounds` 字段——生成时真实捕获、eval 时冻结回放（§6.7 方案 A）。埋在工具结果里的针用 `tool_round`（指向 `tool_rounds` 下标）代替对话 `position`，`carrier: "tool"`：
+
+```jsonc
+// eval/cases/tool-medium/tool_001.json
+{
+  "id": "tool_001", "topic": "ai_trends",
+  "conversation": [ /* 中等长度 user/assistant 历史 */ ],
+  "probes": [
+    {
+      "question": "查一下最新的 X，然后告诉我里面提到的版本号",
+      // 预置 loop：eval 时按此顺序冻结回放，不重新执行工具
+      "tool_rounds": [
+        {
+          "assistant": { "role": "assistant", "content": null, "tool_calls": [
+            { "id": "call_1", "type": "function",
+              "function": { "name": "read_page", "arguments": "{\"url\":\"https://…\"}" } } ] },
+          "tool": { "role": "tool", "tool_call_id": "call_1",
+                    "content": "<read_page 真实截断后的 5000 字正文>" }
+        }
+      ],
+      "needles": [ { "id": "t1", "content": "v4.2", "tool_round": 0, "carrier": "tool", "type": "factual" } ],
+      "needle_ids": ["t1"], "style": "direct",
+      "judge": { "method": "regex", "pattern": "v4\\.2" }
+    }
   ]
 }
 ```
@@ -281,10 +356,13 @@ debugger.html 加 tab 切换：[Single Run | Eval]（同页加 tab，回放复�
 
 ## 10. 实施顺序
 
-1. **Instrumentation**：tiktoken 计数工具、`context_report` 生成与 SSE 推送、Single Run 视图 CONTEXT 区块 —— 先量化 baseline。
-2. **数据集 + 跑批**：`eval/cases/` 用例构造（LLM 生成填充后冻结）、`eval/run.py`、正则/LLM 两种 judge、结果 JSON。
-3. **Eval 视图**：debugger 加 tab、对比表、维度下钻、用例回放。
-4. 以上全部完成后，再开始 context 管理本体的 Phase 1（滑动窗口 + 滚动摘要）→ Phase 2（pgvector RAG）→ Phase 3（跨 session + memory 注入），每阶段用本体系回归。
+1. **Instrumentation**（✅）：tiktoken 计数工具、`context_report` 生成与 SSE 推送、Single Run 视图 CONTEXT 区块 —— 先量化 baseline。
+2. **数据集 + 跑批**（✅）：`eval/cases/{smoke,long}/` 用例构造（LLM 生成填充后冻结）、`eval/run.py`、正则/LLM 两种 judge、结果 JSON。
+3. **Eval 视图**（✅）：debugger 加 tab、对比表、维度下钻（用例回放延后）。
+4. context 管理本体分阶段推进，每阶段用本体系回归：
+   - **Phase 1**（✅ 2026-06-15）：滑动窗口 + 滚动摘要。
+   - **Phase 2**（pgvector RAG）：开始时先做 **tool-medium tier**（§6.7,工具结果维度,信号最干净、直接服务 chunking 调参 + `/debug/run` 冻结回放 replay 参数）；中后段做 **research tier**（长历史 + 多工具,塔尖、最贵、只对 finalist 跑,需评估调高 `MAX_TURNS`）。
+   - **Phase 3**（跨 session + memory 注入）：需新建 multi-session tier（§3 跨 session 检索）。
 
 ## 11. 已定稿决定清单
 
@@ -300,3 +378,6 @@ debugger.html 加 tab 切换：[Single Run | Eval]（同页加 tab，回放复�
 | 跑批方式 | CLI（`eval/run.py`），结果自包含 JSON |
 | 可视化载体 | debugger.html 同页加 [Single Run | Eval] tab |
 | 用例回放 | 延后（结果 JSON 已自包含回放所需数据，后续纯前端实现） |
+| 数据集 tier（2026-06-16） | 两轴矩阵（历史长度 × 工具有无）四 tier：smoke / long（诊断,已交付）+ tool-medium / research（§6.7,未实施）；诊断型单一变量、research 集成验收；分级门控非对称跳过 |
+| 工具结果确定性（2026-06-16） | 真实捕获 + 冻结回放（方案 A 预置 loop）；只挂当前探针 loop、不进历史；`/debug/run` 加 replay 参数 |
+| 工具 tier 排期（2026-06-16） | tool-medium 排 Phase 2 起始、research 排 Phase 2 中后段（需评估调高 `MAX_TURNS`） |
