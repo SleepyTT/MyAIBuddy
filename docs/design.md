@@ -238,6 +238,35 @@ Supports all AI Builder Space models:
 
 ---
 
+## Context Management Evaluation (implemented 2026-06-11; replay deferred)
+
+Before upgrading context window management (sliding window + rolling summary → pgvector RAG → cross-session memory), a measurement system was built first. Full design, implementation status, and the recorded concat baseline (ctx 100% / ans 100% / halluc 0%): **`eval_plan.md`**. Key decisions:
+
+- **`context_report`** — a structured per-LLM-call report (layer-by-layer token breakdown, retrieval candidates incl. rejected ones) emitted as a new SSE event in `/debug/run`. Works on the brute-force concat baseline today, so before/after comparisons are possible.
+- **Token counting** — dual-track: local tiktoken (cl100k_base) estimate for the per-layer breakdown, upstream `usage` as the ground-truth total, with deviation displayed.
+- **Efficiency metrics** — accumulated over a question's full lifecycle (agentic loop resends context every round): input/output tokens reported separately, rounds, latency, management overhead, compression ratio.
+- **Accuracy metrics** — two-level judging: context-hit (deterministic, via stable message IDs in `context_report`) and answer-hit (regex for factual needles, LLM judge for soft ones). Hallucination rate measured via negative probes plus "context-miss but confident answer" counts.
+- **Needle dataset** — 10–12 frozen scripted conversations across 5 topics (ML, stocks, AI trends, gardening, health), needles varying by type/depth/carrier/question-style, same-topic distractors and near-miss needles. One topic per case.
+- **Architecture** — CLI batch runner (`eval/run.py`) producing self-contained result JSON; debugger gains a `[Single Run | Eval]` tab with strategy comparison table, dimension drill-down, and one-click replay of failed cases with needle highlighting.
+
+### Context-management roadmap (the strategies the eval harness will grade)
+
+The measurement system above exists to grade the strategies below. Each strategy plugs into the `strategy` parameter accepted by `/chat` and `/debug/run` (today only `"concat"` — the brute-force full-history baseline — is implemented). Every phase ships behind a new `strategy` value, leaving `concat` intact as the always-available ceiling to compare against, and is regressed with the needle eval set before being considered done.
+
+A structural prerequisite shared by all three phases: **context assembly must move from the frontend to the backend.** Today the browser sends the entire `history` array and the backend concatenates it verbatim. From Phase 1 on, the frontend sends only `chat_id` + the new message and the backend assembles context per the selected strategy. This changes the `/chat` request contract and is detailed in the Phase 1 doc.
+
+| Phase | Strategy value | One-line idea | Detailed plan |
+|---|---|---|---|
+| **Phase 1** | `window_summary` | Keep the last N turns verbatim; compress older turns into a rolling LLM summary kept near the system prompt. Cheap, immediately caps token growth, and forces the frontend→backend assembly move. | [`phase1_sliding_window_summary.md`](phase1_sliding_window_summary.md) |
+| **Phase 2** | `rag` | Embed every message into pgvector; for each new question retrieve the top-k relevant past messages/chunks (hybrid vector + keyword, recency-decayed) and inject only those. Adds a `retrieved` layer to `context_report`. | [`phase2_pgvector_rag.md`](phase2_pgvector_rag.md) |
+| **Phase 3** | `rag_xsession` | Widen retrieval from one chat to all of a user's chats; add async extraction of durable facts into memory entries injected every turn. Tests cross-session recall and multi-topic interference. | [`phase3_cross_session_memory.md`](phase3_cross_session_memory.md) |
+
+The end-state context window is layered, not a single strategy: system prompt → cross-session memory (P3) → current-session rolling summary (P1) → retrieved relevant fragments (P2/P3) → last N verbatim turns (P1) → current message. Recency keeps coreference working, the summary holds the session arc, retrieval handles precise old-detail recall, and memory carries stable cross-session facts.
+
+Which eval tier each phase runs against, the new needles/probes each requires, and the success criteria relative to the concat baseline are specified per-phase in the linked docs. Short version: Phase 1 onward must run the **long tier** (the smoke tier's ~1.5k-token histories fit in any window and can't differentiate compression); Phase 3 additionally requires new **multi-session** cases that the current single-session dataset does not yet contain.
+
+---
+
 ## Local Development
 
 ```bash

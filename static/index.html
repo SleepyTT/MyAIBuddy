@@ -522,10 +522,16 @@ async function send(editText = null) {
   chatAbortController = new AbortController();
 
   try {
+    // Phase 1: backend assembles context. Authenticated users send chat_id and
+    // a strategy (backend reads history from the DB). Guests have no DB chat, so
+    // they keep sending history and are restricted to 'concat'.
+    const chatBody = currentUser
+      ? { message: text, model: chat.model, chat_id: activeId, strategy: chat.strategy || 'concat' }
+      : { message: text, model: chat.model, history, strategy: 'concat' };
     const res = await fetch('/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, model: chat.model, history }),
+      body: JSON.stringify(chatBody),
       signal: chatAbortController.signal,
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

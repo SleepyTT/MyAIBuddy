@@ -1,0 +1,34 @@
+{
+  "id": "ai_trends_001",
+  "topic": "ai_trends",
+  "conversation": [
+    {"role": "user", "content": "公司今年要做几个内部 AI 工具，技术选型上想听听你对现在 agent 框架生态的看法。"},
+    {"role": "assistant", "content": "可以聊。先了解一下背景：你们要做的工具大概是什么形态（问答、工作流自动化、还是多步骤的 agent）？团队有几个工程师，对 Python 生态熟悉程度如何？"},
+    {"role": "user", "content": "主要是文档问答、报销审批自动化、还有一个内部数据分析助手。团队五个后端，Python 都熟。LangChain、LlamaIndex 这些框架你怎么评价？"},
+    {"role": "assistant", "content": "客观说：LangChain 的价值在于快速原型和组件目录——你能在一天内拼出能跑的 demo；代价是抽象层很厚，Chain、Runnable、Callback 一层套一层，生产环境排查问题时你经常在框架内部打转。LlamaIndex 在 RAG 场景的数据接入和索引抽象做得更专注。它们都适合'快速验证想法'，但'长期维护的生产系统'是另一回事。"},
+    {"role": "user", "content": "抽象层太厚确实是我的顾虑，之前试用的时候调试特别痛苦，完全看不清最后发给模型的 prompt 到底长什么样。"},
+    {"role": "assistant", "content": "这是最普遍的抱怨，prompt 的最终形态被层层模板和默认值包装，可观测性很差。而且 LLM 应用的核心复杂度其实不在编排——调 API、拼 prompt、解析响应都是简单代码——而在 prompt 设计、上下文管理和评估，这些框架帮不了你多少。很多团队最后发现自己花在'学框架'上的时间超过了'解决业务问题'。"},
+    {"role": "user", "content": "那 MCP 这种协议化的方向呢？感觉最近声量很大。"},
+    {"role": "assistant", "content": "协议和框架要分开看。MCP 解决的是'工具和数据源如何标准化接入'，类似 USB 的角色，它不绑架你的应用架构，价值是实打实的——接入一次，多个模型客户端都能用。我对协议层的标准化比对框架层的大一统乐观得多：前者是基础设施，后者历史上很少有赢家。"},
+    {"role": "user", "content": "我想清楚了。我的结论是：不押注重框架，我们公司内部统一用轻量自研的 orchestrator，直接拼 prompt 调 API，工具接入走 MCP，不引入 LangChain。"},
+    {"role": "assistant", "content": "这个决定跟你们的团队画像匹配：五个熟悉 Python 的后端，自研一个几百行的 orchestrator 完全在能力范围内，换来的是对 prompt、重试、超时、日志的完全掌控。建议自研时把边界划清楚：只做消息管理、工具调度、错误处理三件事，抵制住把它做成'内部框架'的诱惑，不然两年后你们就是在维护自己的 LangChain。"},
+    {"role": "user", "content": "多 agent 协作的场景呢？比如数据分析助手可能要拆解任务，自研要注意什么？"},
+    {"role": "assistant", "content": "给你三条经验：1）先用'单 agent + 好工具'解决问题，多 agent 的收益经常被高估，复杂度却是真实的；2）如果确实要拆，用最朴素的模式——一个 planner 产出步骤列表，worker 顺序执行，不要上 agent 间自由对话那种结构，调试是噩梦；3）每一步的输入输出落库，方便回放。你们报销审批那个场景大概率一个状态机加 LLM 节点就够了，根本不需要 agent。"},
+    {"role": "user", "content": "可观测性方面有什么轻量的方案？不想再引一个重平台。"},
+    {"role": "assistant", "content": "最低成本的做法：每次 LLM 调用记录完整的请求和响应 JSON（含 prompt、参数、token 用量、延迟），按 trace_id 串起来落到你们现有的日志体系里，再用一个简单的内部页面做查看和回放。这一套两三天就能搭好，覆盖 90% 的排查需求。等真有多团队、多应用的规模了，再考虑 Langfuse 这类专门平台也不迟。"},
+    {"role": "user", "content": "好，那就按这个思路推进了，先从文档问答做起。"},
+    {"role": "assistant", "content": "顺序合理，文档问答最容易出效果。提醒一句：从第一天就建一个 20-30 个问题的评估集，每次改 prompt 或换模型都跑一遍，这个习惯会在三个月后救你的命。推进中有问题随时来聊。"}
+  ],
+  "needles": [
+    {"id": "n1", "content": "不押注重框架，统一用轻量自研 orchestrator，工具接入走 MCP，不引入 LangChain", "position": 8, "carrier": "user", "type": "decision"}
+  ],
+  "probes": [
+    {
+      "id": "p1",
+      "question": "关于 agent 技术选型，我之前最后表的态是什么？",
+      "needle_ids": ["n1"],
+      "style": "paraphrase",
+      "judge": {"method": "llm", "rubric": "回答应指出用户的决定：不引入 LangChain 等重框架，公司内部统一用轻量自研 orchestrator（直接拼 prompt 调 API），工具接入走 MCP。核心要点是'自研轻量 orchestrator、不用 LangChain'；说成采用 LangChain 或其他重框架则不合格。"}
+    }
+  ]
+}

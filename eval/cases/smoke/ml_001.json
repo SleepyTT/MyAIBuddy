@@ -1,0 +1,43 @@
+{
+  "id": "ml_001",
+  "topic": "ml",
+  "conversation": [
+    {"role": "user", "content": "我最近在做一个文本分类项目，用 BERT 微调，想跟你讨论一些工程细节。"},
+    {"role": "assistant", "content": "好的！BERT 微调做文本分类是很成熟的方案。可以先告诉我你的数据规模、类别数，以及目前卡在哪个环节吗？我们可以从数据预处理、模型选型、训练策略几个方面来聊。"},
+    {"role": "user", "content": "数据大概 30 万条中文评论，8 个类别。先交代一下工程背景：我们项目里数据预处理的入口函数叫 build_feature_matrix_v3，在 data_pipeline.py 里，所有特征生成都从它走，后面讨论代码都以这个为准。"},
+    {"role": "assistant", "content": "明白，预处理入口统一是好习惯。30 万条中文评论用 bert-base-chinese 或者 MacBERT 都可以，max_length 建议先统计一下评论长度分布再定，多数评论场景 128 就够了，盲目用 512 会让训练慢四倍。分词直接用模型自带的 tokenizer，不要再叠加 jieba 之类的外部分词。"},
+    {"role": "user", "content": "类别不平衡怎么办？最大的类占 40%，最小的类只有 2%。"},
+    {"role": "assistant", "content": "2% 对 40% 的失衡需要处理，但先别急着做重采样。建议的优先级：1）先跑一个不做任何处理的 baseline，看小类的 F1 到底差多少；2）如果确实差，优先试 class weights（按频率倒数加权 loss），实现成本最低；3）再不行试 focal loss；4）过采样小类放最后，因为容易过拟合小类的噪音。评估时一定看 per-class F1 和 macro-F1，不要只看 accuracy——40% 的大类会把 accuracy 撑得很好看。"},
+    {"role": "user", "content": "学习率你建议多少？"},
+    {"role": "assistant", "content": "BERT 微调的经典区间是 2e-5 到 5e-5，建议从 2e-5 起步，配 warmup（前 10% 的 steps 线性升温）和 linear decay。一个常见坑：分类头是随机初始化的，可以给它设更大的学习率（比如 1e-4），主干用 2e-5，分层学习率对收敛速度帮助明显。batch size 32 或 64，显存不够就用梯度累积。"},
+    {"role": "user", "content": "训练时 loss 在第三个 epoch 开始震荡，是不是过拟合了？"},
+    {"role": "assistant", "content": "要分情况：如果是训练 loss 震荡，更可能是学习率偏大或 batch 太小，先把学习率减半试试；如果训练 loss 还在降但验证 loss 开始回升，那才是过拟合。BERT 微调在 30 万数据上一般 2-4 个 epoch 就收敛了，跑太多 epoch 没有意义。建议每个 epoch 结束在验证集上评估一次，保存 macro-F1 最高的 checkpoint。"},
+    {"role": "user", "content": "early stopping 的 patience 设多少合适？"},
+    {"role": "assistant", "content": "你的训练总共也就 3-4 个 epoch，按 epoch 粒度做 early stopping 太粗了。建议改成每 500 或 1000 个 step 评估一次验证集，patience 设 3-5 次评估不提升就停。另外注意评估指标要和你的目标一致——既然关心小类，就用 macro-F1 做 early stopping 的监控指标，而不是 loss。"},
+    {"role": "user", "content": "我还想加一些手工特征，比如评论长度、标点密度，跟 BERT 向量拼在一起。"},
+    {"role": "assistant", "content": "可以做，但管理好预期：BERT 的 [CLS] 向量已经隐式编码了长度、标点风格这类浅层信号，手工特征的增量通常在 0.5 个点以内。具体做法是把手工特征过一个小的 MLP 投影到比如 32 维，再和 768 维的 [CLS] 向量拼接后接分类头，记得对手工特征做标准化。建议做成可开关的配置项，用 ablation 验证它真的有用再保留。"},
+    {"role": "user", "content": "推理延迟也是个问题，单条要 80ms，能优化吗？"},
+    {"role": "assistant", "content": "80ms 有很大优化空间，按性价比排序：1）动态 batch——把并发请求攒成 batch 推理，吞吐能翻几倍；2）导出 ONNX 并用 onnxruntime，一般能快 30-50%；3）FP16 推理，GPU 上几乎无损提速；4）蒸馏到 4 层或 6 层的小模型（比如 TinyBERT 路线），延迟能降到 10-20ms，精度损失约 1-2 个点；5）极端情况下量化到 INT8。建议先做 1+2+3，不够再上蒸馏。"},
+    {"role": "user", "content": "行，那我先去试试蒸馏，搞定了再来找你。"},
+    {"role": "assistant", "content": "好的！蒸馏时记得用训练好的大模型对全量无标注数据打软标签，软标签比硬标签蒸馏效果好不少。祝顺利，有结果随时来讨论。"}
+  ],
+  "needles": [
+    {"id": "n1", "content": "build_feature_matrix_v3", "position": 2, "carrier": "user", "type": "code_identifier"}
+  ],
+  "probes": [
+    {
+      "id": "p1",
+      "question": "我之前提到的数据预处理入口函数叫什么名字？",
+      "needle_ids": ["n1"],
+      "style": "direct",
+      "judge": {"method": "regex", "pattern": "build_feature_matrix_v3"}
+    },
+    {
+      "id": "p2",
+      "question": "如果我想改特征生成的逻辑，应该从哪个文件的哪个函数入手？",
+      "needle_ids": ["n1"],
+      "style": "paraphrase",
+      "judge": {"method": "regex", "pattern": "build_feature_matrix_v3"}
+    }
+  ]
+}

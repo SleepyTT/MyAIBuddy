@@ -16,6 +16,10 @@ from auth import (
     create_jwt, get_current_user, require_user,
     google_auth_url, exchange_code_for_user_info, get_or_create_user,
 )
+from context_report import build_context_report, estimate_tokens
+from context_strategies import (
+    ALLOWED_STRATEGIES, assemble_context, ensure_summary,
+)
 from database import get_db, init_db
 from models import Chat, Message, User
 
@@ -323,6 +327,13 @@ async def delete_messages_from_position(
     await db.execute(
         delete(Message).where(Message.chat_id == chat_id, Message.position >= position)
     )
+    # Phase 1: if the rolling summary covered any now-deleted positions, it is
+    # stale (it may reference turns that no longer exist). Reset it so it is
+    # rebuilt lazily on the next /chat assembly. summary covers [0, through).
+    if (chat.summary_through_position or 0) > position:
+        chat.summary = None
+        chat.summary_through_position = 0
+        log(f"[Edit] Reset stale rolling summary for chat_id={chat_id} (truncated below summary boundary)")
     await db.commit()
     log(f"[Edit] Truncation done for chat_id={chat_id}")
     return JSONResponse({"ok": True})
@@ -431,7 +442,12 @@ class ChatRequest(BaseModel):
             "`kimi-k2.5`, `gemini-2.5-pro`, `gemini-3-flash-preview`, `gpt-5`, `grok-4-fast`."
         ),
     )
-    history: Optional[List[dict]] = Field(default_factory=list, description="Previous user/assistant messages for context.")
+    # Phase 1: context assembly moved to the backend. Authenticated requests pass
+    # `chat_id` and the backend reads history from the DB. Guest requests (no DB)
+    # keep passing `history` and are restricted to the `concat` strategy.
+    chat_id: Optional[str] = Field(default=None, description="DB chat id; backend assembles history from it (authenticated).")
+    strategy: str = Field(default="concat", description="Context strategy: 'concat' or 'window_summary'.")
+    history: Optional[List[dict]] = Field(default_factory=list, description="Guest-mode history (concat only); ignored when chat_id is given.")
 
 
 class ChatResponse(BaseModel):
@@ -449,16 +465,86 @@ def status(message: str) -> str:
     return sse({"type": "status", "message": message})
 
 
-@app.post("/chat", tags=["chat"], summary="Chat with My AI Buddy (SSE stream)")
-async def chat(body: ChatRequest) -> StreamingResponse:
-    async def generate():
-        api_key = os.getenv("SUPER_MIND_API_KEY")
-        if not api_key:
-            yield sse({"type": "error", "detail": "SUPER_MIND_API_KEY not configured"})
-            return
+async def _assemble_chat_context(
+    body: ChatRequest,
+    user: Optional[User],
+    db: AsyncSession,
+    api_key: str,
+) -> List[dict[str, Any]]:
+    """Assemble the message list for /chat per the request's strategy.
 
+    Authenticated + chat_id: read history from the DB, apply the strategy (for
+    window_summary, lazily refresh + persist the rolling summary). Guest (no
+    chat_id): fall back to concat over the history passed in the request body.
+    """
+    current_msg = {"role": "user", "content": body.message}
+    strategy = body.strategy or "concat"
+    if strategy not in ALLOWED_STRATEGIES:
+        raise HTTPException(status_code=400, detail=f"Unknown context strategy: {strategy}")
+
+    # Guest / stateless path: no DB chat → concat over body.history only.
+    if not (user and body.chat_id):
+        if strategy != "concat":
+            raise HTTPException(
+                status_code=400,
+                detail="Only 'concat' is available without a chat_id (guest mode).",
+            )
+        assembled = assemble_context("concat", body.history or [], current_msg)
+        return assembled["messages"]
+
+    # Authenticated path: load history from the DB by chat_id.
+    result = await db.execute(select(Chat).where(Chat.id == body.chat_id, Chat.user_id == user.id))
+    chat_row = result.scalar_one_or_none()
+    if not chat_row:
+        raise HTTPException(status_code=404, detail="Chat not found")
+    result = await db.execute(
+        select(Message).where(Message.chat_id == body.chat_id).order_by(Message.position)
+    )
+    db_msgs = result.scalars().all()
+    history = [{"role": m.role, "content": m.content} for m in db_msgs]
+
+    if strategy == "concat":
+        return assemble_context("concat", history, current_msg)["messages"]
+
+    # window_summary: lazily bring the rolling summary up to the window boundary,
+    # persist it (incremental update — avoids recomputing on every turn).
+    summary_text, through, cost = await ensure_summary(
+        history,
+        api_key=api_key,
+        summary=chat_row.summary,
+        summary_through_position=chat_row.summary_through_position or 0,
+    )
+    if cost or summary_text != (chat_row.summary or "") or through != (chat_row.summary_through_position or 0):
+        chat_row.summary = summary_text or None
+        chat_row.summary_through_position = through
+        await db.commit()
+        log(f"[Chat] Summary updated chat_id={body.chat_id} through_pos={through} cost={cost} tok")
+    assembled = assemble_context(
+        "window_summary", history, current_msg,
+        summary=summary_text, summary_through_position=through,
+    )
+    return assembled["messages"]
+
+
+@app.post("/chat", tags=["chat"], summary="Chat with My AI Buddy (SSE stream)")
+async def chat(
+    body: ChatRequest,
+    user: Optional[User] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> StreamingResponse:
+    api_key = os.getenv("SUPER_MIND_API_KEY")
+    if not api_key:
+        return StreamingResponse(
+            iter([sse({"type": "error", "detail": "SUPER_MIND_API_KEY not configured"})]),
+            media_type="text/event-stream",
+        )
+
+    # Assemble context up front (needs the request-scoped DB session) so the
+    # streaming generator can run without holding the session open for assembly.
+    messages = await _assemble_chat_context(body, user, db, api_key)
+
+    async def generate():
         headers = {"Authorization": f"Bearer {api_key}"}
-        messages: List[dict[str, Any]] = [*(body.history or []), {"role": "user", "content": body.message}]
 
         yield status("Thinking...")
 
@@ -648,17 +734,56 @@ async def debug_run(body: dict):
     model = body.get("model", "supermind-agent-v1")
     message = body.get("message", "")
     history = body.get("history", [])
+    strategy = body.get("strategy", "concat")
+
+    if strategy not in ALLOWED_STRATEGIES:
+        raise HTTPException(status_code=400, detail=f"Unknown context strategy: {strategy}")
+
+    # /debug/run is stateless (no DB): assemble via the SAME assemble_context as
+    # /chat so eval and production measure the same thing. For window_summary the
+    # rolling summary is computed on the fly from the passed-in history.
+    current_msg = {"role": "user", "content": message}
+    summary_text: Optional[str] = None
+    summary_through = 0
+    summary_cost = 0
+    if strategy == "window_summary":
+        summary_text, summary_through, summary_cost = await ensure_summary(
+            history, api_key=api_key
+        )
+    assembled = assemble_context(
+        strategy, history, current_msg,
+        summary=summary_text, summary_through_position=summary_through,
+    )
+    base_messages = assembled["messages"]
+    base_len = len(base_messages)
+    included_history_ids = assembled["included_history_ids"]
 
     async def generate():
-        messages: List[dict[str, Any]] = [*history, {"role": "user", "content": message}]
+        messages: List[dict[str, Any]] = list(base_messages)
+        tools = [WEB_SEARCH_TOOL, READ_PAGE_TOOL]
 
         for round_num in range(1, MAX_TURNS + 1):
+            # loop_messages: assistant tool-calls / tool results appended after
+            # the assembled base context during this question's agentic loop
+            report = build_context_report(
+                round_num=round_num,
+                strategy=strategy,
+                history=history,
+                included_history_ids=included_history_ids,
+                current=current_msg,
+                loop_messages=messages[base_len:],
+                tools=tools,
+                summary=summary_text,
+                summary_through_position=summary_through,
+                summary_cost_tokens=summary_cost if round_num == 1 else 0,
+            )
+            yield sse({"type": "context_report", "data": report})
             yield sse({"type": "status", "message": f"Round {round_num} — calling LLM…"})
 
             payload = {
                 "model": model,
                 "messages": messages,
-                "tools": [WEB_SEARCH_TOOL, READ_PAGE_TOOL],
+                "tools": tools,
                 "tool_choice": "auto",
             }
             async with httpx.AsyncClient(timeout=60.0) as client:
@@ -671,7 +796,9 @@ async def debug_run(body: dict):
                 yield sse({"type": "error", "detail": resp.text})
                 return
 
-            assistant_message = resp.json()["choices"][0]["message"]
+            resp_json = resp.json()
+            usage = resp_json.get("usage") or {}
+            assistant_message = resp_json["choices"][0]["message"]
             messages.append(assistant_message)
             tool_calls_raw = assistant_message.get("tool_calls") or []
 
@@ -681,6 +808,7 @@ async def debug_run(body: dict):
                     "assistantMessage": assistant_message,
                     "toolResults": [],
                     "finalReply": assistant_message.get("content") or "",
+                    "usage": usage,
                 }})
                 break
 
@@ -719,6 +847,7 @@ async def debug_run(body: dict):
                     "arguments": fn_args,
                     "content": result_str,
                     "status": tool_status,
+                    "tokens": estimate_tokens(result_str),
                 })
                 messages.append({"role": "tool", "tool_call_id": tc_id, "content": result_str})
 
@@ -727,9 +856,23 @@ async def debug_run(body: dict):
                 "assistantMessage": assistant_message,
                 "toolResults": tool_results,
                 "finalReply": None,
+                "usage": usage,
             }})
         else:
             # MAX_TURNS exhausted — force final answer without tools
+            report = build_context_report(
+                round_num=MAX_TURNS + 1,
+                strategy=strategy,
+                history=history,
+                included_history_ids=included_history_ids,
+                current=current_msg,
+                loop_messages=messages[base_len:],
+                tools=[],
+                summary=summary_text,
+                summary_through_position=summary_through,
+                summary_cost_tokens=0,
+            )
+            yield sse({"type": "context_report", "data": report})
             yield sse({"type": "status", "message": "Max turns reached — getting final answer…"})
             payload = {"model": model, "messages": messages}
             async with httpx.AsyncClient(timeout=60.0) as client:
@@ -738,8 +881,13 @@ async def debug_run(body: dict):
                     json=payload,
                     headers={"Authorization": f"Bearer {api_key}"},
                 )
-            final = resp.json()["choices"][0]["message"].get("content") or "" if resp.status_code == 200 else ""
-            yield sse({"type": "final", "reply": final})
+            if resp.status_code == 200:
+                resp_json = resp.json()
+                final = resp_json["choices"][0]["message"].get("content") or ""
+                final_usage = resp_json.get("usage") or {}
+            else:
+                final, final_usage = "", {}
+            yield sse({"type": "final", "reply": final, "usage": final_usage})
 
         yield sse({"type": "done"})
 
@@ -767,6 +915,30 @@ async def debug_regenerate(body: dict):
 
     reply = resp.json()["choices"][0]["message"].get("content") or ""
     return JSONResponse({"reply": reply})
+
+
+EVAL_RESULTS_DIR = "eval/results"
+
+
+@app.get("/debug/eval/results", include_in_schema=False)
+def list_eval_results():
+    if not os.path.isdir(EVAL_RESULTS_DIR):
+        return JSONResponse([])
+    names = sorted(
+        (n for n in os.listdir(EVAL_RESULTS_DIR) if n.endswith(".json")),
+        reverse=True,
+    )
+    return JSONResponse(names)
+
+
+@app.get("/debug/eval/results/{name}", include_in_schema=False)
+def get_eval_result(name: str):
+    if "/" in name or "\\" in name or ".." in name or not name.endswith(".json"):
+        raise HTTPException(status_code=404, detail="Not found")
+    path = os.path.join(EVAL_RESULTS_DIR, name)
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Not found")
+    return FileResponse(path, media_type="application/json")
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
