@@ -47,8 +47,10 @@ A standalone developer tool for inspecting and replaying the agentic loop:
 | `requirements.txt` | Python dependencies |
 | `static/index.html` | Entire frontend — vanilla JS, embedded CSS, no build step |
 | `static/debugger.html` | Context Debugger tool — standalone dark-theme page, no backend auth required |
-| `design.md` | Architecture and feature design document |
-| `reflections.md` | Running log of bugs, surprises, and lessons learned during development |
+| `docs/design.md` | Architecture and feature design document |
+| `docs/eval_plan.md` | Context-management measurement & visualization plan (metrics, needle dataset, debugger Eval tab) |
+| `docs/phase{1,2,3}_*.md` | Detailed per-phase implementation plans for context management |
+| `docs/reflections.md` | Running log of bugs, surprises, and lessons learned during development |
 | `CLAUDE.md` | Guidance for Claude Code: commands, architecture overview, API reference |
 | `AGENTS.md` | Agent configuration notes |
 | `AI-Builder-Space_OpenAPI_Json.json` | OpenAPI spec for the AI Builder Space upstream API |

@@ -325,12 +325,87 @@
       border-radius: 50%; animation: spin .65s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Tabs ── */
+    .tab-row { display: flex; gap: 6px; }
+    .tab-btn {
+      padding: 5px 14px; border-radius: 6px 6px 0 0; cursor: pointer;
+      border: 1px solid var(--card-border); border-bottom: none;
+      background: transparent; color: var(--muted); font-size: 12px; font-weight: 600;
+    }
+    .tab-btn.on { background: var(--card-bg); color: var(--text); }
+
+    /* ── CONTEXT section (per-round) ── */
+    .ctx-section {
+      border: 1px solid #1f3a5f; background: rgba(88,166,255,.05);
+      border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;
+    }
+    .ctx-hdr {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--blue);
+      margin-bottom: 7px;
+    }
+    .ctx-hdr .ctx-stats { font-weight: 400; letter-spacing: 0; color: var(--muted); }
+    .ctx-bar {
+      display: flex; height: 10px; border-radius: 5px; overflow: hidden;
+      background: #0d1420; margin-bottom: 7px;
+    }
+    .ctx-bar div { min-width: 2px; }
+    .ctx-rows { display: flex; flex-direction: column; gap: 2px; }
+    .ctx-row {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11.5px; color: var(--text); font-family: ui-monospace, monospace;
+    }
+    .ctx-row .dot { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+    .ctx-row .lname { width: 110px; color: var(--muted); }
+    .tok-badge {
+      font-size: 10.5px; color: #d29922; font-family: ui-monospace, monospace;
+      margin-left: 8px;
+    }
+
+    /* ── Eval view ── */
+    #eval-area { display: none; flex-direction: column; gap: 14px; }
+    .eval-controls {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 10px; padding: 12px 14px; font-size: 12.5px;
+    }
+    .eval-controls select {
+      background: var(--inner-bg); border: 1px solid var(--card-border);
+      color: var(--text); border-radius: 6px; padding: 5px 8px; font-size: 12px;
+      max-width: 320px;
+    }
+    .eval-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 10px; padding: 14px 16px;
+    }
+    .eval-card h3 {
+      margin: 0 0 10px; font-size: 12px; letter-spacing: .06em;
+      color: var(--blue); text-transform: uppercase;
+    }
+    table.eval-tbl { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+    .eval-tbl th, .eval-tbl td {
+      padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--card-border);
+      font-family: ui-monospace, monospace; white-space: nowrap;
+    }
+    .eval-tbl th { color: var(--muted); font-weight: 600; }
+    .eval-tbl th:first-child, .eval-tbl td:first-child { text-align: left; }
+    .eval-tbl td.bad { color: var(--red); font-weight: 700; }
+    .eval-tbl td.q { max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pf { font-weight: 700; }
+    .pf.pass { color: var(--green); }
+    .pf.fail { color: var(--red); }
+    .pf.na { color: var(--muted); font-weight: 400; }
   </style>
 </head>
 <body>
 
 <div id="header">
   <h1>Context Debugger</h1>
+  <div class="tab-row">
+    <button class="tab-btn on" id="tab-single">Single Run</button>
+    <button class="tab-btn" id="tab-eval">Eval</button>
+  </div>
   <a href="/">← Back to App</a>
 </div>
 
@@ -352,6 +427,17 @@
 
 <div id="status-bar"></div>
 <div id="main-area"></div>
+
+<div id="eval-area">
+  <div class="eval-controls">
+    <span>Result A:</span> <select id="eval-sel-a"></select>
+    <span>Result B:</span> <select id="eval-sel-b"><option value="">— none —</option></select>
+    <button class="hdr-btn accent" id="eval-load-btn">LOAD</button>
+    <button class="hdr-btn" id="eval-refresh-btn">↻ Refresh list</button>
+    <span style="color:var(--muted)">Run <code>python eval/run.py --strategy concat</code> to produce results.</span>
+  </div>
+  <div id="eval-content"></div>
+</div>
 
 <script>
 // ── State ──────────────────────────────────────────────────────
@@ -387,7 +473,8 @@ async function runDebug() {
   const userMsg = msgInput.value.trim();
   if (!userMsg) return;
 
-  state = { model: modelSel.value, userMessage: userMsg, history: [], rounds: [] };
+  state = { model: modelSel.value, userMessage: userMsg, history: [], rounds: [],
+            contextReports: {}, finalUsage: null };
   mainEl.innerHTML = '';
   renderAll();
   setRunning(true);
@@ -433,6 +520,8 @@ async function runDebug() {
 function handleDebugEvent(event) {
   if (event.type === 'status') {
     setStatus('<span class="spin"></span> ' + esc(event.message));
+  } else if (event.type === 'context_report') {
+    state.contextReports[event.data.round] = event.data;
   } else if (event.type === 'round') {
     const r = event.data;
     state.rounds.push({
@@ -443,23 +532,91 @@ function handleDebugEvent(event) {
       assistantMessage: r.assistantMessage,
       toolResults: r.toolResults.map(tr => ({
         id: tr.id, name: tr.name, arguments: tr.arguments,
-        content: tr.content, status: tr.status,
+        content: tr.content, status: tr.status, tokens: tr.tokens,
         active: true, editedArguments: null, editedContent: null,
       })),
       finalReply: r.finalReply,
+      usage: r.usage || null,
     });
     renderAll();
   } else if (event.type === 'final') {
+    state.finalUsage = event.usage || null;
     if (state.rounds.length > 0) {
       state.rounds[state.rounds.length - 1].finalReply = event.reply;
       renderAll();
     }
   } else if (event.type === 'done') {
     const toolRounds = state.rounds.filter(r => r.toolResults.length > 0).length;
-    setStatus(`Done — ${state.rounds.length} round(s), ${toolRounds} with tool calls`);
+    const t = lifecycleTotals();
+    const tok = t.input ? ` · input ${fmtTok(t.input)} tok · output ${fmtTok(t.output)} tok` : '';
+    setStatus(`Done — ${state.rounds.length} round(s), ${toolRounds} with tool calls${tok}`);
   } else if (event.type === 'error') {
     setStatus(`<span style="color:var(--red)">Error: ${esc(event.detail)}</span>`);
   }
+}
+
+// Sum API usage over the question's full lifecycle (all rounds + forced final)
+function lifecycleTotals() {
+  let input = 0, output = 0;
+  for (const r of state.rounds) {
+    input  += r.usage?.prompt_tokens || 0;
+    output += r.usage?.completion_tokens || 0;
+  }
+  input  += state.finalUsage?.prompt_tokens || 0;
+  output += state.finalUsage?.completion_tokens || 0;
+  return { input, output };
+}
+
+const fmtTok = n => n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
+
+const LAYER_COLORS = {
+  history: '#58a6ff', current: '#3fb950', tool_loop: '#d29922',
+  tools_schema: '#8b949e', retrieved: '#bc8cff', summary: '#f778ba', memory: '#ff7b72',
+};
+
+// CONTEXT block: what was actually sent to the LLM this round (docs/eval_plan.md §8.1)
+function renderCtxSection(report, usage) {
+  const sec = el('div', 'ctx-section');
+
+  const est = report.estimated_prompt_tokens;
+  const api = usage?.prompt_tokens;
+  let stats = `est ${fmtTok(est)}`;
+  if (api) {
+    const dev = ((api - est) / api * 100).toFixed(1);
+    stats += ` · api ${fmtTok(api)} (${dev > 0 ? '+' : ''}${dev}%)`;
+  }
+  const used = api || est;
+  stats += ` · ${(used / report.context_limit * 100).toFixed(1)}% of ${fmtTok(report.context_limit)}`;
+
+  const hdr = el('div', 'ctx-hdr');
+  hdr.appendChild(span('CONTEXT', ''));
+  hdr.appendChild(span(stats, 'ctx-stats'));
+  sec.appendChild(hdr);
+
+  const bar = el('div', 'ctx-bar');
+  for (const l of report.layers) {
+    if (!l.tokens) continue;
+    const seg = el('div', '');
+    seg.style.flex = String(l.tokens);
+    seg.style.background = LAYER_COLORS[l.layer] || '#666';
+    seg.title = `${l.layer}: ${l.tokens} tok`;
+    bar.appendChild(seg);
+  }
+  sec.appendChild(bar);
+
+  const rows = el('div', 'ctx-rows');
+  for (const l of report.layers) {
+    const row = el('div', 'ctx-row');
+    const dot = el('div', 'dot');
+    dot.style.background = LAYER_COLORS[l.layer] || '#666';
+    row.appendChild(dot);
+    row.appendChild(span(l.layer, 'lname'));
+    const pct = est ? (l.tokens / est * 100).toFixed(0) : 0;
+    row.appendChild(span(`${fmtTok(l.tokens)} tok · ${l.items} item(s) · ${pct}%`, ''));
+    rows.appendChild(row);
+  }
+  sec.appendChild(rows);
+  return sec;
 }
 
 function setRunning(running) {
@@ -570,6 +727,11 @@ function renderAIBlock(roundIdx) {
 
   const body = el('div', 'turn-body');
 
+  const report = !round.isInserted && state.contextReports[round.roundNum];
+  if (report) {
+    body.appendChild(renderCtxSection(report, round.usage));
+  }
+
   // Show the assistant's text content if present (response text or thinking before tool calls)
   const msgContent = round.assistantMessage?.content;
   if (msgContent) {
@@ -622,6 +784,10 @@ function renderToolCard(roundIdx, trIdx) {
   const trSec = el('div', 'tr-section');
   const trTop = el('div', 'tr-top');
   trTop.appendChild(span('TOOL RESULT', 'inner-label tr'));
+  if (tr.tokens) {
+    // direct source of next round's prompt growth
+    trTop.appendChild(span(`⚠ +${fmtTok(tr.tokens)} tok → next round`, 'tok-badge'));
+  }
 
   const trBadges = el('div', 'badge-row');
   const toggleResultBtn = btn(tr.active ? 'Active' : 'Inactive', 'badge-btn', () => {
@@ -871,6 +1037,139 @@ function btn(text, cls, onclick) {
   b.textContent = text;
   if (onclick) b.onclick = onclick;
   return b;
+}
+
+// ═══ Eval tab ═══════════════════════════════════════════════════
+// Renders result files produced by `python eval/run.py` (docs/eval_plan.md §8.2–8.4).
+// Case replay is deferred — result JSON already contains the data for it.
+
+const tabSingle = document.getElementById('tab-single');
+const tabEval   = document.getElementById('tab-eval');
+const evalArea  = document.getElementById('eval-area');
+const evalSelA  = document.getElementById('eval-sel-a');
+const evalSelB  = document.getElementById('eval-sel-b');
+const evalContent = document.getElementById('eval-content');
+
+function switchTab(toEval) {
+  tabSingle.classList.toggle('on', !toEval);
+  tabEval.classList.toggle('on', toEval);
+  for (const id of ['input-area', 'status-bar', 'main-area']) {
+    document.getElementById(id).style.display = toEval ? 'none' : '';
+  }
+  evalArea.style.display = toEval ? 'flex' : 'none';
+  if (toEval && !evalSelA.options.length) refreshEvalList();
+}
+tabSingle.onclick = () => switchTab(false);
+tabEval.onclick   = () => switchTab(true);
+
+async function refreshEvalList() {
+  try {
+    const names = await (await fetch('/debug/eval/results')).json();
+    for (const sel of [evalSelA, evalSelB]) {
+      const keep = sel === evalSelB ? '<option value="">— none —</option>' : '';
+      sel.innerHTML = keep + names.map(n => `<option>${esc(n)}</option>`).join('');
+    }
+    if (!names.length) {
+      evalContent.innerHTML = '<div class="eval-card">No result files in <code>eval/results/</code> yet.</div>';
+    }
+  } catch (e) {
+    evalContent.innerHTML = `<div class="eval-card" style="color:var(--red)">Failed to list results: ${esc(e.message)}</div>`;
+  }
+}
+document.getElementById('eval-refresh-btn').onclick = refreshEvalList;
+document.getElementById('eval-load-btn').onclick = loadEvalResults;
+
+async function loadEvalResults() {
+  const names = [evalSelA.value, evalSelB.value].filter(Boolean);
+  if (!names.length) return;
+  evalContent.innerHTML = '<div class="eval-card"><span class="spin"></span> Loading…</div>';
+  try {
+    const runs = await Promise.all(
+      names.map(n => fetch('/debug/eval/results/' + encodeURIComponent(n)).then(r => r.json()))
+    );
+    renderEval(runs);
+  } catch (e) {
+    evalContent.innerHTML = `<div class="eval-card" style="color:var(--red)">Failed to load: ${esc(e.message)}</div>`;
+  }
+}
+
+const pct = v => v == null ? '—' : (v * 100).toFixed(0) + '%';
+const num = (v, d = 0) => v == null ? '—' : Number(v).toFixed(d);
+
+// Column label identifying a loaded run: run_id on top, strategy/model/dataset below.
+// Strategy alone is ambiguous — two runs of the same strategy differ by model/time.
+const runLabel = r => `${esc(r.run_id)}<br><span style="color:var(--muted);font-weight:400">${esc(r.strategy)} · ${esc(r.model || '?')}${r.dataset_version ? ' · ' + esc(r.dataset_version) : ''}</span>`;
+
+function renderEval(runs) {
+  evalContent.innerHTML = '';
+
+  // ── Strategy comparison table (the end product of the whole system) ──
+  const sumCard = el('div', 'eval-card');
+  sumCard.innerHTML = '<h3>Strategy comparison</h3>';
+  const rows = runs.map(r => {
+    const s = r.summary;
+    return `<tr>
+      <td>${runLabel(r)}</td>
+      <td>${pct(s.ctx_hit_rate)}</td><td>${pct(s.ans_hit_rate)}</td>
+      <td class="${s.hallucination_rate > 0 ? 'bad' : ''}">${pct(s.hallucination_rate)}</td>
+      <td>${fmtTok(Math.round(s.avg_input_tokens))}</td>
+      <td>${fmtTok(Math.round(s.avg_output_tokens))}</td>
+      <td>${num(s.avg_rounds, 1)}</td><td>${num(s.avg_latency_s, 1)}s</td>
+      <td>${pct(s.avg_compression_ratio)}</td>
+    </tr>`;
+  }).join('');
+  sumCard.innerHTML += `<table class="eval-tbl">
+    <tr><th>strategy</th><th>ctx hit</th><th>ans hit</th><th>halluc</th>
+        <th>in-tok/题</th><th>out-tok/题</th><th>rounds</th><th>latency</th><th>compress</th></tr>
+    ${rows}</table>`;
+  evalContent.appendChild(sumCard);
+
+  // ── Dimension drill-down: where does a strategy lose? ──
+  const dimCard = el('div', 'eval-card');
+  dimCard.innerHTML = '<h3>Dimension drill-down (ans hit / ctx hit)</h3>';
+  const dimKeys = [...new Set(runs.flatMap(r => Object.keys(r.dimensions || {})))];
+  for (const dk of dimKeys) {
+    const buckets = [...new Set(runs.flatMap(r => Object.keys(r.dimensions?.[dk] || {})))];
+    let html = `<table class="eval-tbl" style="margin-bottom:12px">
+      <tr><th>${esc(dk)}</th>${runs.map(r => `<th>${runLabel(r)}</th>`).join('')}</tr>`;
+    for (const b of buckets) {
+      html += `<tr><td>${esc(b)}</td>` + runs.map(r => {
+        const cell = r.dimensions?.[dk]?.[b];
+        if (!cell) return '<td>—</td>';
+        const bad = cell.ans_hit_rate != null && cell.ans_hit_rate < 0.7;
+        return `<td class="${bad ? 'bad' : ''}">${pct(cell.ans_hit_rate)} / ${pct(cell.ctx_hit_rate)}
+          <span style="color:var(--muted)">(n=${cell.probes})</span></td>`;
+      }).join('') + '</tr>';
+    }
+    html += '</table>';
+    dimCard.innerHTML += html;
+  }
+  evalContent.appendChild(dimCard);
+
+  // ── Per-probe list (replay deferred; badges only) ──
+  const probeCard = el('div', 'eval-card');
+  probeCard.innerHTML = '<h3>Probes</h3>';
+  const probeIds = runs[0].probes.map(p => p.case_id + '/' + p.probe_id);
+  const badge = v => v == null ? '<span class="pf na">n/a</span>'
+    : v ? '<span class="pf pass">✓</span>' : '<span class="pf fail">✗</span>';
+  let html = `<table class="eval-tbl">
+    <tr><th>probe</th><th>style</th>
+      ${runs.map(r => `<th>${runLabel(r)}<br>ctx · ans · hal</th>`).join('')}
+      <th>question</th></tr>`;
+  for (const pid of probeIds) {
+    const first = runs[0].probes.find(p => p.case_id + '/' + p.probe_id === pid);
+    html += `<tr><td>${esc(pid)}</td><td>${esc(first.style)}</td>`;
+    for (const r of runs) {
+      const p = r.probes.find(p => p.case_id + '/' + p.probe_id === pid);
+      html += p
+        ? `<td>${badge(p.ctx_hit)} ${badge(p.ans_hit)} ${p.hallucination ? '<span class="pf fail">HAL</span>' : ''}</td>`
+        : '<td>—</td>';
+    }
+    html += `<td class="q" title="${esc(first.question)}">${esc(first.question)}</td></tr>`;
+  }
+  html += '</table>';
+  probeCard.innerHTML += html;
+  evalContent.appendChild(probeCard);
 }
 </script>
 </body>

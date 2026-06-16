@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measurement System Retrospective — Building a Ruler for Context Management</title>
+<style>
+  :root {
+    --bg:#0d1117; --card:#161b22; --border:#21262d; --text:#c9d1d9; --muted:#8b949e;
+    --blue:#58a6ff; --green:#3fb950; --red:#f85149; --amber:#d29922; --purple:#bc8cff;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+  .wrap { max-width:820px; margin:0 auto; padding:48px 24px 80px; }
+  header { border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:36px; }
+  h1 { font-size:30px; line-height:1.3; margin:0 0 12px; color:#f0f6fc; }
+  h2 { font-size:22px; margin:44px 0 14px; color:#f0f6fc; padding-top:10px; border-top:1px solid var(--border); }
+  h3 { font-size:17px; margin:28px 0 8px; color:var(--blue); }
+  .meta { color:var(--muted); font-size:14px; }
+  .meta span { margin-right:16px; }
+  .langswitch { float:right; font-size:13px; color:var(--muted); }
+  .langswitch a { color:var(--blue); text-decoration:none; }
+  p { margin:14px 0; }
+  code { background:#1f2530; padding:2px 6px; border-radius:4px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13.5px; color:#e6edf3; }
+  pre { background:#010409; border:1px solid var(--border); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.55; }
+  pre code { background:none; padding:0; }
+  .lead { font-size:18px; color:var(--text); }
+  blockquote { margin:18px 0; padding:12px 18px; border-left:3px solid var(--blue); background:rgba(88,166,255,.06); border-radius:0 6px 6px 0; }
+  blockquote.warn { border-left-color:var(--amber); background:rgba(210,153,34,.07); }
+  blockquote.win { border-left-color:var(--green); background:rgba(63,185,80,.07); }
+  table { border-collapse:collapse; width:100%; margin:18px 0; font-size:14px; }
+  th,td { border:1px solid var(--border); padding:8px 12px; text-align:left; vertical-align:top; }
+  thead th { background:var(--card); color:var(--muted); font-weight:600; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .bar { display:flex; height:22px; border-radius:5px; overflow:hidden; margin:6px 0 2px; font-size:11px; }
+  .bar div { display:flex; align-items:center; justify-content:center; color:#0d1117; font-weight:700; }
+  ul { padding-left:22px; } li { margin:6px 0; }
+  .footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--border); color:var(--muted); font-size:13px; }
+  .kicker { color:var(--blue); font-size:13px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="langswitch"><a href="measurement_system.html">中文</a> · English</div>
+  <div class="kicker">My AI Buddy · Context Management · Foundation Retrospective</div>
+  <h1>Building a Ruler for Context Management: how the eval system went from design to implementation</h1>
+  <div class="meta">
+    <span>📅 2026-06-11 – 06-15</span>
+    <span>🏷 needle-in-conversation eval</span>
+    <span>📊 2 dataset tiers · two-axis metrics · debugger viz</span>
+  </div>
+</header>
+
+<p class="lead">Before touching context management at all, we spent a few days building a ruler. This post isn't about any one strategy — it's about <b>how to measure</b>: how the two evaluation axes are defined, how the token and accuracy metrics are designed, how the needle dataset is constructed, how it's visualized, and the potholes hit along the way. The one-line motivation: <b>you can't improve what you can't measure</b>.</p>
+
+<h2>1. Why build the ruler first</h2>
+<p>Context management used to be "brute-force concatenate the whole session history into the LLM." We wanted to upgrade to layered management (sliding window + summary → RAG → cross-session). But the moment you ask "how many tokens did the new strategy actually save, and did answers get worse," you find there's no objective basis — only vibes. So the rule: <b>the measurement system ships before any strategy change</b>; quantify the brute-force concatenation (<code>concat</code>) baseline first, then compare everything against it. concat is forever the perfect ceiling (it carries the full context) and the always-available fallback.</p>
+
+<h2>2. Two axes, read together</h2>
+<p>Evaluation runs along two axes: <b>efficiency</b> (token cost) and <b>accuracy</b> (information recall / hallucination). The key insight is that they <b>must be reported together</b>:</p>
+<ul>
+  <li>Efficiency alone is meaningless — deleting all context maximizes it;</li>
+  <li>Accuracy alone is meaningless — full concat maximizes it.</li>
+</ul>
+<p>A strategy is a point in this 2-D plane, and a good strategy is one that <b>saves tokens without dropping accuracy</b>. One discipline follows: efficiency numbers are only comparable on a <b>fixed dataset</b> (different questions have inherently different sizes), so every strategy runs the same scripts, and a single run produces both efficiency and accuracy metrics at once.</p>
+
+<h2>3. Efficiency metrics: account over a question's full lifecycle</h2>
+<p>An easy thing to miss: the agentic loop <b>resends the entire context every round</b>. A question that triggers 3 tool-call rounds bills the same history 3 times. So efficiency must accumulate over the lifecycle, not just one call.</p>
+<table>
+<thead><tr><th>Metric</th><th>Definition / what it answers</th></tr></thead>
+<tbody>
+<tr><td><code>input_tokens</code></td><td>Σ prompt_tokens per round — the big one, what management directly optimizes</td></tr>
+<tr><td><code>output_tokens</code></td><td>Σ completion_tokens per round — barely affected by strategy, counted separately so it doesn't pollute the comparison</td></tr>
+<tr><td>rounds</td><td>tool-call rounds — bad context makes the model search more, inflating input indirectly</td></tr>
+<tr><td>latency / mgmt overhead</td><td>the speed and token cost of retrieval/summarization itself (don't let the saved tokens get eaten by the management call)</td></tr>
+<tr><td>compression ratio</td><td>actually-sent / full history — how much management saved (concat = 1.0)</td></tr>
+</tbody>
+</table>
+<p>input and output are <b>reported separately</b>: context strategy almost only affects input, and the two have different unit prices, so mixing them distorts.</p>
+<blockquote><b>Dual-track token counting (a key design).</b> The upstream API's <code>usage</code> gives only a single ground-truth total — it can't break down by layer. To see "how many tokens each layer took," you must estimate locally with <b>tiktoken (cl100k_base)</b>. Both numbers are shown, with the deviation. This dual track later earned its keep: in one batch run the upstream reported 132k billed tokens for a 2.5k context, while the local estimate stayed in the normal range — the dual track caught an upstream billing anomaly on day one.</blockquote>
+
+<h2>4. Accuracy metrics: two-level judging + negative probes for hallucination</h2>
+<p>Whether a needle was "found" is tested at <b>two levels</b>, because the failure causes are entirely different:</p>
+<ul>
+  <li><b>Context-hit (retrieval level):</b> did the needle's message/fragment make it into the assembled context? Judged <b>deterministically by stable message ID</b> from the structured report — zero cost, no LLM.</li>
+  <li><b>Answer-hit (answer level):</b> does the final reply contain the correct fact? Factual needles use regex/substring; soft needles (decisions, preferences) use an LLM judge.</li>
+</ul>
+<p>Splitting the two is hugely diagnostic: <b>context-hit but answer-wrong</b> → a generation problem (context too noisy, model distracted); <b>context-miss</b> → a retrieval/summary problem. The fixes are completely different.</p>
+<p><b>Hallucination</b> is counted from two sources: ① negative probes — ask about a fact that never appeared in the conversation ("what was the API key I gave you?" — never given); fabricating one counts; ② context-miss yet a confident specific answer — it should have said "I don't recall" but answered anyway.</p>
+<blockquote class="warn">This judging itself later proved to have a pitfall: for a summarization strategy that reformats content, judging "context-hit" by exact substring match massively false-negatives. That story is in the <a href="phase1_window_summary_en.html">Phase 1 report</a> — the eval system measured a blind spot in itself, which is exactly the point of building the ruler.</blockquote>
+
+<h2>5. Dataset design: needle-in-conversation</h2>
+<p>The dataset plants known-fact "needles" into scripted long conversations, then asks at the end and checks whether the system recovers them. The design spreads along dimensions that actually cause strategy differences, rather than planting needles at random:</p>
+<table>
+<thead><tr><th>Dimension</th><th>Values</th><th>What it tests</th></tr></thead>
+<tbody>
+<tr><td>Needle type</td><td>factual atom / decision &amp; preference / code identifier / update-type / personal fact</td><td>update-type (A then corrected to B) tests fetching the latest value; code identifier tests the weak spot of pure vector retrieval</td></tr>
+<tr><td>Needle position</td><td>depth early/mid/late; carrier user / mid-reply in a long assistant message / tool</td><td>lost-in-the-middle; mid-reply needles test chunking</td></tr>
+<tr><td>Question style</td><td>direct recall / paraphrase / implicit dependency / negative</td><td>paraphrase (zero surface overlap) tests semantic retrieval; implicit is closest to real use</td></tr>
+<tr><td>Distractors</td><td>same-topic filler / near-miss needles / negative probes</td><td>near-miss ("port 5433" next to "5432") tests precision, not just recall</td></tr>
+</tbody>
+</table>
+<p>Five topics: ML technical Q&amp;A, stocks/investing, AI trends, gardening, healthy living — and <b>one topic per case</b>: needles and filler must share a topic to form real interference (a stock needle buried in a gardening conversation is trivially retrievable, inflating the score).</p>
+<blockquote><b>Construction discipline: deterministic, freezable.</b> Filler conversations are LLM-generated once and then <b>frozen to a file, never regenerated</b>; the assistant messages in the script are <b>hard-coded</b> (history is not generated by a live LLM), and only the final probe runs the full pipeline for real. Otherwise two runs aren't comparable.</blockquote>
+
+<h2>6. Two dataset tiers: smoke and long</h2>
+<p>We first wrote 12 short cases, but quickly realized a problem — their histories are only ~1.5k tokens, which any reasonable window fits, so they <b>can't differentiate compression strategies</b>. This wasn't discovered by trial; it was predictable: the moment Phase 1 ships, they're useless. So two tiers:</p>
+<table>
+<thead><tr><th>Tier</th><th>Size</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td><b>smoke</b></td><td>12 cases, ~1.5k-tok histories</td><td>fast, cheap — pipeline/model/judge regression sanity</td></tr>
+<tr><td><b>long</b></td><td>6 cases, ~8.7k-tok histories, 800+ char assistant needle replies with needles mid-reply</td><td>the actual ruler for compression/chunking stress</td></tr>
+</tbody>
+</table>
+<p><b>Augment, don't replace</b>: a new tier leaves the old one intact, preserving longitudinal comparability; result files carry a <code>dataset_version</code> field, which must be bumped on any set change, and scores across versions aren't directly comparable. The long tier also went through an independent reviewer audit — it caught a real tail-leak (one needle's old value was restated near the end of the conversation, letting a recency strategy "cheat" past it), so that probe was re-pointed at a non-leaking needle; it also had the bare-number regexes add digit boundaries. <b>Datasets get reviewed too — not done when written.</b></p>
+
+<h2>7. Implementation learnings</h2>
+<ul>
+  <li><b>The model under test can't be an agent wrapper.</b> We first used the app's default <code>supermind-agent-v1</code>, which runs its own agentic loop upstream — we send a 2.5k context and it bills 100k+, and it occasionally returns empty content, both polluting the metrics. The eval defaults to a plain chat model (deepseek-v4-pro / grok-4-fast).</li>
+  <li><b>Judge models misjudge — verify them.</b> <code>deepseek-v4-flash</code> as judge scored clearly rubric-compliant answers as NO (verified false negatives); <code>kimi-k2.5</code> is reliable. The judge's raw output is stored in the result JSON's <code>judge_raw</code> field for auditing.</li>
+  <li><b>Dual-track tokens catch anomalies.</b> See §3 — upstream billing occasionally spikes; the local estimate is more robust, and you only see the problem with both side by side.</li>
+  <li><b>Tool results are the main context polluter.</b> <code>read_page</code> can inject thousands of tokens at once; each tool result's token count is recorded separately and shown as a <code>+N tok</code> badge in the visualization, so you see at a glance who's blowing up the next round.</li>
+</ul>
+
+<h2>8. Visualization: make context visible</h2>
+<p>Measurement isn't a log — it's <b>first-class structured data</b>. Every time the backend assembles messages for an LLM call, it produces a <code>context_report</code>, pushed as an SSE event. It drives two views:</p>
+<h3>Single Run — what does this request's context look like</h3>
+<p>The top of each round's card is a CONTEXT block: a stacked bar of each layer's share, dual-track tokens (local estimate vs API ground truth, with deviation), an expandable per-layer breakdown, a <code>+N tok</code> badge on tool results, and the lifecycle input/output totals after done. You see at a glance "what actually went up, and how many tokens per layer."</p>
+<div class="bar">
+  <div style="flex:6800;background:#58a6ff">history 6.8k</div>
+  <div style="flex:1240;background:#bc8cff">retrieved 1.2k</div>
+  <div style="flex:350;background:#8b949e">tools</div>
+  <div style="flex:85;background:#3fb950">cur</div>
+</div>
+<p style="color:var(--muted);font-size:13px;margin-top:0">▲ CONTEXT stacked bar (illustrative): layers sized by token share, fixed colors; the retrieved layer expands to candidate detail (incl. rejected ones and why) once Phase 2 lands.</p>
+<h3>Eval tab — which of strategy A and B is better</h3>
+<p>It reads the self-contained result JSON produced by the CLI batch runner and renders three blocks: ① a <b>strategy comparison table</b> (one row per strategy: ctx-hit, ans-hit, hallucination, input/output tokens, rounds, latency); ② a <b>dimension drill-down</b> (hit rate bucketed by depth/carrier/style, red below threshold — tells you <i>why</i> it lost); ③ a <b>probe list</b> (per-probe ctx/ans/hallucination badges). Column headers are keyed by <code>run_id + strategy·model·dataset</code>, so same-strategy-different-model runs are still distinguishable.</p>
+<blockquote><b>Architecture: CLI batch + debugger to view.</b> Batch runs are long tasks with a dozen-plus LLM calls — not something to wait on in a browser, so they live in the CLI (CI-able); the result file is self-contained with every context_report, so the debugger renders straight from the file with no re-run. The backend adds only two read-only endpoints (list files, read file).</blockquote>
+
+<h2>9. What the ruler bought us</h2>
+<p>With it, Phase 1 finally has an objective conclusion: window_summary spends ~57% fewer tokens for about 9 points of accuracy and zero hallucination increase (see the <a href="phase1_window_summary_en.html">Phase 1 report</a>). More unexpectedly, the first time this system measured a real summary it exposed a blind spot in its own <code>ctx_hit</code> judging, forcing us to upgrade "exact substring" to "LLM presence judge." <b>A good ruler doesn't just measure the thing under test — it surfaces problems in its own markings.</b></p>
+
+<h2>10. Takeaways</h2>
+<ul>
+  <li>Efficiency and accuracy <b>must be read together</b> — either one alone can be gamed by an extreme strategy.</li>
+  <li>Account efficiency over the <b>question lifecycle</b>, input/output separate; count tokens on a <b>dual track</b> (local per-layer estimate + API ground truth), which catches upstream anomalies.</li>
+  <li>Judge accuracy at <b>two levels</b> (deterministic context-hit + answer-hit); measure hallucination with <b>negative probes</b>, not by feel.</li>
+  <li>Datasets must be <b>deterministically frozen</b>, <b>single-topic</b>, <b>spread across dimensions</b>, <b>tiered</b> (smoke for fast checks / long for stress), and <b>reviewed</b>.</li>
+  <li>The two external variables in evaluation — the <b>model under test and the judge model</b> — both need verification; don't use an agent wrapper, don't trust an unverified judge.</li>
+  <li>Make measurement <b>structured data + visualization</b>, not logs, so "why doesn't the model know X" is actually debuggable.</li>
+</ul>
+
+<div class="footer">
+  Archived under <code>docs/reports/</code> · Related: <code>docs/eval_plan.md</code> (full eval-system design), <a href="phase1_window_summary_en.html">Phase 1 report</a>, <code>docs/design.md</code> (roadmap) · Implementation: <code>context_report.py</code>, <code>eval/run.py</code>, <code>eval/cases/{smoke,long}/</code>, <code>static/debugger.html</code>
+</div>
+</div>
+</body>
+</html>

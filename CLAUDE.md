@@ -22,9 +22,24 @@ open http://localhost:8000
 
 # Interactive API docs
 open http://localhost:8000/docs
+
+# Run the context-management eval set (server must be running; see docs/eval_plan.md)
+python eval/run.py --strategy concat --tier smoke    # fast 12-case set → eval/results/*.json
+python eval/run.py --strategy concat --tier long     # 6-case set, ~8.7k-tok histories (chunking stress)
+python eval/run.py --strategy concat --tier smoke --case ml_001   # single case
+python eval/run.py --strategy concat --tier long --model grok-4-fast   # pick model under test
 ```
 
 There are no tests and no linter configured yet.
+
+## Design docs (in `docs/`)
+
+- `docs/design.md` — full design document (architecture, backend, frontend, context-management roadmap)
+- `docs/eval_plan.md` — context-management measurement & visualization plan (metrics, needle dataset, debugger Eval tab); implemented
+- `docs/phase1_sliding_window_summary.md` — Phase 1 plan: sliding window + rolling summary
+- `docs/phase2_pgvector_rag.md` — Phase 2 plan: pgvector RAG retrieval
+- `docs/phase3_cross_session_memory.md` — Phase 3 plan: cross-session retrieval + memory injection
+- `docs/reflections.md` — session reflections
 
 ## Architecture
 
@@ -38,8 +53,13 @@ There are no tests and no linter configured yet.
 | `auth.py` | Google OAuth flow, JWT sign/verify, FastAPI dependencies |
 | `database.py` | SQLAlchemy async engine setup, `get_db` session dependency, `init_db` |
 | `models.py` | ORM models: `User`, `Chat`, `Message` |
+| `context_report.py` | tiktoken-based token estimation + per-round `context_report` builder |
+| `eval/run.py` | CLI eval runner (`--tier smoke\|long`, two-level judging; see `docs/eval_plan.md`) |
+| `eval/cases/smoke/` | Frozen needle cases, smoke tier (12 cases, ~1.5k-tok histories — fast regression) |
+| `eval/cases/long/` | Frozen needle cases, long tier (6 cases, ~8.7k-tok histories — compression/chunking stress) |
+| `eval/results/` | Self-contained eval result JSONs (tagged `dataset_version`), rendered by the debugger Eval tab |
 | `static/index.html` | Entire frontend (vanilla JS, no build step) |
-| `static/debugger.html` | Context Debugger tool (standalone page, no backend deps) |
+| `static/debugger.html` | Context Debugger: Single Run view + Eval tab (standalone page) |
 
 ### Agentic loop (`POST /chat`)
 
@@ -85,8 +105,10 @@ messages   id (uuid), chat_id → chats, role, content, position
 | Method | Path | Description |
 |---|---|---|
 | `GET` | `/debugger` | Serves `static/debugger.html` |
-| `POST` | `/debug/run` | Runs full agentic loop; **SSE stream** — each round emitted as it completes; client abort stops backend |
-| `POST` | `/debug/regenerate` | Accepts `{model, messages}`; calls LLM once (no tools); returns `{reply}` |
+| `POST` | `/debug/run` | Runs full agentic loop; **SSE stream** — emits `context_report` (per-round token/layer breakdown) before each LLM call, `round` events carry API `usage`; accepts optional `strategy` (only `"concat"` for now); client abort stops backend |
+| `POST` | `/debug/regenerate` | Accepts `{model, messages}`; calls LLM once (no tools); returns `{reply}` (also used by eval runner as LLM judge) |
+| `GET` | `/debug/eval/results` | Lists result files in `eval/results/` |
+| `GET` | `/debug/eval/results/{name}` | Serves one result file (consumed by the debugger Eval tab) |
 
 Open the debugger at `http://localhost:8000/debugger`. It lets you inspect each agentic loop round, edit tool call arguments and results, disable rounds, insert synthetic rounds, and regenerate the final answer.
 

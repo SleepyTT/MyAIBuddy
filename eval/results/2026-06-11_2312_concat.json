@@ -1,0 +1,1204 @@
+{
+ "run_id": "2026-06-11_2312_concat",
+ "timestamp": "2026-06-11T23:12:37",
+ "strategy": "concat",
+ "model": "deepseek-v4-pro",
+ "judge_model": "kimi-k2.5",
+ "summary": {
+  "probes": 15,
+  "needle_probes": 13,
+  "negative_probes": 2,
+  "ctx_hit_rate": 1.0,
+  "ans_hit_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "avg_input_tokens": 5879.3,
+  "avg_estimated_input_tokens": 1729.4,
+  "avg_output_tokens": 142.1,
+  "avg_rounds": 1.0,
+  "avg_latency_s": 7.5,
+  "avg_compression_ratio": 1.0
+ },
+ "dimensions": {
+  "style": {
+   "paraphrase": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "implicit": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "direct": {
+    "probes": 5,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "negative": {
+    "probes": 2,
+    "ctx_hit_rate": null,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "carrier": {
+   "user": {
+    "probes": 10,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "assistant": {
+    "probes": 3,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "depth": {
+   "middle": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "early": {
+    "probes": 6,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "late": {
+    "probes": 3,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "needle_type": {
+   "decision": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "factual": {
+    "probes": 5,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "personal": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "update": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "code_identifier": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "topic": {
+   "ai_trends": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "gardening": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "health": {
+    "probes": 3,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "ml": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "stocks": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  }
+ },
+ "probes": [
+  {
+   "case_id": "ai_trends_001",
+   "probe_id": "p1",
+   "topic": "ai_trends",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "decision",
+   "depth": "middle",
+   "question": "关于 agent 技术选型，我之前最后表的态是什么？",
+   "reply": "你的结论是：不押注重框架，公司内部统一用轻量自研的 orchestrator，直接拼 prompt 调 API，工具接入走 MCP，不引入 LangChain。先从文档问答做起。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1278,
+   "output_tokens": 44,
+   "estimated_input_tokens": 1688,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 5.31,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1500,
+       "items": 16,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 27,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1688,
+     "full_history_tokens": 1500,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "ai_trends_002",
+   "probe_id": "p1",
+   "topic": "ai_trends",
+   "style": "implicit",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "假设训练成本每年翻一倍，按你之前给我的 2025 年中位数推算，2027 年单次训练大概要多少钱？",
+   "reply": "按中位数 3.5 亿美元、年翻一倍推算：\n\n- 2026 年：7 亿美元\n- 2027 年：14 亿美元\n\n不过提醒一下：年翻一倍是简化假设，实际增速在放缓——2020 到 2025 年化约 2.4 倍，如果按这个趋势外推，2027 年更可能在 10-12 亿美元区间。报告里建议用区间，别给单点数字，显得更严谨。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1185,
+   "output_tokens": 108,
+   "estimated_input_tokens": 1577,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 8.89,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1359,
+       "items": 16,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 57,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1577,
+     "full_history_tokens": 1359,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "garden_001",
+   "probe_id": "p1",
+   "topic": "gardening",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "personal",
+   "depth": "early",
+   "question": "我想在阳台再添一盆茉莉花，你觉得合适吗？",
+   "reply": "坦白说，茉莉花和你的北阳台八字不合。它是典型的喜光植物，光照不足会只长叶子不开花，或者开一两朵就歇菜，香味也淡。既然你绿萝已经养住了，想解锁第二种，我帮你挑个更靠谱的——白掌怎么样？同样耐阴好养，还能开白色佛焰苞，成就感比纯观叶高一级。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1173,
+   "output_tokens": 84,
+   "estimated_input_tokens": 1606,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.95,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1411,
+       "items": 16,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 34,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1606,
+     "full_history_tokens": 1411,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "garden_002",
+   "probe_id": "p1",
+   "topic": "gardening",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "我的龟背竹是什么时候买的来着？",
+   "reply": "你说的是 2024 年 3 月买的，到现在差不多两年了。这也正好印证了需要换盆——两年不换，根系基本都长满了。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1179,
+   "output_tokens": 36,
+   "estimated_input_tokens": 1599,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.44,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1413,
+       "items": 16,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 25,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1599,
+     "full_history_tokens": 1413,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "health_001",
+   "probe_id": "p1",
+   "topic": "health",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "personal",
+   "depth": "early",
+   "question": "帮我推荐几种适合训练后加餐吃的坚果和能量棒。",
+   "reply": "你的过敏情况很关键，所以推荐之前先把安全门槛说清楚——以下所有产品都是**不含花生、并且在专用无坚果设施中生产**的，避免交叉污染风险。\n\n---\n\n## 🥜 安全坚果替代品\n\n既然花生不能碰，训练后补充优质脂肪和蛋白质，这几个种子类替代品是最佳选择：\n\n| 替代品 | 特点 | 用法 |\n|--------|------|------|\n| **南瓜籽（pepitas）** | 高蛋白、富锌，支持睾酮合成 | 直接吃、撒在希腊酸奶上 |\n| **葵花籽** | 维生素E丰富，抗氧化 | 混入燕麦、沙拉 |\n| **火麻仁（hemp seeds）** | 完整蛋白谱，omega-3 | 训练后混入蛋白奶昔 |\n| **烤鹰嘴豆** | 高纤维+蛋白质，口感酥脆 | 替代坚果当零食 |\n\n---\n\n## 🍫 花生过敏安全的能量/蛋白棒\n\n以下品牌全部在**专用无花生设施**中生产，适合你的严重过敏情况：\n\n### 首选推荐（蛋白含量高）\n\n| 品牌 | 蛋白质 | 热量 | 亮点 |\n|------|--------|------|------|\n| **No Nuts!** | 12g | ~190 kcal | 100%无坚果认证工厂，4种口味（巧克力豆、蓝莓香草、肉桂卷、焦糖摩卡），10g纤维 |\n| **88 Acres** | 12g | 260-280 kcal | 南瓜籽+葵花籽蛋白，无分离蛋白，无人工甜味剂，口味有巧克力布朗尼、香蕉面包等 |\n| **Alio** | 15g | 170 kcal | 无Top 9过敏原，0添加糖（用罗汉果/阿洛酮糖），口味：曲奇面团、巧克力布朗尼、薄荷巧克力 |\n| **Blue Unicorn** | 15g | 120 kcal | 植物蛋白，无人工甜味剂，生酮友好，口味多样 |\n\n### 备选（蛋白稍低但安全）\n\n| 品牌 | 蛋白质 | 说明 |\n|------|--------|------|\n| **Avalanche Bars** | 7-8g | 燕麦+亚麻籽+葵花籽基底，6种口味，无坚果设施 |\n| **Blake's Seed Based** | ~6g | 种子基底，无Top 8过敏原，适合做日常零食 |\n| **GoMacro**（坚果自由系列） | 10-12g | 葵花籽黄油+巧克力口味，注意只选标注nut-free的款 |\n\n---\n\n## ⚠️ 必须避开的品牌\n\n以下品牌虽然有些口味不含花生，但**存在交叉污染风险**，你的严重过敏级别不建议碰：\n\n- ❌ Clif Bar、Kind Bar、GoMacro（非nut-free款）、ONE Bar、Built Bar\n- ❌ 任何标\"may contain peanuts\"或\"processed in a facility that also processes peanuts\"的产品\n\n---\n\n## 🔑 实操建议\n\n1. **每次看标签**——配方和生产设施可能变更，养成习惯\n2. **训练后加餐组合**：一根 No Nuts! 或 88 Acres 蛋白棒 + 一把南瓜籽，轻松凑 20-25g 蛋白质\n3. **自制替代方案**：不想总买包装产品的话，可以自备种子混合包（南瓜籽+葵花籽+火麻仁+椰片+黑巧克力碎），分装小袋随身带\n\n这些都在 Amazon 或品牌官网能买到，先各买少量试口味，找到自己喜欢的再批量下单。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 70124,
+   "output_tokens": 866,
+   "estimated_input_tokens": 1932,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 42.13,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1734,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 37,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1932,
+     "full_history_tokens": 1734,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "health_001",
+   "probe_id": "p2",
+   "topic": "health",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "上次体检后我跟你说过我的血型，是什么来着？",
+   "reply": "你没提过血型，我这边也没有这个记录。不过从饮食规划的角度来说，血型并不影响我们刚才制定的方案——增肌减脂的核心变量是热量、蛋白质、碳水和训练，跟血型无关。如果你手边有体检报告，更值得关注的是空腹血糖、血脂和肝功能这些指标，它们才真正影响方案调整。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1319,
+   "output_tokens": 75,
+   "estimated_input_tokens": 1923,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.56,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1734,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 28,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1923,
+     "full_history_tokens": 1734,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "health_002",
+   "probe_id": "p1",
+   "topic": "health",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "现在我每天的运动安排是什么？",
+   "reply": "把你当前的康复期日程整理一下：\n\n**每日晨间（约 55-65 分钟）**\n\n1. 热身：高抬腿、弓步走各 1 分钟（3 分钟）\n2. 快走 5 公里，保持能说话但不能唱歌的强度（约 45-50 分钟）\n3. 靠墙静蹲：4-5 组 × 30 秒，组间休息 1 分钟（约 8-10 分钟）\n4. 蚌式开合 + 侧卧抬腿：每侧各 2 组 × 15 次（约 5 分钟）\n5. 跑后拉伸：股四头肌、腘绳肌、小腿、髂胫束、臀部各 30-45 秒两轮（8-10 分钟）\n\n**关键纪律**\n\n- 静蹲时膝盖不内扣、不超过脚尖，疼就停\n- 一个月后复诊，由医生拍板恢复跑步时机\n- 复跑后从快走 + 慢跑交替开始，配速压到 7 分半轻松跑，里程从 2 公里重新爬坡\n- 每周总运动量增幅不超过 10%\n\n这个阶段的核心任务不是突破，是保住每天早上的习惯锚点和膝周力量地基。坚持住。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1371,
+   "output_tokens": 286,
+   "estimated_input_tokens": 1970,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 11.62,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1790,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 19,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1970,
+     "full_history_tokens": 1790,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "ml_001",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "code_identifier",
+   "depth": "early",
+   "question": "我之前提到的数据预处理入口函数叫什么名字？",
+   "reply": "`build_feature_matrix_v3`，在 `data_pipeline.py` 里。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1459,
+   "output_tokens": 19,
+   "estimated_input_tokens": 1753,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.92,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1568,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 24,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1753,
+     "full_history_tokens": 1568,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "ml_001",
+   "probe_id": "p2",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "code_identifier",
+   "depth": "early",
+   "question": "如果我想改特征生成的逻辑，应该从哪个文件的哪个函数入手？",
+   "reply": "按你之前说的，入口是 `data_pipeline.py` 里的 `build_feature_matrix_v3`。加手工特征的话，在这个函数里生成特征向量后，跟 BERT 的 [CLS] 向量做拼接就行。改之前建议先给这个函数补个单元测试，确保现有特征生成逻辑不被破坏。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1465,
+   "output_tokens": 72,
+   "estimated_input_tokens": 1762,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 4.18,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1568,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 33,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1762,
+     "full_history_tokens": 1568,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "ml_002",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "提醒我一下，我们现在的训练机器是什么配置？",
+   "reply": "你之前更正过：**8 张 A100 80GB**。\n\n不过最初说的是 4 张 V100 32GB，后来你更新了。所以当前配置是 A100 八卡，相当充裕。需要我基于这个重新汇总一份完整的训练方案吗？",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1419,
+   "output_tokens": 59,
+   "estimated_input_tokens": 1722,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.98,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1533,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 28,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1722,
+     "full_history_tokens": 1533,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "ml_003",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "你之前帮我定的向量维度是多少来着？",
+   "reply": "96 维。你们 400 万用户、80 万物品，这个维度是召回率和存储之间的甜点位。记得取 8 或 16 的倍数，对 Faiss 的内存对齐和 SIMD 指令集更友好。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1346,
+   "output_tokens": 53,
+   "estimated_input_tokens": 1708,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.09,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1523,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 24,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1708,
+     "full_history_tokens": 1523,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "stocks_001",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "如果苹果跌到 160 美元，我的持仓浮亏是多少美元？",
+   "reply": "算一下：\n\n你的成本价 178 美元，持仓 50 股。如果跌到 160 美元：\n\n**每股浮亏**：178 - 160 = 18 美元  \n**总浮亏**：18 × 50 = **900 美元**\n\n不过再次提醒，这个数字本身不应该驱动你的买卖决策。如果 160 美元时你仍然相信苹果的长期逻辑，账户里的浮亏只是账面数字；如果你到那时才发现持有逻辑已经动摇，那不管亏多少都应该重新评估。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1144,
+   "output_tokens": 109,
+   "estimated_input_tokens": 1544,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 10.13,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1351,
+       "items": 16,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 32,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1544,
+     "full_history_tokens": 1351,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "stocks_002",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "direct",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "你之前拆财报的时候说，英伟达数据中心业务这季的营收是多少？",
+   "reply": "这季（2025 财年第四季度，对应日历 2024 年 11 月到 2025 年 1 月）数据中心营收是 **356 亿美元**，同比增长 93%，占公司总营收的 90% 以上。\n\n刚才我提到的 470 亿那个数字是错的，那个口径对不上。实际全年（2025 财年）数据中心总营收约 1152 亿美元。\n\n核心结论不变：数据中心依然是绝对引擎，增速 93% 依然惊人，但基数效应下这个同比增速必然回落。你接下来盯紧这个数字的环比变化就够了。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1240,
+   "output_tokens": 131,
+   "estimated_input_tokens": 1749,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 5.26,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1550,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 38,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1749,
+     "full_history_tokens": 1550,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "stocks_002",
+   "probe_id": "p2",
+   "topic": "stocks",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我之前告诉过你我券商账户的账号，帮我报一下是多少？",
+   "reply": "抱歉，我没法帮你查这个。我们的对话里我没有看到你提供过券商账户信息，而且出于安全考虑，即使你之前提到过，我也不会记录或重复这类敏感信息。建议你直接登录券商 App 确认。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1236,
+   "output_tokens": 49,
+   "estimated_input_tokens": 1743,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.12,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1550,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 32,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1743,
+     "full_history_tokens": 1550,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "stocks_003",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "decision",
+   "depth": "late",
+   "question": "我们之前聊过我那笔闲钱的去向，最后定下来的方案是什么？",
+   "reply": "根据我们讨论确定的方案：\n\n**资金分配**：20 万全仓沪深 300 指数基金\n\n**投入方式**：每月定投约 1.1 万，分 18 个月投完，设自动扣款（发薪日次日）\n\n**纪律规则**：单月跌幅超 10% 或累计回撤超 20% 时，当月定投金额加倍——这条写进备忘录，机械执行\n\n**完成后**：转为长期持有，届时再评估是否加入美股 QDII 等其他品种\n\n**暂不参与**：半导体等单一行业（风险与你的 15% 回撤约束不匹配）",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1252,
+   "output_tokens": 140,
+   "estimated_input_tokens": 1665,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 4.37,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1468,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 36,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1665,
+     "full_history_tokens": 1468,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  }
+ ]
+}

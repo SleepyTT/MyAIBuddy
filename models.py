@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime, timezone
+from typing import Optional
 from sqlalchemy import String, Text, DateTime, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database import Base
@@ -30,6 +31,11 @@ class Chat(Base):
     title: Mapped[str] = mapped_column(String, default="New Chat")
     model: Mapped[str] = mapped_column(String, default="supermind-agent-v1")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    # Phase 1 (sliding window + rolling summary): the rolling summary of history
+    # that has fallen outside the verbatim window, and the position it covers up
+    # to (exclusive) — i.e. summary covers messages [0, summary_through_position).
+    summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    summary_through_position: Mapped[int] = mapped_column(Integer, default=0)
 
     user: Mapped["User"] = relationship("User", back_populates="chats")
     messages: Mapped[list["Message"]] = relationship("Message", back_populates="chat", cascade="all, delete-orphan", order_by="Message.position")

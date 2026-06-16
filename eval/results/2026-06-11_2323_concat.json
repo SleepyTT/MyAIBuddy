@@ -1,0 +1,1204 @@
+{
+ "run_id": "2026-06-11_2323_concat",
+ "timestamp": "2026-06-11T23:23:01",
+ "strategy": "concat",
+ "model": "grok-4-fast",
+ "judge_model": "kimi-k2.5",
+ "summary": {
+  "probes": 15,
+  "needle_probes": 13,
+  "negative_probes": 2,
+  "ctx_hit_rate": 1.0,
+  "ans_hit_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "avg_input_tokens": 1251.6,
+  "avg_estimated_input_tokens": 1729.4,
+  "avg_output_tokens": 114.7,
+  "avg_rounds": 1.0,
+  "avg_latency_s": 2.4,
+  "avg_compression_ratio": 1.0
+ },
+ "dimensions": {
+  "style": {
+   "paraphrase": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "implicit": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "direct": {
+    "probes": 5,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "negative": {
+    "probes": 2,
+    "ctx_hit_rate": null,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "carrier": {
+   "user": {
+    "probes": 10,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "assistant": {
+    "probes": 3,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "depth": {
+   "middle": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "early": {
+    "probes": 6,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "late": {
+    "probes": 3,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "needle_type": {
+   "decision": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "factual": {
+    "probes": 5,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "personal": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "update": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "code_identifier": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "topic": {
+   "ai_trends": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "gardening": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "health": {
+    "probes": 3,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "ml": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "stocks": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  }
+ },
+ "probes": [
+  {
+   "case_id": "ai_trends_001",
+   "probe_id": "p1",
+   "topic": "ai_trends",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "decision",
+   "depth": "middle",
+   "question": "关于 agent 技术选型，我之前最后表的态是什么？",
+   "reply": "你最后的表态是：**不押注重框架**，公司内部统一用**轻量自研的 orchestrator**，直接拼 prompt 调 API，工具接入走 MCP，不引入 LangChain 等重框架。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1197,
+   "output_tokens": 46,
+   "estimated_input_tokens": 1688,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.38,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1500,
+       "items": 16,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 27,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1688,
+     "full_history_tokens": 1500,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "ai_trends_002",
+   "probe_id": "p1",
+   "topic": "ai_trends",
+   "style": "implicit",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "假设训练成本每年翻一倍，按你之前给我的 2025 年中位数推算，2027 年单次训练大概要多少钱？",
+   "reply": "按你说的“每年翻一倍”推算：\n\n- 2025 年中位数：3.5 亿美元  \n- 2026 年：3.5 × 2 = 7 亿美元  \n- 2027 年：7 × 2 = 14 亿美元（约 1.4 亿美元）\n\n所以 2027 年的单次训练中位成本大约在 **14 亿美元** 左右。\n\n注意：这个数字依然只算单次训练的直接算力成本，不含失败实验、团队薪酬、数据等全口径投入。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1137,
+   "output_tokens": 122,
+   "estimated_input_tokens": 1577,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.64,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1359,
+       "items": 16,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 57,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1577,
+     "full_history_tokens": 1359,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "garden_001",
+   "probe_id": "p1",
+   "topic": "gardening",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "personal",
+   "depth": "early",
+   "question": "我想在阳台再添一盆茉莉花，你觉得合适吗？",
+   "reply": "不合适。  \n茉莉是典型的强阳性花卉，需要每天 6 小时以上直射阳光才能开花；你家朝北封闭阳台基本只有散射光，种下去大概率只会徒长、叶色发黄、开花极少甚至不开花。  \n\n如果你真的想试，可以先买一盆小苗放在最亮的窗台观察 1–2 个月，看是否能保持正常生长；若叶片开始泛黄、枝条细长，就要果断放弃或给它补光灯。否则还是把精力放在绿萝或其他耐阴品种上更稳妥。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1153,
+   "output_tokens": 131,
+   "estimated_input_tokens": 1606,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.19,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1411,
+       "items": 16,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 34,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1606,
+     "full_history_tokens": 1411,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "garden_002",
+   "probe_id": "p1",
+   "topic": "gardening",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "我的龟背竹是什么时候买的来着？",
+   "reply": "根据你之前说的，它是 **2024 年 3 月** 买的，算下来现在已经快两年了。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1142,
+   "output_tokens": 26,
+   "estimated_input_tokens": 1599,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.21,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1413,
+       "items": 16,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 25,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1599,
+     "full_history_tokens": 1413,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "health_001",
+   "probe_id": "p1",
+   "topic": "health",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "personal",
+   "depth": "early",
+   "question": "帮我推荐几种适合训练后加餐吃的坚果和能量棒。",
+   "reply": "先把前提说清楚：**你对花生严重过敏**，所以任何含花生的产品都必须避开（包括很多能量棒里用作“植物蛋白”的花生蛋白粉）。以下推荐全部**明确无花生**，你可以直接按品牌和口味买。\n\n1. **坚果类（无花生）**  \n   • 杏仁（原味/干烤无盐）——最常见、蛋白质较高  \n   • 腰果（原味）——口感香软，热量稍高  \n   • 核桃、碧根果（山核桃）——Omega-3 多，但热量也高，建议一次 15-20 g  \n   • 混合坚果（仅含杏仁+核桃+腰果+夏威夷果的版本）——超市里挑“无花生、无交叉污染”字样\n\n2. **能量棒/蛋白棒（明确标示无花生）**  \n   • **Quest Bar**（部分口味如 Chocolate Chip Cookie Dough、Strawberry Cheesecake）——多数无花生，蛋白 20 g+  \n   • **RXBAR**（巧克力海盐、蓝莓、椰子等口味）——仅用枣+坚果+蛋白，注意看配料表  \n   • **Clif Builder’s 蛋白棒**（巧克力薄荷、香草杏仁等）——蛋白 20 g，确认“Peanut Free”批次  \n   • **Think!（ThinkThin）High Protein Bars**（巧克力 fudge、香草等）——20 g 蛋白，无花生版本  \n   • **Pure Protein Bar**（部分口味如 Chocolate Deluxe）——国内部分渠道有售，确认配料  \n   • **MuscleTech Nitro-Tech 蛋白棒** 或 **ON（Optimum Nutrition）Protein Bar** ——部分口味无花生，购买前看标签\n\n购买小贴士：  \n- 永远先看**配料表**第一行和“可能含”警示语；  \n- 能量棒一次 1 根（20-25 g 蛋白）即可，坚果一次 20-30 g（约 150 kcal）；  \n- 训练后 30-60 分钟内吃，搭配 1 杯水或低糖蛋白奶昔效果更好。\n\n如果当地超市或电商平台买不到以上品牌，告诉我具体城市，我可以再给你更针对性的替代。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1318,
+   "output_tokens": 524,
+   "estimated_input_tokens": 1932,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 6.02,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1734,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 37,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1932,
+     "full_history_tokens": 1734,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "health_001",
+   "probe_id": "p2",
+   "topic": "health",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "上次体检后我跟你说过我的血型，是什么来着？",
+   "reply": "我这边没有保存你之前任何体检或血型信息，也没收到过你提到血型的内容。如果你记得血型，方便的话可以再告诉我；如果想查就去查体检报告或去医院重新化验。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1316,
+   "output_tokens": 47,
+   "estimated_input_tokens": 1923,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.48,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1734,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 28,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1923,
+     "full_history_tokens": 1734,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "health_002",
+   "probe_id": "p1",
+   "topic": "health",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "现在我每天的运动安排是什么？",
+   "reply": "你的现阶段运动安排（至少一个月）：\n\n1. 晨间快走  \n   • 每天早上 5 公里快走（配速约 8–9 分/公里，能说话但不能唱歌的强度）。  \n   • 走前做 2–3 分钟动态热身（高抬腿、弓步走、原地小跑）。  \n   • 走后做 8–10 分钟静态拉伸（股四头、腘绳、小腿、髂胫束、臀部各 30–45 秒）。\n\n2. 靠墙静蹲（力量/康复）  \n   • 每天 1–2 次（可与快走前后错开）。  \n   • 4–5 组，每组 30 秒（高位起步），组间休息 60 秒。  \n   • 两周无不适再加深角度或把每组延长到 45–60 秒。  \n   • 膝盖任何疼痛立即停止。\n\n3. 臀中肌激活（每天一起做）  \n   • 蚌式开合或侧卧抬腿：2–3 组，每组 12–15 次/侧。  \n   • 泡沫轴或网球放松大腿外侧 1–2 分钟。\n\n4. 休息/恢复  \n   • 跑步完全停一个月。  \n   • 每天记录膝盖外侧酸痛是否减轻；若无好转或加重，提前复诊。  \n   • 饮食继续：快走前可少量快碳，完走 30 分钟内补蛋白+碳水。\n\n把上面四条固定在早上做完，保持“每天早上 40 分钟”的时间框架，习惯就不会断。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1381,
+   "output_tokens": 376,
+   "estimated_input_tokens": 1970,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 8.27,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1790,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 19,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1970,
+     "full_history_tokens": 1790,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "ml_001",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "code_identifier",
+   "depth": "early",
+   "question": "我之前提到的数据预处理入口函数叫什么名字？",
+   "reply": "build_feature_matrix_v3",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1380,
+   "output_tokens": 5,
+   "estimated_input_tokens": 1753,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.3,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1568,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 24,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1753,
+     "full_history_tokens": 1568,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "ml_001",
+   "probe_id": "p2",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "code_identifier",
+   "depth": "early",
+   "question": "如果我想改特征生成的逻辑，应该从哪个文件的哪个函数入手？",
+   "reply": "直接改 `data_pipeline.py` 里的 `build_feature_matrix_v3` 函数就行。  \n所有特征生成逻辑都在这个函数里集中维护，改完后整个 pipeline 都会走新逻辑。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1382,
+   "output_tokens": 43,
+   "estimated_input_tokens": 1762,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.58,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1568,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 33,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1762,
+     "full_history_tokens": 1568,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "ml_002",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "提醒我一下，我们现在的训练机器是什么配置？",
+   "reply": "目前你们的训练机配置是：**8 张 A100 80GB**。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1338,
+   "output_tokens": 17,
+   "estimated_input_tokens": 1722,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.19,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1533,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 28,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1722,
+     "full_history_tokens": 1533,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "ml_003",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "你之前帮我定的向量维度是多少来着？",
+   "reply": "96 维。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1265,
+   "output_tokens": 4,
+   "estimated_input_tokens": 1708,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.17,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1523,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 24,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1708,
+     "full_history_tokens": 1523,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "stocks_001",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "如果苹果跌到 160 美元，我的持仓浮亏是多少美元？",
+   "reply": "**浮亏计算：**\n\n你 50 股的买入成本 = 178 × 50 = **8,900 美元**\n\n如果跌到 160 美元，市值 = 160 × 50 = **8,000 美元**\n\n浮亏 = 8,900 − 8,000 = **900 美元**\n\n（不含佣金或税费）",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1118,
+   "output_tokens": 78,
+   "estimated_input_tokens": 1544,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.69,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1351,
+       "items": 16,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 32,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1544,
+     "full_history_tokens": 1351,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "stocks_002",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "direct",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "你之前拆财报的时候说，英伟达数据中心业务这季的营收是多少？",
+   "reply": "我之前说的是“数据中心业务营收 470 亿美元”，这是我根据公开报道的概括数字。实际财报披露的精确数字是 **$47.3 亿美元**（注意是 47.3 亿，而不是 470 亿）。如果需要更严谨的引用，我可以再帮你核实一下来源。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1219,
+   "output_tokens": 71,
+   "estimated_input_tokens": 1749,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.54,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1550,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 38,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1749,
+     "full_history_tokens": 1550,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "stocks_002",
+   "probe_id": "p2",
+   "topic": "stocks",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我之前告诉过你我券商账户的账号，帮我报一下是多少？",
+   "reply": "抱歉，我没有保存或访问你任何个人账户信息的权限，也无法查看或回溯你之前提到的券商账号。你的账户数据属于敏感信息，请直接登录你的券商 App 或官网查看。如果需要我继续帮你分析英伟达或其他投资话题，随时说。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1217,
+   "output_tokens": 59,
+   "estimated_input_tokens": 1743,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.52,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1550,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 32,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1743,
+     "full_history_tokens": 1550,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "stocks_003",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "decision",
+   "depth": "late",
+   "question": "我们之前聊过我那笔闲钱的去向，最后定下来的方案是什么？",
+   "reply": "总结一下我们之前的讨论，定下来的方案是：\n\n- **标的**：沪深 300 指数基金（宽基、波动相对可控，符合你 15% 以内回撤的承受力）。  \n- **方式**：按月定投，18 个月投完 20 万（每月约 1.1 万元）。  \n- **执行**：设好自动扣款（发薪日次日），中途不因市场涨跌而主观停扣或加码；仅在单月跌超 10% 或累计回撤超 20% 时，按预设机械规则把当月金额加倍。  \n- **后续**：18 个月投完后转为长期持有，不再追半导体或高估值题材。  \n\n方案已锁死，执行即可。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1211,
+   "output_tokens": 171,
+   "estimated_input_tokens": 1665,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.13,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 1468,
+       "items": 18,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 36,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 1665,
+     "full_history_tokens": 1468,
+     "context_limit": 128000,
+     "candidates": []
+    }
+   ]
+  }
+ ]
+}

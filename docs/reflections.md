@@ -158,3 +158,34 @@ while (true) {
 
 ### `for...else` is the cleanest Python pattern for MAX_TURNS exhaustion
 **Learning:** Using `for turn in range(MAX_TURNS): ... else: <exhausted>` (where `else` runs only if the loop wasn't `break`ed) is the most readable way to distinguish "loop ended naturally" from "loop exited early with a reply." Avoids a separate boolean flag.
+
+---
+
+## Context Management & Eval (Phase 1)
+
+### Exact substring match is the wrong way to check a fact against a summary
+**What happened:** The needle-eval `ctx_hit` judged whether a summary-absorbed needle survived by checking if the needle's content string was a literal substring of the summary text. The rolling summary *reformats* facts — `HybridRetrieverV2（retrieval/service.py）` became `` `HybridRetrieverV2`，位于 `retrieval/service.py` `` (backticks, "位于", comma). The substring failed even though the fact was fully preserved and the model answered correctly. ctx-hit collapsed to 9% — a pure measurement artifact.
+
+**Fix:** `ctx_hit` became async. Substring is now only a *positive fast-path* (a literal match is definitely present, no LLM needed — and concat, being all-verbatim, never leaves this path). On substring failure, an LLM judge decides whether the fact is retained regardless of wording/format.
+
+**Rule:** For any system that paraphrases/reformats (summaries, RAG, rewriting), "is this fact present?" is a semantic question — judge it with an LLM, not `str in str`. Keep substring as a cheap positive shortcut only.
+
+### A correct answer is never a hallucination
+**What happened:** The hallucination metric ran the fabrication judge on any context-miss regardless of answer correctness. Combined with the substring false-negatives above, 14 of 22 needle probes were "answered correctly but flagged as hallucination." The fabrication judge only sees question+reply (not ground truth), so it labels any confident specific answer as fabrication.
+
+**Fix:** Guard the needle branch with `and not hit_ans` — hallucination is only counted on a *wrong* answer (or a negative-probe fabrication). The true hallucination rate (from the 2 negative probes) was 0%, not 71%.
+
+**Rule:** Hallucination must be predicated on the answer being wrong. Never run a fabrication check on a probe the model got right.
+
+### Don't hand-edit result files to "fix" wrong numbers — fix the harness and re-run
+**What happened:** When the metrics were found to be artifacts, the temptation was to just caveat them in prose. But the result JSON *is* the report. Hand-editing the numbers would falsify the experimental record.
+
+**Rule:** A result file is a faithful record of what a given code version produced. Correct wrong metrics by fixing the measurement code and re-running, so the corrected numbers are real measured data. Delete the superseded buggy result; record the correction in the docs.
+
+### Integration testing catches what compile + static review cannot — and cold subagents miss documented pitfalls
+**What happened:** `models.py` used `str | None`, which crashes on this project's Python 3.9 at class-definition time. `py_compile` doesn't catch it (annotations evaluate at runtime), and the code-reviewer subagent had no Bash so couldn't run anything. It only surfaced when the server was actually started. Worse: the `X | None` pitfall was *already documented in this very file*, but the cold dev subagent didn't read reflections and reintroduced it.
+
+**Rule:** "Actually run it" is a non-skippable verification step — compile + static review are not substitutes for starting the app. When dispatching cold subagents, either point them at `reflections.md` or expect known pitfalls to recur; always integration-test their output yourself.
+
+### Diagnose from the contradiction
+**Learning:** The thread that unravelled the whole artifact was a single inconsistency: ctx-hit 9% but ans-hit 77% — if the context truly retained nothing, how did the model answer most questions? When metrics don't agree with each other, suspect the measurement before the system under test.
