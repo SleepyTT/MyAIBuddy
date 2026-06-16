@@ -240,7 +240,7 @@ Supports all AI Builder Space models:
 
 ## Context Management Evaluation (implemented 2026-06-11; replay deferred)
 
-Before upgrading context window management (sliding window + rolling summary → pgvector RAG → cross-session memory), a measurement system was built first. Full design, implementation status, and the recorded concat baseline (ctx 100% / ans 100% / halluc 0%): **`eval_plan.md`**. Key decisions:
+Before upgrading context window management (sliding window + rolling summary → pgvector RAG → cross-session memory), a measurement system was built first. Full design, implementation status, and the recorded concat baseline (ctx 100% / ans 100% / halluc 0%): **`eval_plan.md`**. Narrative retrospective (design→implementation, metrics, dataset, viz, learnings): report [中文](reports/measurement_system.html) / [EN](reports/measurement_system_en.html). Key decisions:
 
 - **`context_report`** — a structured per-LLM-call report (layer-by-layer token breakdown, retrieval candidates incl. rejected ones) emitted as a new SSE event in `/debug/run`. Works on the brute-force concat baseline today, so before/after comparisons are possible.
 - **Token counting** — dual-track: local tiktoken (cl100k_base) estimate for the per-layer breakdown, upstream `usage` as the ground-truth total, with deviation displayed.

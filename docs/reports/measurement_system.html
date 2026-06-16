@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>评测体系技术总结 — 给上下文管理造一把尺子</title>
+<style>
+  :root {
+    --bg:#0d1117; --card:#161b22; --border:#21262d; --text:#c9d1d9; --muted:#8b949e;
+    --blue:#58a6ff; --green:#3fb950; --red:#f85149; --amber:#d29922; --purple:#bc8cff;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:820px; margin:0 auto; padding:48px 24px 80px; }
+  header { border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:36px; }
+  h1 { font-size:30px; line-height:1.3; margin:0 0 12px; color:#f0f6fc; }
+  h2 { font-size:22px; margin:44px 0 14px; color:#f0f6fc; padding-top:10px; border-top:1px solid var(--border); }
+  h3 { font-size:17px; margin:28px 0 8px; color:var(--blue); }
+  .meta { color:var(--muted); font-size:14px; }
+  .meta span { margin-right:16px; }
+  .langswitch { float:right; font-size:13px; color:var(--muted); }
+  .langswitch a { color:var(--blue); text-decoration:none; }
+  p { margin:14px 0; }
+  code { background:#1f2530; padding:2px 6px; border-radius:4px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13.5px; color:#e6edf3; }
+  pre { background:#010409; border:1px solid var(--border); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.55; }
+  pre code { background:none; padding:0; }
+  .lead { font-size:18px; color:var(--text); }
+  blockquote { margin:18px 0; padding:12px 18px; border-left:3px solid var(--blue); background:rgba(88,166,255,.06); border-radius:0 6px 6px 0; }
+  blockquote.warn { border-left-color:var(--amber); background:rgba(210,153,34,.07); }
+  blockquote.win { border-left-color:var(--green); background:rgba(63,185,80,.07); }
+  table { border-collapse:collapse; width:100%; margin:18px 0; font-size:14px; }
+  th,td { border:1px solid var(--border); padding:8px 12px; text-align:left; vertical-align:top; }
+  thead th { background:var(--card); color:var(--muted); font-weight:600; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .bar { display:flex; height:22px; border-radius:5px; overflow:hidden; margin:6px 0 2px; font-size:11px; }
+  .bar div { display:flex; align-items:center; justify-content:center; color:#0d1117; font-weight:700; }
+  ul { padding-left:22px; } li { margin:6px 0; }
+  .footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--border); color:var(--muted); font-size:13px; }
+  .kicker { color:var(--blue); font-size:13px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="langswitch">中文 · <a href="measurement_system_en.html">English</a></div>
+  <div class="kicker">My AI Buddy · 上下文管理 · 地基总结</div>
+  <h1>给上下文管理造一把尺子:评测体系从设计到落地的迭代</h1>
+  <div class="meta">
+    <span>📅 2026-06-11 ~ 06-15</span>
+    <span>🏷 needle-in-conversation eval</span>
+    <span>📊 2 档数据集 · 双轴指标 · debugger 可视化</span>
+  </div>
+</header>
+
+<p class="lead">在动手改上下文管理之前,我们先花了几天造一把尺子。这篇讲的不是某个策略,而是<b>怎么量</b>:两条评测轴怎么定、token 和准确度的指标怎么设计、needle 数据集怎么构造、怎么可视化,以及落地时踩的坑。一句话动机——<b>你没法改进一个你量不了的东西</b>。</p>
+
+<h2>1. 为什么先造尺子</h2>
+<p>原本的上下文管理是"把整个 session 历史暴力拼接发给 LLM"。我们想升级成分层管理(滑动窗口+摘要 → RAG → 跨 session)。但只要一问"新策略到底省了多少 token、答案有没有变差",就会发现没有任何客观依据——全靠感觉。于是定下原则:<b>测量体系先于任何策略改动上线</b>,先把暴力拼接(<code>concat</code>)这个基线量化清楚,之后所有策略和它对比。concat 永远是满分上限(它带了全部上下文),也是永远可用的回退。</p>
+
+<h2>2. 两条轴,必须一起读</h2>
+<p>评测沿两条轴:<b>效率</b>(token 成本)和<b>准确度</b>(信息找回能力 / 幻觉程度)。关键认知是这两条<b>必须一起报告</b>:</p>
+<ul>
+  <li>单看效率没有意义——把 context 全删光效率最高;</li>
+  <li>单看准确度也没有意义——全量 concat 准确度上限最高。</li>
+</ul>
+<p>每个策略是这个二维平面上的一个点,好策略 = <b>准确度不降的前提下省 token</b>。还有一条纪律:效率数字只在<b>固定数据集</b>上可比(不同问题天然体积不同),所以所有策略跑同一套脚本,同一次运行同时产出效率和准确度两类指标。</p>
+
+<h2>3. 效率指标:按"一次提问的完整生命周期"算</h2>
+<p>一个容易漏的点:agentic loop <b>每一轮都重发整个 context</b>。一个问题触发 3 轮工具调用,同样的历史就被计费 3 次。所以效率必须按生命周期累计,而不是只看一次调用。</p>
+<table>
+<thead><tr><th>指标</th><th>定义 / 回答什么</th></tr></thead>
+<tbody>
+<tr><td><code>input_tokens</code></td><td>Σ 各轮 prompt_tokens —— 大头,管理直接优化的对象</td></tr>
+<tr><td><code>output_tokens</code></td><td>Σ 各轮 completion_tokens —— 策略基本不影响它,单独计以免污染对比</td></tr>
+<tr><td>rounds</td><td>工具轮数 —— context 质量差会让模型多搜几轮,间接膨胀 input</td></tr>
+<tr><td>latency / 管理开销</td><td>检索、摘要本身的速度与 token 成本(别让省下的被管理调用吃回去)</td></tr>
+<tr><td>压缩比</td><td>实际发送 / 全量历史 —— 管理省了多少(concat=1.0)</td></tr>
+</tbody>
+</table>
+<p>input 和 output <b>分开报告</b>:context 策略几乎只影响 input,且两者单价不同,混在一起会失真。</p>
+<blockquote><b>token 双轨制(关键设计)。</b>上游 API 的 <code>usage</code> 只给一个总量真值,无法分层。要看"哪一层占了多少 token",必须本地用 <b>tiktoken(cl100k_base)</b> 估算。两个数都展示并显示偏差。这个双轨后来立了大功:一次跑批里上游对一个 2.5k 的 context 报出了 132k 的计费,本地估算稳在正常区间——双轨第一天就抓出了上游的计费异常。</blockquote>
+
+<h2>4. 准确度指标:两级判定 + 负向探针测幻觉</h2>
+<p>每个 needle"找到没找到"测<b>两层</b>,因为失败原因完全不同:</p>
+<ul>
+  <li><b>Context 命中(retrieval-level)</b>:needle 所在消息/片段有没有进入最终组装的 context?从结构化报告里按<b>稳定消息 ID 确定性判断</b>,零成本、不需要 LLM。</li>
+  <li><b>答案命中(answer-level)</b>:模型最终回答里有没有正确事实?事实型针用正则/子串,软性针(决定、偏好类)用 LLM 判分。</li>
+</ul>
+<p>两层分开诊断价值极大:<b>context 命中但答案错</b> → 生成问题(context 太乱、模型被干扰);<b>context 没命中</b> → 检索/摘要问题。修法完全不同。</p>
+<p><b>幻觉</b>从两个来源计数:① 负向探针——问一个对话里从没出现过的事实("我之前给你的 API key 是多少?"——从没给过),编造即计一次;② context 没命中却给出了具体答案——本该说"不记得"却答了。</p>
+<blockquote class="warn">这套判定本身后来也被证明有坑:对会改写内容的摘要策略,"context 命中"用精确子串匹配会大量假阴性。这个故事在 <a href="phase1_window_summary.html">Phase 1 报告</a>里——评测体系把自己的盲点也量了出来,正是建尺子的价值。</blockquote>
+
+<h2>5. 数据集设计:needle-in-conversation</h2>
+<p>数据集是把已知事实"针"埋进脚本化的长对话,然后在结尾提问、看系统能不能找回。设计沿几个会导致策略差异的维度铺开,而不是随机埋针:</p>
+<table>
+<thead><tr><th>维度</th><th>取值</th><th>测什么</th></tr></thead>
+<tbody>
+<tr><td>针的类型</td><td>事实原子 / 决定偏好 / 代码标识符 / 更新型 / 个人事实</td><td>更新型(先 A 后改 B)测能不能取最新值;代码标识符测纯向量检索弱点</td></tr>
+<tr><td>针的位置</td><td>深度 早/中/晚;载体 user / assistant 长回复中段 / tool</td><td>lost-in-the-middle;assistant 中段针测 chunking</td></tr>
+<tr><td>问法</td><td>直接回忆 / 改写问法 / 隐式依赖 / 负向</td><td>改写(零词面重叠)专测语义检索;隐式最接近真实使用</td></tr>
+<tr><td>干扰项</td><td>同题材填充 / 近似干扰针 / 负向探针</td><td>近似干扰("端口 5433"旁放"5432")测精度而非只测召回</td></tr>
+</tbody>
+</table>
+<p>题材五个:ML 技术问答、股票/投资、AI 趋势、养花、健康生活,且<b>每个用例单一题材</b>——针和填充同题材才构成真干扰(股票针埋在养花对话里,检索随便就中,分数虚高)。</p>
+<blockquote><b>构造纪律:确定性、可冻结。</b>填充对话用 LLM 生成一次后<b>冻结存文件,永不重新生成</b>;脚本里 assistant 消息<b>写死</b>(不真调 LLM 生成历史),只有最后的 probe 真实跑完整 pipeline。否则两次运行的分数不可比。</blockquote>
+
+<h2>6. 两档数据集:smoke 与 long</h2>
+<p>最初做了 12 个短用例,但很快意识到一个问题——它们的历史只有 ~1.5k token,任何合理窗口都装得下,<b>测不出压缩策略的区分度</b>。这不是用着用着才发现,而是能预判:Phase 1 一上线它就失效。于是分两档:</p>
+<table>
+<thead><tr><th>档位</th><th>规模</th><th>职责</th></tr></thead>
+<tbody>
+<tr><td><b>smoke</b></td><td>12 用例,历史 ~1.5k tok</td><td>快、便宜,管道/模型/裁判的快速回归自检</td></tr>
+<tr><td><b>long</b></td><td>6 用例,历史 ~8.7k tok,assistant 针回复 800+ 字、针埋中段</td><td>真正压测压缩/chunking 的尺子</td></tr>
+</tbody>
+</table>
+<p>采用 <b>augment 而非 replace</b>:加新档不动旧档,保持纵向可比;结果文件带 <code>dataset_version</code> 字段,换 set 必须 bump,不同版本分数不可直接比。long tier 还经过独立 reviewer 审计——它抓出一个真实的尾部泄漏(某个针的旧值在对话尾部被复述,会让 recency 策略"作弊"通过),据此把那个探针换了个不泄漏的针;还让裸数字正则加了数字边界。<b>数据集也要被 review,不是写完就完。</b></p>
+
+<h2>7. 落地时的 learning</h2>
+<ul>
+  <li><b>被测模型不能用 agent 封装。</b>最初用应用默认的 <code>supermind-agent-v1</code>,它在上游自跑 agentic loop——我们发 2.5k context,它计费报 100k+,还偶发返回空 content,两者都污染指标。eval 默认换成普通 chat 模型(deepseek-v4-pro / grok-4-fast)。</li>
+  <li><b>裁判模型会误判,要验。</b><code>deepseek-v4-flash</code> 当裁判会把明显符合 rubric 的回答判 NO(实测假阴性);换成 <code>kimi-k2.5</code> 可靠。裁判的原始输出存进结果 JSON 的 <code>judge_raw</code> 字段,可审计。</li>
+  <li><b>双轨 token 抓异常。</b>见 §3,API 计费偶发暴涨,本地估算更稳健,两者并列才看得出问题。</li>
+  <li><b>tool result 是 context 污染的大头。</b><code>read_page</code> 一次能塞进几千 token,每条 tool result 单独记 token、在可视化里打 <code>+N tok</code> 徽章,一眼看出谁在撑爆下一轮。</li>
+</ul>
+
+<h2>8. 可视化:让 context 看得见</h2>
+<p>测量不是日志,而是<b>一等公民的结构化数据</b>。后端每次组装 messages 调 LLM 时,同步生成一份 <code>context_report</code>,作为 SSE 事件推送。它驱动两个视图:</p>
+<h3>Single Run —— 这次请求的 context 长什么样</h3>
+<p>每轮卡片顶部一个 CONTEXT 区块:各层占比的堆叠条、双轨 token(本地估算 vs API 真值及偏差)、可展开的分层明细、tool result 上的 <code>+N tok</code> 徽章、done 后整次生命周期的 input/output 累计。一眼看清"发上去的到底是什么、每层多少 token"。</p>
+<div class="bar">
+  <div style="flex:6800;background:#58a6ff">history 6.8k</div>
+  <div style="flex:1240;background:#bc8cff">retrieved 1.2k</div>
+  <div style="flex:350;background:#8b949e">tools</div>
+  <div style="flex:85;background:#3fb950">cur</div>
+</div>
+<p style="color:var(--muted);font-size:13px;margin-top:0">▲ CONTEXT 堆叠条示意:各层按 token 占比,颜色固定;检索层 Phase 2 后会展开候选明细(含落选项及落选原因)。</p>
+<h3>Eval tab —— 策略 A 和 B 谁好</h3>
+<p>读 CLI 跑批产出的自包含结果 JSON,渲染三块:① <b>策略对比表</b>(每策略一行:ctx 命中、ans 命中、幻觉、input/output tok、轮数、延迟);② <b>维度下钻</b>(按深度/载体/问法分桶的命中率,低于阈值标红——告诉你"为什么"输);③ <b>probe 列表</b>(逐探针的 ctx/ans/幻觉徽章)。列头按 <code>run_id + strategy·model·dataset</code> 区分,同策略不同模型也分得清。</p>
+<blockquote><b>架构:CLI 跑批 + debugger 看结果。</b>跑批是长任务、十几次 LLM 调用,不适合浏览器里等,放 CLI(可进 CI);结果文件自包含所有 context_report,debugger 读文件即可渲染,无需重跑。后端只加两个只读端点(列文件、读文件)。</blockquote>
+
+<h2>9. 这把尺子带来了什么</h2>
+<p>有了它,Phase 1 才有了客观结论:window_summary 用 ~57% 的 token 节省换约 9 个百分点准确度、幻觉零增长(详见 <a href="phase1_window_summary.html">Phase 1 报告</a>)。更意外的是,这套体系在第一次量真实摘要时,把自己 <code>ctx_hit</code> 判定的盲点也照了出来,逼着我们把"精确子串"升级成"LLM 判存在"。<b>一把好尺子不只量被测对象,也会量出自己的刻度问题。</b></p>
+
+<h2>10. 收获清单</h2>
+<ul>
+  <li>效率和准确度<b>必须一起读</b>——单看任何一条都能被极端策略骗过。</li>
+  <li>效率按<b>提问生命周期</b>累计,input/output 分开;token 走<b>双轨</b>(本地估算分层 + API 真值),双轨能抓上游异常。</li>
+  <li>准确度<b>两级判定</b>(context 命中确定性 + 答案命中);幻觉靠<b>负向探针</b>,不靠感觉。</li>
+  <li>数据集要<b>确定性冻结</b>、<b>单题材</b>、<b>按维度铺开</b>、<b>分档</b>(smoke 快测 / long 压测),而且<b>要被 review</b>。</li>
+  <li>评测的两个外部变量——<b>被测模型和裁判模型</b>——都要验,别用 agent 封装、别信没验过的裁判。</li>
+  <li>把测量做成<b>结构化数据 + 可视化</b>,而不是日志,排查"模型为什么不知道 X"才有抓手。</li>
+</ul>
+
+<div class="footer">
+  归档于 <code>docs/reports/</code> · 关联:<code>docs/eval_plan.md</code>(评测体系完整设计)、<a href="phase1_window_summary.html">Phase 1 报告</a>、<code>docs/design.md</code>(路线总览) · 实现:<code>context_report.py</code>、<code>eval/run.py</code>、<code>eval/cases/{smoke,long}/</code>、<code>static/debugger.html</code>
+</div>
+</div>
+</body>
+</html>
