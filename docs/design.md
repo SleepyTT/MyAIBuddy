@@ -251,15 +251,17 @@ Before upgrading context window management (sliding window + rolling summary →
 
 ### Context-management roadmap (the strategies the eval harness will grade)
 
-The measurement system above exists to grade the strategies below. Each strategy plugs into the `strategy` parameter accepted by `/chat` and `/debug/run` (today only `"concat"` — the brute-force full-history baseline — is implemented). Every phase ships behind a new `strategy` value, leaving `concat` intact as the always-available ceiling to compare against, and is regressed with the needle eval set before being considered done.
+The measurement system above exists to grade the strategies below. Each strategy plugs into the `strategy` parameter accepted by `/chat` and `/debug/run`. `concat` (brute-force full-history baseline) and `window_summary` (Phase 1) are implemented; `rag` / `rag_xsession` are planned. Every phase ships behind a new `strategy` value, leaving `concat` intact as the always-available ceiling to compare against, and is regressed with the needle eval set before being considered done.
 
-A structural prerequisite shared by all three phases: **context assembly must move from the frontend to the backend.** Today the browser sends the entire `history` array and the backend concatenates it verbatim. From Phase 1 on, the frontend sends only `chat_id` + the new message and the backend assembles context per the selected strategy. This changes the `/chat` request contract and is detailed in the Phase 1 doc.
+A structural prerequisite shared by all three phases — **context assembly moved from the frontend to the backend** — was completed in Phase 1. The browser used to send the entire `history` array for the backend to concatenate verbatim; now the frontend sends only `chat_id` + the new message and the backend assembles context per the selected strategy (`/chat` and `/debug/run` share one `assemble_context`). Guest mode (no DB) stays concat-only.
 
-| Phase | Strategy value | One-line idea | Detailed plan |
-|---|---|---|---|
-| **Phase 1** | `window_summary` | Keep the last N turns verbatim; compress older turns into a rolling LLM summary kept near the system prompt. Cheap, immediately caps token growth, and forces the frontend→backend assembly move. | [`phase1_sliding_window_summary.md`](phase1_sliding_window_summary.md) |
-| **Phase 2** | `rag` | Embed every message into pgvector; for each new question retrieve the top-k relevant past messages/chunks (hybrid vector + keyword, recency-decayed) and inject only those. Adds a `retrieved` layer to `context_report`. | [`phase2_pgvector_rag.md`](phase2_pgvector_rag.md) |
-| **Phase 3** | `rag_xsession` | Widen retrieval from one chat to all of a user's chats; add async extraction of durable facts into memory entries injected every turn. Tests cross-session recall and multi-topic interference. | [`phase3_cross_session_memory.md`](phase3_cross_session_memory.md) |
+| Phase | Strategy value | Status | One-line idea | Detailed plan |
+|---|---|---|---|---|
+| **Phase 1** | `window_summary` | ✅ implemented (2026-06-15) | Keep the last N turns verbatim; compress older turns into a rolling LLM summary kept near the system prompt. Cheap, immediately caps token growth, forced the frontend→backend assembly move. | [`phase1_sliding_window_summary.md`](phase1_sliding_window_summary.md) · [report](reports/phase1_window_summary.html) |
+| **Phase 2** | `rag` | planned | Embed every message into pgvector; for each new question retrieve the top-k relevant past messages/chunks (hybrid vector + keyword, recency-decayed) and inject only those. Adds a `retrieved` layer to `context_report`. | [`phase2_pgvector_rag.md`](phase2_pgvector_rag.md) |
+| **Phase 3** | `rag_xsession` | planned | Widen retrieval from one chat to all of a user's chats; add async extraction of durable facts into memory entries injected every turn. Tests cross-session recall and multi-topic interference. | [`phase3_cross_session_memory.md`](phase3_cross_session_memory.md) |
+
+**Phase 1 result (corrected baseline):** window_summary on the long tier scored ctx-hit 91% / ans-hit 91% / hallucination 0% at ~57% fewer input tokens than concat (full write-up incl. an eval-harness measurement bug it surfaced: [reports/phase1_window_summary.html](reports/phase1_window_summary.html)).
 
 The end-state context window is layered, not a single strategy: system prompt → cross-session memory (P3) → current-session rolling summary (P1) → retrieved relevant fragments (P2/P3) → last N verbatim turns (P1) → current message. Recency keeps coreference working, the summary holds the session arc, retrieval handles precise old-detail recall, and memory carries stable cross-session facts.
 

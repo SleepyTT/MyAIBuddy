@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 1 技术总结 — 滑动窗口 + 滚动摘要</title>
+<style>
+  :root {
+    --bg:#0d1117; --card:#161b22; --border:#21262d; --text:#c9d1d9; --muted:#8b949e;
+    --blue:#58a6ff; --green:#3fb950; --red:#f85149; --amber:#d29922; --purple:#bc8cff;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:820px; margin:0 auto; padding:48px 24px 80px; }
+  header { border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:36px; }
+  h1 { font-size:30px; line-height:1.3; margin:0 0 12px; color:#f0f6fc; }
+  h2 { font-size:22px; margin:44px 0 14px; color:#f0f6fc; padding-top:10px; border-top:1px solid var(--border); }
+  h3 { font-size:17px; margin:28px 0 8px; color:var(--blue); }
+  .meta { color:var(--muted); font-size:14px; }
+  .meta span { margin-right:16px; }
+  p { margin:14px 0; }
+  code { background:#1f2530; padding:2px 6px; border-radius:4px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13.5px; color:#e6edf3; }
+  pre { background:#010409; border:1px solid var(--border); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.55; }
+  pre code { background:none; padding:0; }
+  .lead { font-size:18px; color:var(--text); }
+  blockquote { margin:18px 0; padding:12px 18px; border-left:3px solid var(--blue); background:rgba(88,166,255,.06); border-radius:0 6px 6px 0; }
+  blockquote.warn { border-left-color:var(--amber); background:rgba(210,153,34,.07); }
+  blockquote.win { border-left-color:var(--green); background:rgba(63,185,80,.07); }
+  table { border-collapse:collapse; width:100%; margin:18px 0; font-size:14px; }
+  th,td { border:1px solid var(--border); padding:8px 12px; text-align:right; font-variant-numeric:tabular-nums; }
+  th:first-child,td:first-child { text-align:left; }
+  thead th { background:var(--card); color:var(--muted); font-weight:600; }
+  td.good { color:var(--green); font-weight:600; }
+  td.bad { color:var(--red); font-weight:600; }
+  td.strike { color:var(--muted); text-decoration:line-through; }
+  .tag { display:inline-block; font-size:12px; padding:2px 9px; border-radius:20px; font-weight:600; }
+  .tag.dev { background:rgba(88,166,255,.15); color:var(--blue); }
+  .tag.sci { background:rgba(188,140,255,.15); color:var(--purple); }
+  .tag.rev { background:rgba(210,153,34,.15); color:var(--amber); }
+  ul { padding-left:22px; } li { margin:6px 0; }
+  .footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--border); color:var(--muted); font-size:13px; }
+  .kicker { color:var(--blue); font-size:13px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="kicker">My AI Buddy · 上下文管理 · 阶段总结</div>
+  <h1>Phase 1：滑动窗口 + 滚动摘要,以及一次评测体系给自己挑出的 bug</h1>
+  <div class="meta">
+    <span>📅 2026-06-15</span>
+    <span>🏷 strategy=<code>window_summary</code></span>
+    <span>📊 long tier · 24 探针</span>
+  </div>
+</header>
+
+<p class="lead">这是 context window 管理三阶段路线里第一阶段的技术总结。核心结论一句话:滚动摘要用 <b>57% 的 token 节省</b> 换来约 <b>9 个百分点</b> 的准确度下降、<b>零</b> 幻觉增长——但更值得写下来的,是评测体系在第一次跑真实摘要时,把<b>自己测量逻辑里的盲点</b>照了出来。</p>
+
+<h2>1. 背景:为什么先建尺子,再造东西</h2>
+<p>应用原本把一个 session 里的全部对话历史暴力拼接发给 LLM,有两个痛点:大量无关 context 费 token;长回答迅速撑满 context window 导致幻觉。计划用分层 context 管理来解决——Phase 1 滑动窗口+滚动摘要,Phase 2 pgvector RAG 检索,Phase 3 跨 session 检索+记忆。</p>
+<p>但在动手之前,我们先建了一套<b>评测体系</b>:一个 needle-in-conversation 数据集(把已知事实"针"埋进脚本化长对话)、一个两级判定的跑批器(context 命中 / 答案命中,外加负向探针测幻觉)、以及 debugger 里的可视化。没有这把尺子,"新策略到底省了多少 token、答案有没有变差"就只能靠感觉。<code>concat</code>(全量拼接)作为永远满分的天花板基线保留,所有新策略和它对比。</p>
+
+<h2>2. 策略:窗口保近、摘要保远</h2>
+<p>每次请求组装的 context 分三段:</p>
+<pre><code>[system prompt]
+[滚动摘要]        ← 把"窗口之外"的旧历史压缩成一段(≤400 token)
+[最近 N 轮原文]    ← N=6,保证指代("它"、"刚才那个")和近期连贯
+[当前用户消息]</code></pre>
+<p>关键设计:<b>窗口必须是原文</b>(指代消解只能靠原文);<b>摘要增量更新</b>(旧摘要 + 新滑出的几轮 → 新摘要,一次便宜 LLM 调用,而非每次从全量重算);摘要持久化在 <code>Chat.summary</code>。短对话(≤N 轮)摘要为空,自动退化成 concat,不付任何摘要成本。</p>
+<p>一个所有阶段共享的架构前提也在这一步完成了:<b>context 组装从前端搬到后端</b>。原来前端发全量 history,现在前端只发 <code>chat_id</code>,后端按 <code>strategy</code> 组装。<code>/chat</code>(线上,读 DB)和 <code>/debug/run</code>(评测,无状态收 history)共用同一个 <code>assemble_context</code>——否则评测量的和线上跑的不是同一个东西,评测就失去意义。</p>
+
+<h2>3. 怎么造的:多 agent 协作</h2>
+<p>这一阶段用了四个子 agent 并行+评审的方式推进:</p>
+<ul>
+  <li><span class="tag dev">dev</span> 按 Phase 1 计划实现 <code>window_summary</code>(策略、后端组装、模型摘要列、context_report 摘要层)。</li>
+  <li><span class="tag sci">scientist</span> 按各阶段评测计划扩充 long tier 数据集(探针 15→24:早期精确值针测摘要保真、低词面重叠 paraphrase 针测语义检索)。</li>
+  <li><span class="tag rev">code-reviewer</span> 审 dev 的代码 diff,<span class="tag rev">dsreviewer</span> 审 scientist 的数据集 diff。</li>
+</ul>
+<p>dev 和 scientist 改的文件完全不相交(代码 vs JSON),所以可以共享工作树并行。两个 reviewer 都给了 PASS-WITH-FIXES,各自迭代到清干净才进入评测。code-reviewer 抓到两个会扭曲对比的 BLOCKING(压缩比漏算摘要 token、ctx_hit 短数字针易误命中),dev 修复;dsreviewer 让数据集的 bare 数字正则加了数字边界。</p>
+<blockquote class="warn"><b>编排途中抓到的集成 bug:</b><code>models.py</code> 用了 <code>str | None</code>(Python 3.10+ 语法),而本环境是 3.9,服务器直接起不来。这个 <code>py_compile</code> 不报(注解是运行时才求值)、无 Bash 的 reviewer 也跑不出来——<b>只有真正启动服务器才暴露</b>。讽刺的是这个坑早就记在 reflections 里,但冷启动的子 agent 没读到。</blockquote>
+
+<h2>4. 第一次跑分:数字在撒谎</h2>
+<p>评测跑完,window_summary 的结果乍看是灾难:</p>
+<table>
+<thead><tr><th>指标</th><th>concat</th><th>window_summary(首跑)</th></tr></thead>
+<tbody>
+<tr><td>ctx 命中</td><td>100%</td><td class="bad">9%</td></tr>
+<tr><td>ans 命中</td><td>100%</td><td>77%</td></tr>
+<tr><td>幻觉率</td><td>0%</td><td class="bad">71%</td></tr>
+<tr><td>input/题</td><td>5539</td><td>2672</td></tr>
+</tbody>
+</table>
+<p>ctx 命中 9%、幻觉 71%——如果照单全收,结论会是"摘要把上下文丢光了,而且疯狂编造"。但有个地方对不上:<b>ans 命中却有 77%</b>。如果 context 真的什么都没保住,模型怎么答对了四分之三?这个矛盾是揭穿伪影的线索。</p>
+
+<h2>5. 根因:两个测量 bug</h2>
+
+<h3>Bug ①:精确子串匹配,在会改写的摘要面前必然假阴性</h3>
+<p><code>ctx_hit</code> 对"被摘要吸收的针"的判定方式是:针的内容字符串是否<b>精确子串出现</b>在摘要文本里。但滚动摘要是会<b>改写</b>事实的。实锤一例:</p>
+<pre><code>针内容:  HybridRetrieverV2（retrieval/service.py）     ← 全角括号
+摘要文本:  …检索代码入口类为 `HybridRetrieverV2`,位于 `retrieval/service.py`。
+模型回答:  新加一路召回的注册点是 `HybridRetrieverV2`(文件 retrieval/service.py)✓ 答对</code></pre>
+<p>信息<b>完整保留了</b>,模型也<b>答对了</b>,但摘要加了反引号、用"位于"和逗号代替括号——精确子串 <code>HybridRetrieverV2（retrieval/service.py）</code> 在摘要里<b>找不到</b>,于是判 miss。摘要天然会换措辞、换标点、换格式,所以这种判定对保留下来的事实<b>大面积假阴性</b>,ctx 命中被压到 9%。</p>
+<blockquote>code-reviewer 当时其实盯了 <code>ctx_hit</code>,但盯的是<b>反方向</b>——短数字针(如 <code>242</code>)子串匹配太松会假阳性(命中 <code>2425</code> 里的 242),我们加了数字边界修掉了。真正的杀手是<b>假阴性</b>方向,它只有在跑一次真实摘要时才暴露。</blockquote>
+
+<h3>Bug ②:答对的回答被记成幻觉</h3>
+<p>幻觉判定的逻辑是:负向探针编造 → 幻觉;或者"ctx-miss 且模型给了自信的具体回答"→ 调编造裁判。问题在于它<b>不看回答对错</b>就在 ctx-miss 时触发裁判,而编造裁判只看问答、不知道真值,把"从摘要里正确回忆出来的答案"也判成了"编造"。叠加 Bug ① 的假 ctx-miss,22 个 needle 探针里 <b>14 个是"答对却被记为幻觉"的纯假阳性</b>。真正的幻觉测试是 2 个负向探针——两个 window_summary 都正确拒答了。</p>
+<blockquote class="warn"><b>更根本的认知:一个正确的回答永远不可能是幻觉。</b>原逻辑缺了这条守卫。</blockquote>
+
+<h2>6. 修复</h2>
+<p>不手改结果 JSON(那等于篡改实验记录),而是修测量代码、重跑,让正确数字成为真测出来的数据。</p>
+<pre><code># Bug ②:答对不算幻觉 —— 一行守卫
+- elif hit_ctx is False:
++ elif hit_ctx is False and not hit_ans:
+
+# Bug ①:ctx_hit 改为 子串快速路径 + LLM 回退
+#  · verbatim 针仍按 position 判定(concat 全走这条,零 LLM 开销、结果不变)
+#  · 被摘要吸收的针:子串/数字边界命中即确定(快速路径,无 LLM)
+#  · 子串失败时回退 LLM:"这条事实在摘要里是否保留(措辞格式不同也算)?"</code></pre>
+<p>LLM 判定只在子串失败时触发,开销可控;concat 因为针全是 verbatim,根本走不到摘要分支,既不受影响也不加任何 LLM 调用。</p>
+
+<h2>7. 修正后的结果</h2>
+<table>
+<thead><tr><th>指标</th><th>concat</th><th class="strike">ws(错)</th><th>ws(修正)</th></tr></thead>
+<tbody>
+<tr><td>ctx 命中</td><td>100%</td><td class="strike">9%</td><td class="good">91%</td></tr>
+<tr><td>ans 命中</td><td>100%</td><td class="strike">77%</td><td class="good">91%</td></tr>
+<tr><td>幻觉率</td><td>0%</td><td class="strike">71%</td><td class="good">0%</td></tr>
+<tr><td>input/题</td><td>5539</td><td>2672</td><td>2394</td></tr>
+<tr><td>压缩比</td><td>1.0</td><td>0.37</td><td>0.38</td></tr>
+<tr><td>延迟</td><td>1.7s</td><td>16.4s</td><td>16.4s</td></tr>
+</tbody>
+</table>
+<blockquote class="win"><b>真实的 Phase 1 权衡:</b>window_summary 用 ~57% 的 token 节省,换约 9 个百分点的准确度(100%→91%)、幻觉零增长。比伪影满天飞的首读乐观得多。</blockquote>
+<p>剩余的真实 miss 也都解释得通、且都<b>不是幻觉</b>:某一轮摘要确实没保住一个类名,模型正确地拒答了;另一例 ctx 判 miss 但模型答对了大意(摘要保留了够回答的信息、但不足以让 ctx 裁判判"完整保留");还有一例信息在摘要里但回答带了 <code>**8**</code> 的 markdown 加粗、正则没匹配上(数据集层面的小脆弱)。</p>
+<p>延迟那 16.4s 要打折看:无状态评测每个探针都从头重算摘要;线上 <code>/chat</code> 是持久化的滚动摘要、只增量更新,单问延迟远低于此。另外摘要是 LLM 调用,有轮间方差(修正前那次随机摘要下 ans 命中是 77%,这次 91%)——严肃对比宜多跑取均值。</p>
+
+<h2>8. 收获</h2>
+<ul>
+  <li><b>端到端评测会照出测量体系自己的盲点。</b>这套尺子是用来给策略打分的,结果第一次量真实摘要,就把<code>ctx_hit</code>/幻觉判定自己的缺陷量了出来——这正是建尺子的价值。</li>
+  <li><b>对会改写内容的系统,精确子串匹配是错的判定方式。</b>摘要/RAG/改写类输出,事实会换措辞;判"信息在不在"是个语义问题,该用 LLM 判定(并用子串做正向快速路径省钱)。</li>
+  <li><b>一个正确的回答永远不是幻觉。</b>幻觉判定必须以回答错误为前提。</li>
+  <li><b>集成测试 > 编译 + 静态审查。</b><code>str | None</code> 的 3.9 崩溃,<code>py_compile</code> 不报、无 Bash 的 reviewer 看不出,只有真起服务器才暴露。冷启动的子 agent 还会漏掉已记录在案的项目坑——所以"真的把它跑起来"这一步不能省。</li>
+  <li><b>诊断从矛盾开始。</b>"ctx 9% 但 ans 77%"这个对不上的地方,就是拆穿伪影的入口。数字之间不自洽时,先怀疑测量。</li>
+</ul>
+
+<h2>9. 下一步</h2>
+<p>Phase 2:pgvector RAG 检索——对每个新问题精确召回最相关的历史片段,只放这些进 context。long tier 的改写问法探针和 assistant 长回复中段的针正是为它的两个软肋(语义检索、chunking)准备的。详见 <code>docs/phase2_pgvector_rag.md</code>。</p>
+
+<div class="footer">
+  归档于 <code>docs/reports/</code> · 关联:<code>docs/phase1_sliding_window_summary.md</code>(实现计划)、<code>docs/eval_plan.md</code>(评测体系)、<code>docs/design.md</code>(路线总览) · 结果文件:<code>eval/results/2026-06-15_1846_concat_long.json</code>、<code>eval/results/2026-06-15_2052_window_summary_long.json</code>
+</div>
+</div>
+</body>
+</html>
