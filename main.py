@@ -801,6 +801,7 @@ async def debug_run(body: dict):
                 )
             if resp.status_code != 200:
                 yield sse({"type": "error", "detail": resp.text})
+                yield sse({"type": "done"})
                 return
             resp_json = resp.json()
             final = resp_json["choices"][0]["message"].get("content") or ""

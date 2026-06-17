@@ -300,6 +300,11 @@ async def main() -> None:
     if not args.cases:
         args.cases = os.path.join(os.path.dirname(__file__), "cases", args.tier)
 
+    # A registered tier may not have a cases dir yet (e.g. `research`): exit
+    # cleanly rather than letting os.listdir raise FileNotFoundError.
+    if not os.path.isdir(args.cases):
+        sys.exit(f"No cases directory for tier '{args.tier}': {args.cases} (not built yet)")
+
     case_files = sorted(
         f for f in os.listdir(args.cases)
         if f.endswith(".json") and (not args.case or f == f"{args.case}.json")

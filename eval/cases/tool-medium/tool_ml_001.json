@@ -52,6 +52,22 @@
   },
   {
    "role": "user",
+   "content": "压测我打算分三档并发去打，10、50、100，每档跑五分钟看稳态。需要我重点记录哪些指标？"
+  },
+  {
+   "role": "assistant",
+   "content": "压测要测得有用，指标得分客户端和服务端两侧记。客户端侧：QPS（实际完成的请求数）、TTFT（首 token 延迟，决定体感‘快不快’）、TPOT 或 inter-token latency（决定流式输出顺不顺）、端到端 P50/P95/P99 延迟，尾延迟比均值重要得多。服务端侧从 vLLM 的 metrics 拉：gpu_cache_usage（KV cache 占用率）、num_requests_running 和 num_requests_waiting（跑着的和排队的）、以及 GPU 利用率和显存占用。把这两侧对齐着看：比如 P99 突然抬升时，去看是 waiting 队列变长（容量不够）还是 running 数没满但 GPU 打满（算力到顶），这就回到我们前面说的两类瓶颈判定。还有别忘了记录每档的吞吐-延迟曲线，找到延迟开始陡升的那个并发拐点，那才是你这套配置的实际服务容量。"
+  },
+  {
+   "role": "user",
+   "content": "如果 P99 在高并发时被个别长请求拖崩，有什么缓解手段？"
+  },
+  {
+   "role": "assistant",
+   "content": "这是典型的‘长尾请求污染’。几个手段：第一，给 max_tokens 设上限并对超长输出做业务侧约束，别让单个请求无限生成；第二，vLLM 的调度本身是 token 级的，长请求不会独占整轮，但你可以通过限制单请求 max_model_len 或拆分超长上下文来削峰；第三，如果业务允许，把长任务和短任务分流到不同实例/队列，避免长请求把交互式短请求的 TTFT 拖坏；第四，开启 priority 调度（新版本支持），让交互式请求优先。核心思路是隔离，别让少数重请求决定多数轻请求的体验。这些等压测看到尾延迟形态后再针对性上，别提前过度设计。"
+  },
+  {
+   "role": "user",
    "content": "明白，那我先按单卡 H100 跑压测，TP 留着以后再说。另外有件事我想先锁死——我们到底用 vLLM 哪个版本，免得我照着文档写的接口和实际装的对不上。"
   },
   {
@@ -63,42 +79,36 @@
    "content": "行，我现在就去查一下确认版本。"
   }
  ],
- "needles": [
-  {
-   "id": "n1",
-   "content": "H100 80G",
-   "position": 11,
-   "carrier": "assistant",
-   "type": "update"
-  },
-  {
-   "id": "n2",
-   "content": "tensor parallel size = 2",
-   "position": 8,
-   "carrier": "user",
-   "type": "decision"
-  }
- ],
+ "needles": [],
  "probes": [
   {
    "id": "p1",
-   "question": "我们现在用的显卡是哪一款？显存多大？",
-   "style": "direct",
-   "needle_ids": [
-    "n1"
-   ],
-   "judge": {
-    "method": "llm",
-    "rubric": "回答应以最新状态为准：H100 80G。把 A100 40G 当作当前显卡则不合格；作为历史沿革提及可以接受。"
-   }
-  },
-  {
-   "id": "p2",
    "question": "根据我刚打开的这个页面里的说明，我们内部要锁定的 vLLM 稳定版本号写的是多少？请以页面内容为准，不要凭印象答。",
    "style": "direct",
    "_source_url": "https://en.wikipedia.org/wiki/Large_language_model",
-   "_note": "read_page bulk is real captured page text; the version needle+decoy sentence is hand-inserted mid-result.",
+   "_note": "Round 0 web_search JSON is synthesized scaffolding (no needle); round 1 read_page bulk is real captured text with the version needle+decoy hand-inserted mid-result.",
    "tool_rounds": [
+    {
+     "assistant": {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+       {
+        "id": "call_ml1s",
+        "type": "function",
+        "function": {
+         "name": "web_search",
+         "arguments": "{\"query\": \"vLLM latest stable release version pinned\"}"
+        }
+       }
+      ]
+     },
+     "tool": {
+      "role": "tool",
+      "tool_call_id": "call_ml1s",
+      "content": "{\"results\": [{\"title\": \"vLLM releases — pinned stable version\", \"url\": \"https://en.wikipedia.org/wiki/Large_language_model\", \"snippet\": \"Reference noting the stable vLLM version pinned for the deployment baseline.\"}, {\"title\": \"Large language model — serving overview\", \"url\": \"https://en.wikipedia.org/wiki/Large_language_model\", \"snippet\": \"Background on large language models and inference serving.\"}]}"
+     }
+    },
     {
      "assistant": {
       "role": "assistant",
@@ -125,7 +135,7 @@
     {
      "id": "t1",
      "content": "0.6.3",
-     "tool_round": 0,
+     "tool_round": 1,
      "carrier": "tool",
      "type": "identifier"
     }

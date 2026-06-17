@@ -44,6 +44,30 @@
   },
   {
    "role": "user",
+   "content": "我手写时多头那块老写错，能再帮我把多头的张量形状变换捋一遍吗？"
+  },
+  {
+   "role": "assistant",
+   "content": "好，按形状走一遍最不容易错。设输入是 (B, T, D)：B 是 batch，T 是序列长度，D 是模型维度。第一步，过 Wq/Wk/Wv（各是 D×D）得到 Q、K、V，形状还是 (B, T, D)。第二步是多头的关键——把 D 拆成 h 个 head：reshape 成 (B, T, h, D/h)，再 transpose 成 (B, h, T, D/h)，让 head 维提到前面，后面每个 head 独立算注意力。第三步，Q·Kᵀ：在最后两维做矩阵乘，(B,h,T,D/h) × (B,h,D/h,T) 得到注意力分数 (B, h, T, T)，除以 √(D/h) 再 softmax。第四步，乘 V：(B,h,T,T) × (B,h,T,D/h) 得到 (B, h, T, D/h)。第五步，合并 head：transpose 回 (B, T, h, D/h) 再 reshape 回 (B, T, D)，最后过一个输出投影 Wo。最容易错的就是第二步和第五步的 transpose+reshape 顺序，以及缩放用的是单个 head 的维度 D/h 而不是 D，你对照着这套形状检查就行。"
+  },
+  {
+   "role": "user",
+   "content": "因果掩码（causal mask）是在哪一步加？为什么训练时也要加？"
+  },
+  {
+   "role": "assistant",
+   "content": "因果掩码加在第三步算完分数、softmax 之前：对 (B,h,T,T) 的分数矩阵，把每个位置 i 对所有 j>i（未来位置）的分数置成负无穷，这样 softmax 后这些位置权重为 0，每个 token 只能看到自己和之前的 token。训练时也必须加，原因是 Transformer 训练用的是‘teacher forcing+并行’：一次性把整个目标序列喂进去并行算所有位置的预测，如果不加掩码，预测第 i 个 token 时就能看到第 i+1 个真实 token，等于偷看答案，训出来的模型在推理时（看不到未来）会彻底崩。所以掩码不是推理才用的优化，而是保证‘训练和推理信息可见性一致’的正确性要求。实现上通常预生成一个上三角的布尔掩码缓存复用。顺带一提，很多框架的标准注意力函数直接带一个 is_causal 参数帮你做这件事，这也是我想让你去确认那个官方函数名和它入参的原因。"
+  },
+  {
+   "role": "user",
+   "content": "我手写版本和库函数性能差很多，库里那个融合实现到底快在哪？我有必要自己也优化吗？"
+  },
+  {
+   "role": "assistant",
+   "content": "差距主要来自‘访存’而不是‘算得多’。朴素实现会把那个 (B,h,T,T) 的注意力分数矩阵完整地写到显存、做 softmax、再读回来乘 V，T 一大这个中间矩阵就巨大，显存带宽被这来回读写吃满，同时还占用大量显存。库里的融合实现（FlashAttention 那一类）的核心技巧是分块（tiling）：把 Q、K、V 切成小块，在芯片上的高速 SRAM 里逐块算注意力并用在线 softmax 增量累加，全程不把完整的 T×T 分数矩阵落到显存，于是既省显存（从 O(T²) 降到 O(T)）又快（省掉了最贵的那部分访存），数值上还更稳。对你练习而言：自己手写一版朴素的、把正确性和形状彻底搞懂，是必须的；但性能优化不必自己造 FlashAttention，直接调库里那个融合函数即可，这也正是我让你去确认官方函数名的原因——你对接到它，就免费拿到了这些优化。重复造这个轮子工程价值很低。"
+  },
+  {
+   "role": "user",
    "content": "明白。最后一步，我想拿一个现成库的标准实现对照我手写的，确认一下‘标准缩放点积注意力’对应的那个官方函数名，免得我造的轮子和主流接口对不上。你帮我查一下。"
   },
   {
@@ -55,30 +79,10 @@
    "content": "好，谢谢。"
   }
  ],
- "needles": [
-  {
-   "id": "n1",
-   "content": "batch size 64",
-   "position": 8,
-   "carrier": "user",
-   "type": "update"
-  }
- ],
+ "needles": [],
  "probes": [
   {
    "id": "p1",
-   "question": "我练习最终定的 batch size 是多少？",
-   "style": "direct",
-   "needle_ids": [
-    "n1"
-   ],
-   "judge": {
-    "method": "llm",
-    "rubric": "回答应以最新状态为准：batch size 64。答成 32（旧值）则不合格；作为‘从 32 改成 64’的沿革提及可以接受。"
-   }
-  },
-  {
-   "id": "p2",
    "question": "根据我刚打开的这个页面里写的，标准缩放点积注意力对应的那个官方函数名是什么？以页面内容为准。",
    "style": "direct",
    "_source_url": "https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)",
