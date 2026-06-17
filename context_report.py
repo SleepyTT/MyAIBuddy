@@ -99,7 +99,20 @@ def build_context_report(
     layers.append(_layer("current", [current]))
 
     if loop_messages:
-        layers.append(_layer("tool_loop", loop_messages))
+        tool_loop_layer = _layer("tool_loop", loop_messages)
+        # Carry the tool-result text so the eval ctx_hit judge can check whether a
+        # needle embedded in a (possibly bloated) tool result survived into this
+        # round's context. Mirrors how the `summary` layer carries `text`.
+        tool_texts = [
+            m.get("content") for m in loop_messages
+            if m.get("role") == "tool" and m.get("content")
+        ]
+        if tool_texts:
+            tool_loop_layer["text"] = "\n".join(
+                t if isinstance(t, str) else json.dumps(t, ensure_ascii=False)
+                for t in tool_texts
+            )
+        layers.append(tool_loop_layer)
     tools_tokens = estimate_tokens(tools) if tools else 0
     layers.append({"layer": "tools_schema", "tokens": tools_tokens, "items": len(tools)})
 

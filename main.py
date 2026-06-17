@@ -735,6 +735,11 @@ async def debug_run(body: dict):
     message = body.get("message", "")
     history = body.get("history", [])
     strategy = body.get("strategy", "concat")
+    # Frozen tool rounds (eval_plan §6.7 method A): when present, the agentic loop
+    # is REPLAYED from these preset [assistant tool_call, tool result] pairs instead
+    # of really executing web_search/read_page, then the model is asked for a final
+    # answer. Keeps tool-tier evals deterministic.
+    tool_rounds = body.get("tool_rounds") or []
 
     if strategy not in ALLOWED_STRATEGIES:
         raise HTTPException(status_code=400, detail=f"Unknown context strategy: {strategy}")
@@ -761,6 +766,48 @@ async def debug_run(body: dict):
     async def generate():
         messages: List[dict[str, Any]] = list(base_messages)
         tools = [WEB_SEARCH_TOOL, READ_PAGE_TOOL]
+
+        if tool_rounds:
+            # --- Frozen replay path (eval_plan §6.7 method A) ---------------------
+            # Inject the preset tool rounds verbatim (no real tool execution), emit a
+            # single context_report for the final-answer round (so estimated tokens
+            # line up with the one real upstream call), then ask the model to answer
+            # from the injected context with tools OFF (the determinism guarantee).
+            for fr in tool_rounds:
+                if fr.get("assistant"):
+                    messages.append(fr["assistant"])
+                if fr.get("tool"):
+                    messages.append(fr["tool"])
+            report = build_context_report(
+                round_num=len(tool_rounds) + 1,
+                strategy=strategy,
+                history=history,
+                included_history_ids=included_history_ids,
+                current=current_msg,
+                loop_messages=messages[base_len:],
+                tools=[],
+                summary=summary_text,
+                summary_through_position=summary_through,
+                summary_cost_tokens=summary_cost,
+            )
+            yield sse({"type": "context_report", "data": report})
+            yield sse({"type": "status", "message": "Replaying frozen tool rounds — getting final answer…"})
+            payload = {"model": model, "messages": messages}
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                resp = await client.post(
+                    f"{AI_BUILDER_BASE_URL}/chat/completions",
+                    json=payload,
+                    headers={"Authorization": f"Bearer {api_key}"},
+                )
+            if resp.status_code != 200:
+                yield sse({"type": "error", "detail": resp.text})
+                return
+            resp_json = resp.json()
+            final = resp_json["choices"][0]["message"].get("content") or ""
+            final_usage = resp_json.get("usage") or {}
+            yield sse({"type": "final", "reply": final, "usage": final_usage})
+            yield sse({"type": "done"})
+            return
 
         for round_num in range(1, MAX_TURNS + 1):
             # loop_messages: assistant tool-calls / tool results appended after

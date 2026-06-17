@@ -1,0 +1,120 @@
+{
+ "id": "tool_ai_001",
+ "topic": "ai_trends",
+ "conversation": [
+  {
+   "role": "user",
+   "content": "我在给公司董事会写一份 AI 趋势简报，主题是生成式 AI 在企业里的真实采用情况，要能经得起追问。先帮我把整体框架和叙事搭出来。"
+  },
+  {
+   "role": "assistant",
+   "content": "框架我建议分三层，层层递进、也方便答辩。第一层是采用率的真实数字——一定要剥掉营销口径，区分‘试用过’和‘进了生产流程’，因为这俩差着量级；第二层是真正落地最快的场景，告诉董事会钱该往哪投；第三层是没落地的卡点，提前把‘为什么不能更快’讲清楚，免得被质疑。整份简报最忌讳的就是拿‘做了个 PoC’当‘已经采用’，董事会一问‘那转化成生产的有几个、ROI 多少’就露馅了。所以数字这块我们要格外谨慎，宁可保守也别注水。"
+  },
+  {
+   "role": "user",
+   "content": "对，我最烦那种把 PoC 当成果汇报的。先说采用率，你印象里现在大盘是什么量级？"
+  },
+  {
+   "role": "assistant",
+   "content": "各家口径差很多，你引用时务必标清来源和‘采用’的定义。麦肯锡的年度调研、斯坦福 HAI 的 AI Index、各大咨询机构的数字，能从三成一路到七成不等，差异几乎全来自定义口径：有的把‘公司里有人用过’算采用，有的要求‘至少一个业务职能进了常规流程’才算。所以单看一个百分比没意义，要带定义。简报里我建议挑一个口径清晰、样本量大的权威调研做主锚，其它做佐证。"
+  },
+  {
+   "role": "user",
+   "content": "明白，口径比数字本身还重要。那落地最快的场景呢？"
+  },
+  {
+   "role": "assistant",
+   "content": "目前最稳的是三类，共同特点是容错高、有人兜底：一是客服与工单/会话摘要，错了人能复核，省的是人力工时；二是营销与文案生成，本来就要人改稿，AI 出初稿提效明显；三是代码助手，补全和样板代码生成，工程师本来就会 review。相对地，医疗诊断、法律意见这类高风险领域还卡在合规、责任归属和幻觉上，落地慢是合理的，不该硬推。"
+  },
+  {
+   "role": "user",
+   "content": "卡点具体是哪些？我想在简报里诚实地列出来。"
+  },
+  {
+   "role": "assistant",
+   "content": "三个核心卡点：第一，数据治理跟不上——RAG 想做好得有干净、结构化、权限清晰的语料，多数公司的内部文档是一团乱麻，喂进去就是垃圾进垃圾出；第二，幻觉带来的信任成本，一旦出过一次离谱错误，业务方就不敢放权，使用率掉下去；第三，也是最致命的，ROI 算不清，很多项目死在‘说不清到底省了多少钱、提了多少效’，预算第二年就被砍。简报里把这三点讲透，反而显得你判断扎实。"
+  },
+  {
+   "role": "user",
+   "content": "这些我都认同，尤其 ROI 那条。简报里我想放一个权威的总体采用率数字镇场子，你帮我查一份比较新的报告，把里面那个企业整体采用比例摘出来。"
+  },
+  {
+   "role": "assistant",
+   "content": "好，我先搜一下最近的权威调研，锁定一份口径清晰的，再点进去把那个总体采用比例的具体数字读出来给你。"
+  },
+  {
+   "role": "user",
+   "content": "可以，搜吧，记得要新一点的。"
+  }
+ ],
+ "needles": [],
+ "probes": [
+  {
+   "id": "p1",
+   "question": "根据我刚读取的那个页面里的调研数据，企业整体用上生成式 AI 的比例写的是多少？以页面里的数字为准。",
+   "style": "paraphrase",
+   "_source_url": "https://en.wikipedia.org/wiki/Generative_artificial_intelligence",
+   "_note": "Round 0 web_search JSON is synthesized scaffolding (no needle); round 1 read_page bulk is real captured text with the adoption-rate needle+decoy hand-inserted mid-result.",
+   "tool_rounds": [
+    {
+     "assistant": {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+       {
+        "id": "call_ai_s",
+        "type": "function",
+        "function": {
+         "name": "web_search",
+         "arguments": "{\"query\": \"enterprise generative AI adoption rate survey 2024\"}"
+        }
+       }
+      ]
+     },
+     "tool": {
+      "role": "tool",
+      "tool_call_id": "call_ai_s",
+      "content": "{\"results\": [{\"title\": \"The state of AI: organizations adopting generative AI\", \"url\": \"https://en.wikipedia.org/wiki/Generative_artificial_intelligence\", \"snippet\": \"Latest survey wave on enterprise adoption of generative AI across business functions.\"}, {\"title\": \"Generative artificial intelligence - overview\", \"url\": \"https://en.wikipedia.org/wiki/Generative_artificial_intelligence\", \"snippet\": \"Background on generative AI models and enterprise use.\"}]}"
+     }
+    },
+    {
+     "assistant": {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+       {
+        "id": "call_ai_r",
+        "type": "function",
+        "function": {
+         "name": "read_page",
+         "arguments": "{\"url\": \"https://en.wikipedia.org/wiki/Generative_artificial_intelligence\"}"
+        }
+       }
+      ]
+     },
+     "tool": {
+      "role": "tool",
+      "tool_call_id": "call_ai_r",
+      "content": "Generative AI - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\n(Redirected from\nGenerative artificial intelligence\n)\nAI that generates content\n\"GenAI\" redirects here; not to be confused with\nArtificial general intelligence\n.\nThéâtre D'opéra Spatial\n(Space Opera Theater, 2022), an image made with\nMidjourney\nthat won an award at the\nColorado State Fair\n's fine art competition\nPart of\na series\non\nArtificial intelligence (AI)\nMajor goals\nArtificial general intelligence\nIntelligent agent\nRecursive self-improvement\nPlanning\nComputer vision\nGeneral game playing\nKnowledge representation\nNatural language processing\nRobotics\nAI safety\nApproaches\nMachine learning\nSymbolic\nDeep learning\nBayesian networks\nEvolutionary algorithms\nNeuro-symbolic AI\nSystems integration\nOpen-source\nAI data centers\nApplications\nBioinformatics\nDeepfake\nEarth sciences\nFinance\nGenerative AI\nArt\nAudio\nMusic\nGovernment\nHealthcare\nIndustry\nSoftware development\nTranslation\nMilitary\nPhysics\nProjects\nPhilosophy\nAI alignment\nArtificial consciousness\nThe bitter lesson\nChinese room\nFriendly AI\nEthics\nExistential risk\nTuring test\nUncanny valley\nHuman–AI interaction\nHistory\nTimeline\nProgress\nAI winter\nAI boom\nAI bubble\nControversies\nDeepfake pornography\nTaylor Swift deepfake pornography controversy\nGrok sexual deepfake scandal\nGoogle Gemini image generation controversy\nIt's the Most Terrible Time of the Year\nPause Giant AI Experiments\nRemoval of Sam Altman from OpenAI\nStatement on AI Risk\nTay (chatbot)\nThéâtre D'opéra Spatial\nVoiceverse NFT plagiarism scandal\nGlossary\nGlossary\nv\nt\ne\nGenerative artificial intelligence\n(\nGenAI\n) is a subfield of\nartificial intelligence\n(AI) that uses\ngenerative models\nto generate text,\nimages\n,\nvideos\n,\naudio\n,\nsoftware code\n(\nvibe coding\n) or other forms of data.\n[\n1\n]\nThese models\nlearn the underlying patterns\nand structures of their\ntraining data\n, and use them to generate new data\n[\n2\n]\nin response to input, which often takes the form of\nnatural language\nprompts\n.\n[\n3\n]\n[\n4\n]\nThe prevalence of generative AI tools has increased significantly since the\nAI boom\nin the 2020s. This boom was made possible by improvements in\ndeep\nneural networks\n, particularly\nlarge language models\n(LLMs), which are based on the\ntransformer\narchitecture. Generative AI\napplications\ninclude\nchatbots\nsuch as\nChatGPT\n,\nClaude\n,\nCopilot\n,\nDeepSeek\n,\nDoubao\n,\nGoogle Gemini\n,\nGrok\nand\nQwen\n;\ntext-to-image\nmodels such as\nDALL-E\n,\nFirefly\n,\nStable Diffusion\n, and\nMidjourney\n; and\ntext-to-video\nmodels such as\nVeo\n,\nLTX\nand\nSora\n.\n[\n5\n]\n[\n6\n]\n[\n7\n]\nCompanies in a variety of sectors have used generative AI, including those in software development, healthcare,\n[\n8\n]\nfinance,\n[\n9\n]\nentertainment,\n[\n10\n]\ncustomer service,\n[\n11\n]\nsales and marketing,\n[\n12\n]\nart, writing,\n[\n13\n]\nand product design.\n[\n14\n]\nGenerative AI has been used for\ncybercrime\n, and to deceive and manipulate people through\nfake news\nand\ndeepfakes\n.\n[\n15\n]\n[\n16\n]\nGenerative AI models have been trained on\ncopyrighted\nworks without the\nrightholders\n' permission.\n[\n17\n]\nMany generative AI systems use large-scale\ndata centers\n, whose\nenvironmental impacts\ninclude\nelectronic waste\n, consumption of fresh water for cooling, and high energy consumption that is estimated to be growing steadily.\n[\n18\n]\nHistory\n[\nedit\n]\nMain article:\nHistory of artificial intelligence\nEarly history\n[\nedit\n]\nThe origins of algorithmically generated media can be traced to the development of the\nMarkov chain\n, which has been used to model natural language since the early 20th century. Russian mathematician\nAndrey Markov\nintroduced the concept in 1906,\n[\n19\n]\n[\n20\n]\nincluding an analysis of vowel and consonant patterns in\nEugene Onegin\n. Once trained on a\ntext corpus\n, a Markov chain can generate probabilistic text.\n[\n21\n]\n[\n22\n]\nBy the early 1970s, artists began using computers to extend generative techniques beyond Markov models.\nHarold Cohen\ndeveloped and exhibited works produced by\nAARON\n, a pioneering computer program designed to autonomously create paintings.\n[\n23\n]\nThe terms generative\nAI planning\nSurvey highlight: across the firms polled, 71% reported using generative AI in at least one business function in the latest wave — up sharply year over year. (An earlier baseline wave had put the comparable figure near 65% of organizations.)\nor generative planning were used in the 1980s and 1990s to refer to\nAI planning\nsystems, especially\ncomputer-aided process planning\n, used to generate sequences of actions to reach a specified goal.\n[\n24\n]\n[\n25\n]\nGenerative AI planning systems used\nsymbolic AI\nmethods such as\nstate space search\nand\nconstraint satisfaction\nand were a \"relatively mature\" technology by the early 1990s. They were used to generate crisis action plans for military use,\n[\n26\n]\nprocess plans for manufacturing\n[\n24\n]\nand decision plans such as in prototype autonomous spacecraft.\n[\n27\n]\nGenerative neural networks (since the late 2000s)\n[\nedit\n]\nSee also:\nMachine learning\nand\ndeep learning\nAbove"
+     }
+    }
+   ],
+   "needles": [
+    {
+     "id": "t1",
+     "content": "71% reported using generative AI",
+     "tool_round": 1,
+     "carrier": "tool",
+     "type": "factual"
+    }
+   ],
+   "needle_ids": [
+    "t1"
+   ],
+   "judge": {
+    "method": "regex",
+    "pattern": "71\\s*%|71\\s*％"
+   }
+  }
+ ]
+}

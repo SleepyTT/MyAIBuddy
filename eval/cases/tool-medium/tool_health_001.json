@@ -1,0 +1,109 @@
+{
+ "id": "tool_health_001",
+ "topic": "health",
+ "conversation": [
+  {
+   "role": "user",
+   "content": "我体检血压偏高，医生让我控盐。我想系统了解一下日常饮食怎么减钠，别只给我‘少吃盐’这种废话。先讲讲原理。"
+  },
+  {
+   "role": "assistant",
+   "content": "原理讲清楚你才知道为什么这么做。钠摄入过多会让身体潴留水分、血容量增加，外周血管阻力也受影响，血压随之上升；长期高钠还和血管硬化相关。所以控钠对血压偏高的人是性价比最高的饮食干预之一。但关键认知是：控钠不等于‘炒菜少放盐’。真正的大头往往是‘隐形钠’——酱油、蚝油等调味料，咸菜酱菜，火腿肠培根等加工肉，薯片饼干等零食，以及外卖。很多人把炒菜的盐控得死死的，却被一顿外卖、几根火腿肠把一天的钠配额干超了，还以为自己很克制。所以我们要盯的是‘总钠’，不是‘那勺盐’。"
+  },
+  {
+   "role": "user",
+   "content": "隐形钠这块我确实没概念，哪些最坑？"
+  },
+  {
+   "role": "assistant",
+   "content": "按‘单份就能顶大半天配额’排，最坑的几类：第一，挂面和方便面——钠不只在料包，揉进面里的盐也不少，很多人只倒一半料包以为减了钠，其实大头在面本身；第二，加工肉，火腿肠、培根、午餐肉，为了防腐和口味钠含量都很高；第三，咸菜酱菜豆腐乳，这类基本是‘盐做的’；第四，零食，薯片饼干话梅，钠藏在咸味和膨松剂里；第五，外卖和预制菜，普遍重口、还看不见用量。养成看营养成分表‘钠’那一行的习惯，比记一堆食物清单更管用。"
+  },
+  {
+   "role": "user",
+   "content": "那我自己在家做饭，具体能怎么减？"
+  },
+  {
+   "role": "assistant",
+   "content": "给你几招立刻能用的：第一，用酸和香料替一部分咸味——柠檬、醋、番茄、葱姜蒜、孜然花椒，能让你在少盐的情况下还觉得有味；第二，盐出锅前再放，咸味集中在食物表面、舌头更敏感，同样咸度用盐更少；第三，警惕‘隐形咸’调味料，蚝油、生抽、豆瓣酱、鸡精本身就是高钠，用了它们就要相应减盐，别叠加；第四，多吃高钾食物（香蕉、土豆、菠菜等绿叶菜、豆类），钾能帮助身体排钠。循序渐进减，味觉两三周就能适应清淡。"
+  },
+  {
+   "role": "user",
+   "content": "你提到钾，钾真能对冲钠？"
+  },
+  {
+   "role": "assistant",
+   "content": "在肾功能正常的前提下可以这么理解：钾有助于促进钠的排出、并对血管有一定舒张作用，所以现代膳食指南普遍是‘减钠’和‘增钾’配套推荐，不是单减钠。但有个重要前提——肾功能不全的人排钾能力下降，盲目补钾可能导致高钾血症，这类人补钾必须遵医嘱。对你这种单纯血压偏高、肾功能正常的情况，‘减钠+适当增钾’是安全且有效的组合。"
+  },
+  {
+   "role": "user",
+   "content": "懂了。我想要一个明确的每日钠摄入上限数字好对照着吃，你帮我查一份权威膳食指南，确认一般成人的推荐上限。"
+  },
+  {
+   "role": "assistant",
+   "content": "好，我去查一份权威膳食指南，把一般成年人每日钠摄入的推荐上限那个数值确认给你，你拿它当对照线。"
+  },
+  {
+   "role": "user",
+   "content": "好的，谢谢。"
+  }
+ ],
+ "needles": [],
+ "probes": [
+  {
+   "id": "p1",
+   "question": "根据我刚查到的这份指南页面里写的，一般成年人每天钠摄入大概不该超过多少毫克？以页面里的数值为准。",
+   "style": "paraphrase",
+   "_source_url": "https://en.wikipedia.org/wiki/Sodium",
+   "_note": "read_page bulk is real captured text; the 2300 mg needle + 1500 mg decoy are hand-inserted mid-result.",
+   "tool_rounds": [
+    {
+     "assistant": {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+       {
+        "id": "call_h1",
+        "type": "function",
+        "function": {
+         "name": "read_page",
+         "arguments": "{\"url\": \"https://en.wikipedia.org/wiki/Sodium\"}"
+        }
+       }
+      ]
+     },
+     "tool": {
+      "role": "tool",
+      "tool_call_id": "call_h1",
+      "content": "Sodium - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\nThis article is about the chemical element. For the nutrient commonly called sodium, see\nsalt\n. For the use of sodium as a medication, see\nSaline (medicine)\n. For other uses, see\nsodium (disambiguation)\n.\n\"Natrium\" redirects here. For other uses, see\nNatrium (disambiguation)\n.\nChemical element with atomic number 11 (Na)\nSodium,\n11\nNa\nSodium\nAppearance\nsilvery white metallic\nStandard atomic weight\nA\nr\n°(Na)\n22.989\n769\n28\n±\n0.000\n000\n02\n[\n1\n]\n22.990\n±\n0.001\n(\nabridged\n)\n[\n2\n]\nSodium in the\nperiodic table\nHydrogen\nHelium\nLithium\nBeryllium\nBoron\nCarbon\nNitrogen\nOxygen\nFluorine\nNeon\nSodium\nMagnesium\nAluminium\nSilicon\nPhosphorus\nSulfur\nChlorine\nArgon\nPotassium\nCalcium\nScandium\nTitanium\nVanadium\nChromium\nManganese\nIron\nCobalt\nNickel\nCopper\nZinc\nGallium\nGermanium\nArsenic\nSelenium\nBromine\nKrypton\nRubidium\nStrontium\nYttrium\nZirconium\nNiobium\nMolybdenum\nTechnetium\nRuthenium\nRhodium\nPalladium\nSilver\nCadmium\nIndium\nTin\nAntimony\nTellurium\nIodine\nXenon\nCaesium\nBarium\nLanthanum\nCerium\nPraseodymium\nNeodymium\nPromethium\nSamarium\nEuropium\nGadolinium\nTerbium\nDysprosium\nHolmium\nErbium\nThulium\nYtterbium\nLutetium\nHafnium\nTantalum\nTungsten\nRhenium\nOsmium\nIridium\nPlatinum\nGold\nMercury (element)\nThallium\nLead\nBismuth\nPolonium\nAstatine\nRadon\nFrancium\nRadium\nActinium\nThorium\nProtactinium\nUranium\nNeptunium\nPlutonium\nAmericium\nCurium\nBerkelium\nCalifornium\nEinsteinium\nFermium\nMendelevium\nNobelium\nLawrencium\nRutherfordium\nDubnium\nSeaborgium\nBohrium\nHassium\nMeitnerium\nDarmstadtium\nRoentgenium\nCopernicium\nNihonium\nFlerovium\nMoscovium\nLivermorium\nTennessine\nOganesson\nLi\n↑\nNa\n↓\nK\nneon\n←\nsodium\n→\nmagnesium\nAtomic number\n(\nZ\n)\n11\nGroup\ngroup 1: hydrogen and\nalkali metals\nPeriod\nperiod 3\nBlock\ns-block\nElectron configuration\n[\nNe\n] 3s\n1\nElectrons per shell\n2, 8, 1\nPhysical properties\nPhase\nat\nSTP\nsolid\nMelting point\n370.944\nK\n​(97.794 °C, ​208.029 °F)\nBoiling point\n1156.090 K ​(882.940 °C, ​1621.292 °F)\nDensity\n(at 20° C)\n0.9688 g/cm\n3\n[\n3\n]\nwhen liquid (at\nm.p.\n)\n0.927 g/cm\n3\nCritical point\n2573 K, 35 MPa\n(extrapolated)\nHeat of fusion\n2.60\nkJ/mol\nHeat of vaporization\n97.42 kJ/mol\nMolar heat capacity\n28.230 J/(mol·K)\nSpecific heat capacity\n1227.925 J/(kg·K)\nVapor pressure\nP\n(Pa)\n1\n10\n100\n1 k\n10 k\n100 k\nat\nT\n(K)\n554\n617\n697\n802\n946\n1153\nAtomic properties\nOxidation states\ncommon:\n+1\n−1,\n[\n4\n]\nElectronegativity\nPauling scale: 0.93\nIonization energies\n1st: 495.8 kJ/mol\n2nd: 4562 kJ/mol\n3rd: 6910.3 kJ/mol\n(\nmore\n)\nAtomic radius\nempirical: 186\npm\nCovalent radius\n166±9 pm\nVan der Waals radius\n227 pm\nSpectral lines\nof sodium\nOther properties\nNatural occurrence\nprimordial\nCrystal structure\n​\nbody-centered cubic\n(bcc) (\ncI2\n)\nLattice constant\na\n= 428.74 pm (at 20 °C)\n[\n3\n]\nThermal expansion\n69.91\n×\n10\n−6\n/K (at 20 °C)\n[\n3\n]\nThermal conductivity\n142 W/(m⋅K)\nElectrical resistivity\n47.7 nΩ⋅m (at 20 °C)\nMagnetic ordering\nparamagnetic\n[\n5\n]\nMolar magnetic susceptibility\n+16.0\n×\n10\n−6\ncm\n3\n/mol (298 K)\n[\n6\n]\nYoung's modulus\n10 GPa\nShear modulus\n3.3 GPa\nBulk modulus\n6.3 GPa\nSpeed of sound\nthin rod\n3200 m/s (at 20 °C)\nMohs hardness\n0.5\nBrinell hardness\n0.69 MPa\nCAS Number\n7440-23-5\nHistory\nNaming\npossibly from Arabic suda, 'headache', for\nsoda\n's use as an anticephalalgic\nDiscovery\nand first isolation\nHumphry Davy\n(1807)\nSymbol\n\"Na\": from\nNew Latin\nnatrium\n, coined from German\nNatron\n, '\nnatron\n'\nIsotopes of sodium\nv\ne\nMain isotopes\n[\n7\n]\nDecay\nIsotope\nabun­dance\nhalf-life\n(\nt\n1/2\n)\nmode\npro­duct\n22\nNa\ntrace\n2.6019 y\nβ\n+\n22\nNe\n23\nNa\n100%\nstable\n24\nNa\ntrace\n14.956 h\nβ\n−\n24\nMg\nCategory: Sodium\nview\ntalk\nedit\n|\nreferences\nSodium\nis a\nchemical element\n; it has\nsymbol\nNa\n(from\nNeo-Latin\nnatrium\n) and\natomic number\n11. It is a soft, silvery-white, highly reactive\nmetal\n. Sodium is an\nalkali metal\n, being in\ngroup 1\nof the periodic table. Its only stable\nisotope\nis\n23\nNa. The free metal does not occur in nature and must be prepared from compounds. Sodium is the\nsixth–most abundant element in the Earth's crust\nand exists in numerous\nminerals\nsuch as\nfeldspars\n,\nsodalite\n, and\nhalite\nDietary guidance: for the general adult population the recommended upper limit is about 2300 mg of sodium per day (roughly one teaspoon of salt). A stricter target of 1500 mg/day is advised for some higher-risk groups, but 2300 mg is the general cap.\n(NaCl). Many salts of sodium are highly water-soluble: sodium ions have been\nleached\nby the action of water from the\nEarth\n's\nminerals\nover eons, and thus sodium and\nchlorine\nare the most common dissolved elements by weight in the oceans.\nSodium was first isolated by\nHumphry Davy\nin 1807 by the\nelectrolysis\nof\nsodium hydroxide\n. Among many other useful sodium compounds, sodium hydroxide (\nlye\n) is used in\nsoap manufacture\n, and\nsodium chloride\n(\nedible salt\n) is a\nde-icing\nagent and a nutrient for animals including humans.\nSodium is an\nessential element\nfor all animals and some plants. Sodium ions are the major cation in the\nextracellular fluid\n(ECF) and as such are the major"
+     }
+    }
+   ],
+   "needles": [
+    {
+     "id": "t1",
+     "content": "about 2300 mg of sodium",
+     "tool_round": 0,
+     "carrier": "tool",
+     "type": "factual"
+    }
+   ],
+   "needle_ids": [
+    "t1"
+   ],
+   "judge": {
+    "method": "llm",
+    "rubric": "回答应给出一般成人每日钠上限约 2300 毫克（约一茶匙盐）。答成 1500 毫克（那是高危人群更严目标）或其它数字则不合格。"
+   }
+  },
+  {
+   "id": "p2",
+   "question": "我之前跟你说的我那次空腹血糖的具体数值是多少来着？",
+   "style": "negative",
+   "needle_ids": [],
+   "judge": {
+    "method": "llm",
+    "rubric": "对话只提到血压偏高，从未给出任何空腹血糖数值。正确行为是表示没有提供过血糖数值、或不知道。编造一个具体血糖数字则不合格。"
+   }
+  }
+ ]
+}

@@ -38,7 +38,16 @@ DEFAULT_JUDGE_MODEL = "kimi-k2.5"
 #        800+ chars with needles mid-reply, denser near-miss distractors) —
 #        the tier that actually pressure-tests compression/chunking
 #        strategies; see docs/eval_plan.md §6.6.
-DATASET_VERSIONS = {"smoke": "v1-smoke", "long": "v1-long"}
+# tool-medium: medium history + frozen tool rounds (replayed, not re-executed);
+#        isolates the loop-internal tool-result bloat dimension (§6.7).
+# research: long history + multi-round tools — registered for §6.7 completeness;
+#        cases not built yet (--tier research errors until eval/cases/research/ exists).
+DATASET_VERSIONS = {
+    "smoke": "v1-smoke",
+    "long": "v1-long",
+    "tool-medium": "v1-tool-medium",
+    "research": "v1-research",
+}
 
 ANSWER_JUDGE_PROMPT = """你是评测裁判。下面是 AI 助手对用户问题的回答，请根据评分标准判断是否合格。
 
@@ -77,13 +86,21 @@ SUMMARY_PRESENCE_JUDGE_PROMPT = """下面是一段对话历史的压缩摘要。
 
 
 async def run_probe(client: httpx.AsyncClient, base_url: str, model: str,
-                    strategy: str, history: list, question: str) -> dict:
-    """Drive /debug/run via SSE; collect context_reports, usage, final reply."""
+                    strategy: str, history: list, question: str,
+                    tool_rounds: list = None) -> dict:
+    """Drive /debug/run via SSE; collect context_reports, usage, final reply.
+
+    `tool_rounds` (tool tier): preset [assistant tool_call, tool result] pairs the
+    backend replays frozen instead of executing tools (eval_plan §6.7 method A).
+    """
     reports, usages, reply, error = [], [], None, None
+    payload = {"model": model, "message": question, "history": history, "strategy": strategy}
+    if tool_rounds:
+        payload["tool_rounds"] = tool_rounds
     t0 = time.monotonic()
     async with client.stream(
         "POST", f"{base_url}/debug/run",
-        json={"model": model, "message": question, "history": history, "strategy": strategy},
+        json=payload,
         timeout=300.0,
     ) as resp:
         resp.raise_for_status()
@@ -160,13 +177,24 @@ async def ctx_hit(needles: list, reports: list, *, client: httpx.AsyncClient,
     """
     included: set = set()
     summaries: list = []
+    tool_texts: list = []
     for r in reports:
         for layer in r["layers"]:
             included.update(layer.get("msg_ids") or [])
             if layer.get("layer") == "summary":
                 summaries.append((layer.get("covers_positions"), layer.get("text") or ""))
+            elif layer.get("layer") == "tool_loop" and layer.get("text"):
+                tool_texts.append(layer["text"])
 
     async def needle_present(n: dict) -> bool:
+        # Tool-carrier needle (tool tier): no conversation `position` — it lives in a
+        # frozen tool result. "In context" iff its content survived into a tool_loop
+        # layer's text (deterministic substring; tool results aren't reformatted by
+        # concat/window_summary, so no LLM fallback is needed here).
+        if n.get("carrier") == "tool" or "position" not in n:
+            content = str(n.get("content", "")).strip()
+            return bool(content) and any(
+                _substring_present(content, t) for t in tool_texts)
         pos = n["position"]
         if pos in included:
             return True
@@ -285,16 +313,20 @@ async def main() -> None:
             with open(os.path.join(args.cases, fname), encoding="utf-8") as f:
                 case = json.load(f)
             conv = case["conversation"]
-            needles = {n["id"]: n for n in case["needles"]}
+            case_needles = {n["id"]: n for n in case.get("needles", [])}
 
             for probe in case["probes"]:
                 label = f"{case['id']}/{probe['id']}"
                 print(f"[{label}] {probe['question'][:40]}…", flush=True)
                 run = await run_probe(client, args.base_url, args.model,
-                                      args.strategy, conv, probe["question"])
+                                      args.strategy, conv, probe["question"],
+                                      tool_rounds=probe.get("tool_rounds"))
                 if run["error"]:
                     print(f"  ERROR: {run['error']}", flush=True)
 
+                # Tool-tier probes carry their needles inline (they live in this
+                # probe's frozen tool rounds); resolve ids against the union.
+                needles = {**case_needles, **{n["id"]: n for n in probe.get("needles", [])}}
                 probe_needles = [needles[nid] for nid in probe["needle_ids"]]
                 is_negative = probe["style"] == "negative"
                 hit_ctx = None if is_negative else await ctx_hit(
@@ -345,9 +377,12 @@ async def main() -> None:
                 probe_rows.append({
                     "case_id": case["id"], "probe_id": probe["id"],
                     "topic": case["topic"], "style": probe["style"],
-                    "carrier": first_needle["carrier"] if first_needle else None,
-                    "needle_type": first_needle["type"] if first_needle else None,
-                    "depth": depth_bucket(first_needle["position"], len(conv)) if first_needle else None,
+                    "carrier": first_needle.get("carrier") if first_needle else None,
+                    "needle_type": first_needle.get("type") if first_needle else None,
+                    # tool-carrier needles have no conversation depth (`tool_round`,
+                    # not `position`) — leave depth unbucketed for them.
+                    "depth": depth_bucket(first_needle["position"], len(conv))
+                    if first_needle and "position" in first_needle else None,
                     "question": probe["question"],
                     "reply": run["reply"], "error": run["error"],
                     "ctx_hit": hit_ctx, "ans_hit": hit_ans, "hallucination": hallucination,

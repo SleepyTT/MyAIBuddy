@@ -1,0 +1,142 @@
+{
+ "id": "tool_ml_001",
+ "topic": "ml",
+ "conversation": [
+  {
+   "role": "user",
+   "content": "我在做一个 LLM 推理服务，想用 vLLM 部署，规模不大但要扛真实并发。先帮我把整体架构和关键决策点完整过一遍，我好心里有数，再逐个抠参数。"
+  },
+  {
+   "role": "assistant",
+   "content": "好。先讲清楚 vLLM 为什么值得用：它的核心是 PagedAttention——把每个序列的 KV cache 切成固定大小的 block，像操作系统的分页那样按需分配，避免了传统把 KV cache 当一整块连续显存预留所带来的碎片和浪费。配合 continuous batching（每一步动态把新请求拼进正在跑的 batch，而不是等一个 batch 全部结束），同样的卡能把吞吐拉高好几倍。整体架构我建议三层：最前面 API gateway 负责鉴权、限流、把 OpenAI 格式的请求转发进来；中间是 vLLM 自带的 OpenAI-compatible server，承担调度和实际推理；后面是显卡资源，初期单机，之后再考虑多卡张量并行。我们按‘单卡跑通 → 压测找瓶颈 → 再谈并行’的顺序来，别一上来就上分布式，调试成本太高。"
+  },
+  {
+   "role": "user",
+   "content": "同意，先单卡。模型我用 7B 验证，显卡是 A100 40G。"
+  },
+  {
+   "role": "assistant",
+   "content": "A100 40G 跑 7B 很宽裕：FP16 权重约 14G，剩下二十多 G 全是你的 KV cache 和激活值预算，能容纳相当多的并发序列。几个起步参数：gpu_memory_utilization 先设 0.9，给框架留 10% 余量防 OOM；max_model_len 一定要按真实请求长度设，别图省事开满 32k，那会凭空预留巨量 KV cache 把并发压死；dtype 用默认的 FP16 即可，A100 上 FP8 收益有限。先把这套跑起来看基线吞吐。"
+  },
+  {
+   "role": "user",
+   "content": "请求大多在 4k 上下文以内，偶尔到 8k。那我 max_model_len 先开 8192 行不行？"
+  },
+  {
+   "role": "assistant",
+   "content": "可以，8192 对 7B 在 40G 上压力不大。提醒一点：max_model_len 是单条序列的上限，KV cache 总预算是被所有并发序列分摊的，所以 8192 配合较高并发时，能同时在跑的序列数会被压低——这正是后面压测要观察的点。另外 batch 你不用手动设，vLLM 是动态拼 batch 的，这和 TGI 要手调 max_batch_total_tokens 的思路完全不同，你只管设显存利用率和长度上限，调度交给它。"
+  },
+  {
+   "role": "user",
+   "content": "那并发上来之后，我怎么判断到底是显存瓶颈还是算力瓶颈？这俩处理方式完全不一样。"
+  },
+  {
+   "role": "assistant",
+   "content": "对，区分清楚才不会乱加卡。看两组指标：第一，KV cache 的 block 占用率（vLLM 会暴露 gpu_cache_usage 这个 metric），如果它逼近 1.0、同时有请求在 waiting 队列里排队，那就是显存瓶颈——KV cache 装不下更多并发序列了，解法是降 max_model_len、上量化、或者加卡。第二，如果 cache 占用并不高，但 GPU 利用率打满、TTFT（首 token 延迟）和 TPOT（每 token 延迟）一起往上涨，那是算力瓶颈，纯靠张量并行把单次前向拆到多卡才有用。两者搞反了会白烧钱：算力瓶颈你去减长度没用，显存瓶颈你去加 TP 也救不了。"
+  },
+  {
+   "role": "user",
+   "content": "理解了。我们后面大概率要上多卡。先记一个决策：初期决定用 tensor parallel size = 2 起步。"
+  },
+  {
+   "role": "assistant",
+   "content": "记下了，TP=2 起步是稳妥的第一步。两卡之间走 NVLink 带宽足够，AllReduce 通信开销占比小，不会成为瓶颈；而且 7B 切两半后单卡权重和激活都更宽松，能进一步抬高并发。等 QPS 再翻倍、单机两卡也吃紧时，我们再谈 TP=4，或者跨机时叠加 pipeline parallel——但那会引入 micro-batch 调度的复杂度，非必要不提前上。"
+  },
+  {
+   "role": "user",
+   "content": "等等，采购那边刚反馈 A100 缺货，给换成 H100 80G 了。前面的架构判断要不要改？"
+  },
+  {
+   "role": "assistant",
+   "content": "好消息，基本是放宽约束。换 H100 80G 后：单卡显存直接翻倍到 80G，KV cache 预算大涨，你单卡就能扛明显更高的并发；H100 的 FP8 和 Transformer Engine 支持更好，吞吐还能再上一截；算力也强不少。结论是张量并行的引入时间点可以往后大幅推迟，单卡先把量做起来。请把前面所有‘A100 40G’的前提都更新成 H100 80G，包括显存预算和并发预期。"
+  },
+  {
+   "role": "user",
+   "content": "明白，那我先按单卡 H100 跑压测，TP 留着以后再说。另外有件事我想先锁死——我们到底用 vLLM 哪个版本，免得我照着文档写的接口和实际装的对不上。"
+  },
+  {
+   "role": "assistant",
+   "content": "非常对，版本必须锁死。PagedAttention 的 Python 接口和 LLM/engine 的入参在小版本之间改过几次，跨版本抄代码很容易踩坑。你去官方页面确认一下当前推荐的稳定版本号，我们后面所有示例代码和 API 调用都以那个版本为准，requirements 里也钉死，别用浮动版本。"
+  },
+  {
+   "role": "user",
+   "content": "行，我现在就去查一下确认版本。"
+  }
+ ],
+ "needles": [
+  {
+   "id": "n1",
+   "content": "H100 80G",
+   "position": 11,
+   "carrier": "assistant",
+   "type": "update"
+  },
+  {
+   "id": "n2",
+   "content": "tensor parallel size = 2",
+   "position": 8,
+   "carrier": "user",
+   "type": "decision"
+  }
+ ],
+ "probes": [
+  {
+   "id": "p1",
+   "question": "我们现在用的显卡是哪一款？显存多大？",
+   "style": "direct",
+   "needle_ids": [
+    "n1"
+   ],
+   "judge": {
+    "method": "llm",
+    "rubric": "回答应以最新状态为准：H100 80G。把 A100 40G 当作当前显卡则不合格；作为历史沿革提及可以接受。"
+   }
+  },
+  {
+   "id": "p2",
+   "question": "根据我刚打开的这个页面里的说明，我们内部要锁定的 vLLM 稳定版本号写的是多少？请以页面内容为准，不要凭印象答。",
+   "style": "direct",
+   "_source_url": "https://en.wikipedia.org/wiki/Large_language_model",
+   "_note": "read_page bulk is real captured page text; the version needle+decoy sentence is hand-inserted mid-result.",
+   "tool_rounds": [
+    {
+     "assistant": {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+       {
+        "id": "call_ml1",
+        "type": "function",
+        "function": {
+         "name": "read_page",
+         "arguments": "{\"url\": \"https://en.wikipedia.org/wiki/Large_language_model\"}"
+        }
+       }
+      ]
+     },
+     "tool": {
+      "role": "tool",
+      "tool_call_id": "call_ml1",
+      "content": "Large language model - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\nType of machine learning model\n\"LLM\" redirects here. For other uses, see\nLLM (disambiguation)\n.\nPart of a series on\nMachine learning\nand\ndata mining\nParadigms\nSupervised learning\nUnsupervised learning\nSemi-supervised learning\nSelf-supervised learning\nReinforcement learning\nMeta-learning\nOnline learning\nBatch learning\nCurriculum learning\nRule-based learning\nNeuro-symbolic AI\nNeuromorphic engineering\nQuantum machine learning\nProblems\nClassification\nGenerative modeling\nRegression\nClustering\nDimensionality reduction\nDensity estimation\nAnomaly detection\nData cleaning\nAutoML\nAssociation rules\nSemantic analysis\nStructured prediction\nFeature engineering\nFeature learning\nLearning to rank\nGrammar induction\nOntology learning\nMultimodal learning\nSupervised learning\n(\nclassification\n•\nregression\n)\nApprenticeship learning\nDecision trees\nEnsembles\nBagging\nBoosting\nRandom forest\nk\n-NN\nLinear regression\nNaive Bayes\nArtificial neural networks\nLogistic regression\nPerceptron\nRelevance vector machine (RVM)\nSupport vector machine (SVM)\nClustering\nBIRCH\nCURE\nHierarchical\nk\n-means\nFuzzy\nExpectation–maximization (EM)\nDBSCAN\nOPTICS\nMean shift\nDimensionality reduction\nFactor analysis\nCCA\nICA\nLDA\nNMF\nPCA\nPGD\nt-SNE\nSDL\nStructured prediction\nGraphical models\nBayes net\nConditional random field\nHidden Markov\nAnomaly detection\nRANSAC\nk\n-NN\nLocal outlier factor\nIsolation forest\nNeural networks\nAutoencoder\nDeep learning\nFeedforward neural network\nRecurrent neural network\nLSTM\nGRU\nESN\nreservoir computing\nBoltzmann machine\nRestricted\nGAN\nDiffusion model\nSOM\nConvolutional neural network\nU-Net\nLeNet\nAlexNet\nDeepDream\nNeural field\nNeural radiance field\nPhysics-informed neural networks\nTransformer\nVision\nMamba\nSpiking neural network\nMemtransistor\nElectrochemical RAM\n(ECRAM)\nReinforcement learning\nQ-learning\nPolicy gradient\nSARSA\nTemporal difference (TD)\nMulti-agent\nSelf-play\nLearning with humans\nActive learning\nCrowdsourcing\nHuman-in-the-loop\nMechanistic interpretability\nRLHF\nModel diagnostics\nCoefficient of determination\nConfusion matrix\nLearning curve\nROC curve\nMathematical foundations\nKernel machines\nBias–variance tradeoff\nComputational learning theory\nEmpirical risk minimization\nOccam learning\nPAC learning\nStatistical learning\nVC theory\nTopological deep learning\nJournals and conferences\nAAAI\nCVPR\nECCV\nECML PKDD\nEMNLP\nICCV\nNeurIPS\nICML\nICLR\nIJCAI\nML\nJMLR\nRelated articles\nGlossary of artificial intelligence\nList of datasets for machine-learning research\nList of datasets in computer vision and image processing\nOutline of machine learning\nv\nt\ne\nA\nlarge language model\n(\nLLM\n) is a\nneural network\ntrained on a vast amount of text for\nnatural language processing\ntasks, especially\nlanguage generation\n. LLMs can typically generate, summarize, translate, and analyze text in many contexts, and are a foundational technology behind modern\nchatbots\n.\n[\n1\n]\nBiased or inaccurate training data can make an LLM's output less reliable.\n[\n2\n]\nLLMs are typically based on\ntransformer\narchitecture, which is more parallelizable than earlier\nrecurrent neural network\nmodels.\n[\n3\n]\nGenerative pre-trained transformers\n(GPTs) are a type of LLM that is pre-trained to predict the next word.\n[\n4\n]\nGPTs are then often\nfine-tuned\nto follow instructions and to behave as assistants.\n[\n5\n]\nBenchmark\nevaluations for LLMs attempt to measure\nmodel reasoning\n, factual accuracy,\nalignment\n, and\nsafety\n.\n[\n6\n]\nHistory\n[\nedit\n]\nThe number of publications about large language models by year grouped by publication types\nThe training compute of notable large models in FLOPs vs publication date over the period 2010–2024. For overall notable models (top left), frontier models (top right), top language models (bottom left) and top models within leading companies (bottom right). The majority of these models are language models.\nThe training compute of notable large AI models in FLOPs vs publication date over the period 2017–2024. The majority of large models are language models or multimodal models with language capacity.\nProduction note (internal): the deployment baseline is pinned to vLLM 0.6.3, which stabilized the PagedAttention block-manager API. Do not target the older 0.5.4 line — its KV-cache interface differs and is considered deprecated here.\nBefore the emergence of transformer-based models in 2017, some\nlanguage models\nwere considered large relative to the computational and data constraints of their time. In the early 1990s,\nIBM\n's\nstatistical models\npioneered\nword alignment\ntechniques for machine translation, laying the groundwork for\ncorpus-based language modeling\n. In 2001, a smoothed\nn\n-gram model\n, such as those employing\nKneser–Ney smoothing\n, trained on 300 million words, achieved state-of-the-art\nperplexity\non benchmark tests.\n[\n7\n]\nDuring the 2000s, with the rise of widespread\ninternet access\n, researchers began compiling massive text datasets from the web (\"web as corpus\"\n[\n8\n]\n) to train "
+     }
+    }
+   ],
+   "needles": [
+    {
+     "id": "t1",
+     "content": "0.6.3",
+     "tool_round": 0,
+     "carrier": "tool",
+     "type": "identifier"
+    }
+   ],
+   "needle_ids": [
+    "t1"
+   ],
+   "judge": {
+    "method": "regex",
+    "pattern": "0\\.6\\.3"
+   }
+  }
+ ]
+}

@@ -1,0 +1,107 @@
+{
+ "id": "tool_stocks_001",
+ "topic": "stocks",
+ "conversation": [
+  {
+   "role": "user",
+   "content": "帮我系统分析一下英伟达这家公司的投资价值，我主要关心数据中心业务的盈利能力，最后我想自己用财报数据算一算。"
+  },
+  {
+   "role": "assistant",
+   "content": "好。英伟达现在的核心叙事几乎可以浓缩成一句话：数据中心 GPU。逻辑链条是——大模型训练和推理需求爆发，H100/H200 这类高端加速卡供不应求，于是数据中心分部的营收占比从过去的‘一半左右’迅速飙到八成以上，成了绝对大头；同时因为卖的是高附加值芯片加软件生态（CUDA、NVLink），整体毛利率被拉到历史高位。投资价值的多空分歧基本都围绕这条链：多头赌需求持续、护城河（CUDA 生态）够深；空头担心客户集中（几家云厂商占大头）、竞品追赶（AMD MI300、各家自研 ASIC）以及周期性。我们先把盈利能力的数字坐实，再谈估值。"
+  },
+  {
+   "role": "user",
+   "content": "毛利率被拉到历史高位，大概是多高的水平？"
+  },
+  {
+   "role": "assistant",
+   "content": "在数据中心高端芯片的拉动下，公司整体毛利率一度冲到 70% 多的区间，明显高于过去以游戏显卡为主、毛利率 60% 出头的时代。这个跃升不是靠降本，而是产品结构变了——卖的东西单价和附加值都上了一个台阶。但要提醒：这么高的毛利率本身就是供需极度紧张的产物，能不能维持，取决于这种紧张还能持续多久，一旦供给跟上或需求降温，毛利率回归是大概率事件，所以做模型时不能简单线性外推。"
+  },
+  {
+   "role": "user",
+   "content": "那按现在的盈利，估值算贵吗？"
+  },
+  {
+   "role": "assistant",
+   "content": "取决于你用什么锚。看静态 PE 确实不低，市场已经把高增长预期打进去了；但如果数据中心营收还能维持高速增长，forward PE 会被未来盈利摊薄，看起来就没那么离谱。关键变量始终是数据中心这块营收能不能持续放量——它既是营收大头，又是毛利率的支撑，一荣俱荣、一损俱损。所以与其纠结当前 PE，不如把精力放在跟踪数据中心营收的环比趋势和大客户的采购指引上。"
+  },
+  {
+   "role": "user",
+   "content": "我最担心的就是周期性。万一 AI 资本开支退潮呢？"
+  },
+  {
+   "role": "assistant",
+   "content": "这是最大的尾部风险，而且是‘双杀’式的。一旦云厂商和大企业开始收缩 AI 相关的 capex，数据中心营收会掉，产能利用率下来后毛利率也会跟着回落，营收和利润率同时下滑、估值再被下修，就是典型的戴维斯双杀。所以对英伟达来说，盯紧几家大客户（微软、谷歌、Meta、亚马逊）的资本开支指引，往往比盯英伟达自己上个季度的财报还重要——客户的开支计划是领先指标，财报是滞后结果。"
+  },
+  {
+   "role": "user",
+   "content": "讲得很清楚。那我想用最近一个财年的数据，自己算一下数据中心这块大致的毛利贡献。你帮我把数据中心分部营收和公司整体毛利率从那一页里读出来。"
+  },
+  {
+   "role": "assistant",
+   "content": "好，我去把那一页里最近财年的数据中心分部营收和公司整体毛利率两个数读出来给你，你拿这两个一乘就能估出数据中心的毛利量级了。"
+  },
+  {
+   "role": "user",
+   "content": "好，麻烦了。"
+  }
+ ],
+ "needles": [],
+ "probes": [
+  {
+   "id": "p1",
+   "question": "就用我刚读到的这一页里写的数据中心营收和整体毛利率两个数字，大致估一下这块业务一年的毛利金额是多少？以页面数字为准。",
+   "style": "implicit",
+   "_source_url": "https://en.wikipedia.org/wiki/Nvidia",
+   "_note": "read_page bulk is real captured text; two needles (475 revenue, 75% margin) + a 60% decoy are hand-inserted mid-result. Multi-hop: 475*0.75≈356.",
+   "tool_rounds": [
+    {
+     "assistant": {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+       {
+        "id": "call_st1",
+        "type": "function",
+        "function": {
+         "name": "read_page",
+         "arguments": "{\"url\": \"https://en.wikipedia.org/wiki/Nvidia\"}"
+        }
+       }
+      ]
+     },
+     "tool": {
+      "role": "tool",
+      "tool_call_id": "call_st1",
+      "content": "Nvidia - Wikipedia\nJump to content\nChecked\nFrom Wikipedia, the free encyclopedia\nThis is the\nlatest accepted revision\n,\nreviewed\non\n16 June 2026\n.\nAmerican multinational technology company\n\"IReady\" redirects here. For the educational platform, see\nI-Ready\n.\nNvidia Corporation\nLogo since 2006\nHeadquarters in\nSanta Clara, California\n, in 2023\nType\nPublic\nTraded as\nNasdaq\n:\nNVDA\nNasdaq-100\ncomponent\nDJIA\ncomponent\nS&P 100\ncomponent\nS&P 500\ncomponent\nIndustry\nSemiconductors\nFounded\nApril 5, 1993\n; 33 years ago\n(\n1993-04-05\n)\n, in\nSunnyvale, California\n, US\nFounders\nJensen Huang\nChris Malachowsky\nCurtis Priem\nHeadquarters\nSanta Clara, California\n,\nUS\nArea served\nWorldwide\nKey people\nJensen Huang (\npresident\nand\nCEO\n)\nBill Dally\n(chief scientist)\nRevenue\nUS$215.9 billion\n(FY26)\nOperating income\nUS$130.4 billion\n(FY26)\nNet income\nUS$120.1 billion\n(FY26)\nTotal assets\nUS$206.8 billion\n(FY26)\nTotal equity\nUS$144.3 billion\n(FY26)\nNumber of employees\n42,000 (FY26)\nSubsidiaries\nMental Images\nWebsite\nnvidia.com\nFootnotes\nFinancials as of\nfiscal year\nended January 25, 2026\n[update]\n(FY26).\nReferences:\n[\n1\n]\n[\n2\n]\nNvidia Corporation\n[\na\n]\n(\n/\nɛ\nn\nˈ\nv\nɪ\nd\ni\nə\n/\nen-\nVID\n-ee-ə\n) is an American\nmultinational\ntechnology company headquartered in\nSanta Clara, California\n. The company develops\ngraphics processing units\n(GPUs),\nsystems on chips\n(SoCs), and\napplication programming interfaces\n(APIs) for\ndata science\n,\nhigh-performance computing\n, AI (Artificial intelligence), and mobile and automotive applications.\n[\n5\n]\n[\n6\n]\nFounded in 1993 by\nJensen Huang\n,\nChris Malachowsky\n, and\nCurtis Priem\n, Nvidia has been widely described as a\nBig Tech\ncompany.\nOriginally focused on GPUs for video games, Nvidia broadened their use into other markets, including\nartificial intelligence\n(AI), professional visualization, and\nsupercomputing\n. The company's product lines include\nGeForce\nGPUs for gaming and creative workloads, and professional GPUs for\nedge computing\n, scientific research, and industrial applications. As of the first quarter of 2025, Nvidia held a 92% share of the discrete desktop and laptop GPU market.\n[\n7\n]\n[\n8\n]\nIn the early to mid 2000's, the company invested over a billion dollars to develop\nCUDA\n, a software platform and API (Application Programming Interfaces) that enabled GPUs to run massively\nparallel programs\nfor a broad range of compute-intensive applications.\n[\n9\n]\n[\n10\n]\n[\n11\n]\nAs a result, as of 2025, Nvidia controlled more than 80% of the market for GPUs used in training and deploying AI models,\n[\n9\n]\nand provided chips for over 75% of the world's\nTOP500\nsupercomputers.\n[\n1\n]\nThe company has also expanded into gaming hardware and services, with products such as the\nShield Portable\n,\nShield Tablet\n, and\nShield TV\n, and operates the\nGeForce Now\ncloud gaming service.\n[\n12\n]\nFurthermore, it has developed the\nTegra\nline of mobile processors for smartphones, tablets, and automotive infotainment systems.\n[\n13\n]\n[\n14\n]\n[\n15\n]\nIn 2023, Nvidia became the seventh U.S. company to reach a\nUS$1 trillion valuation\n.\n[\n16\n]\nIn 2025, driven by soaring global demand for\nAI data center\nhardware in the midst of the\nAI boom\n, Nvidia became the first company in the world to surpass US$4 trillion\n[\n17\n]\n[\n18\n]\nand US$5 trillion in\nmarket capitalization\n.\n[\n19\n]\nFor its strength, size and market capitalization, Nvidia has been selected as one of\nBloomberg\n's \"\nMagnificent Seven\n\", the seven biggest companies on the stock market in these regards.\n[\n20\n]\nHistory\n[\nedit\n]\nFounding\n[\nedit\n]\nThe\nDenny's\nroadside diner in\nSan Jose, California\n, where Nvidia's three co-founders agreed to start the company in late 1992\nNvidia's former headquarters which was home to the company through most of its pre-AI period (still in use)\nAerial view of Endeavor, the first of the two new Nvidia headquarters buildings, in\nSanta Clara, California\n, in 2017\nEntrance of Endeavor headquarters building in 2018\nNvidia was founded on April 5, 1993,\n[\n21\n]\n[\n22\n]\n[\n23\n]\nby Jensen Huang, a\nTaiwanese-American\nelectrical engineer who was previously the director of CoreWare at\nLSI Logic\nSegment detail (most recent fiscal year): Data Center revenue came in at 475 (US$ billion) for the year, the dominant segment. Company-wide gross margin for the same period was 75% (a prior-year comparison figure of 60% is shown for reference).\nand a\nmicroprocessor\ndesigner at\nAMD\n;\nChris Malachowsky\n, an engineer who worked at\nSun Microsystems\n; and\nCurtis Priem\n, who was previously a senior staff engineer and graphics chip designer at\nIBM\nand Sun Microsystems.\n[\n24\n]\n[\n25\n]\nIn late 1992, the three men agreed to start the company in a meeting at a\nDenny's\nroadside diner on Berryessa Road in East\nSan Jose\n.\n[\n26\n]\n[\n27\n]\n[\n28\n]\n[\n29\n]\nAt the time, Malachowsky and Priem were frustrated with Sun's management and were looking to leave, but Huang was on \"firmer ground\",\n[\n30\n]\nin that he was already running his own division at LSI.\n[\n27\n]\nThe three co-founders discussed a vision of the future whi"
+     }
+    }
+   ],
+   "needles": [
+    {
+     "id": "t1",
+     "content": "revenue came in at 475",
+     "tool_round": 0,
+     "carrier": "tool",
+     "type": "factual"
+    },
+    {
+     "id": "t2",
+     "content": "gross margin for the same period was 75%",
+     "tool_round": 0,
+     "carrier": "tool",
+     "type": "factual"
+    }
+   ],
+   "needle_ids": [
+    "t1",
+    "t2"
+   ],
+   "judge": {
+    "method": "llm",
+    "rubric": "回答需用到数据中心营收约 475（十亿美元）和毛利率约 75%，给出毛利金额约 350-360（十亿美元，475×0.75≈356）。只要数量级和算法对即可；明显用错数字（如用 60%）或算错则不合格。"
+   }
+  }
+ ]
+}
