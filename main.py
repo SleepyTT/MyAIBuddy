@@ -89,7 +89,7 @@ READ_PAGE_TOOL: dict[str, Any] = {
     },
 }
 
-PAGE_TEXT_LIMIT = 5_000  # chars sent to the LLM
+PAGE_TEXT_LIMIT = 30_000  # chars sent to the LLM (most pages load in full)
 
 
 async def read_page(url: str) -> str:

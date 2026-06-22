@@ -18,8 +18,8 @@ import tiktoken
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 ENC = tiktoken.get_encoding("cl100k_base")
-CONV_TOK_MIN = 2000          # clearly above smoke (~1.5k); medium, not long (~8.7k)
-READ_PAGE_MIN, READ_PAGE_MAX = 4000, 5000
+CONV_TOK_MIN = 3000          # solidly medium (DS-review target ~3-4k), << long (~8.7k)
+READ_PAGE_MIN, READ_PAGE_MAX = 10000, 30000  # near production PAGE_TEXT_LIMIT (30k)
 NEEDLE_FRAC_LO, NEEDLE_FRAC_HI = 0.12, 0.88  # needle must sit mid-result
 
 
