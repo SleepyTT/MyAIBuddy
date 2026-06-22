@@ -47,9 +47,9 @@
   <div class="kicker">My AI Buddy · 上下文管理 · 地基总结</div>
   <h1>给上下文管理造一把尺子:评测体系从设计到落地的迭代</h1>
   <div class="meta">
-    <span>📅 2026-06-11 ~ 06-15</span>
-    <span>🏷 needle-in-conversation eval</span>
-    <span>📊 2 档数据集 · 双轴指标 · debugger 可视化</span>
+    <span>📅 2026-06-11 ~ 06-22</span>
+    <span>🏷 needle eval · 工具结果维度</span>
+    <span>📊 四 tier 矩阵 · 双轴指标 · debugger 可视化</span>
   </div>
 </header>
 
@@ -105,23 +105,25 @@
 <p>题材五个:ML 技术问答、股票/投资、AI 趋势、养花、健康生活,且<b>每个用例单一题材</b>——针和填充同题材才构成真干扰(股票针埋在养花对话里,检索随便就中,分数虚高)。</p>
 <blockquote><b>构造纪律:确定性、可冻结。</b>填充对话用 LLM 生成一次后<b>冻结存文件,永不重新生成</b>;脚本里 assistant 消息<b>写死</b>(不真调 LLM 生成历史),只有最后的 probe 真实跑完整 pipeline。否则两次运行的分数不可比。</blockquote>
 
-<h2>6. 两档数据集:smoke 与 long</h2>
-<p>最初做了 12 个短用例,但很快意识到一个问题——它们的历史只有 ~1.5k token,任何合理窗口都装得下,<b>测不出压缩策略的区分度</b>。这不是用着用着才发现,而是能预判:Phase 1 一上线它就失效。于是分两档:</p>
+<h2>6. 数据集分档:从 smoke / long 到四 tier 矩阵</h2>
+<p>最初做了 12 个短用例,但很快意识到——它们的历史只有 ~1.5k token,任何合理窗口都装得下,<b>测不出压缩策略的区分度</b>。这能预判:Phase 1 一上线它就失效。于是分档,并进一步把"分档"抽象成<b>两条正交轴</b>:历史长度 × 工具有无。每个格子只变一个量,专门归因一种失败。</p>
 <table>
-<thead><tr><th>档位</th><th>规模</th><th>职责</th></tr></thead>
+<thead><tr><th></th><th>无工具</th><th>有工具</th></tr></thead>
 <tbody>
-<tr><td><b>smoke</b></td><td>12 用例,历史 ~1.5k tok</td><td>快、便宜,管道/模型/裁判的快速回归自检</td></tr>
-<tr><td><b>long</b></td><td>6 用例,历史 ~8.7k tok,assistant 针回复 800+ 字、针埋中段</td><td>真正压测压缩/chunking 的尺子</td></tr>
+<tr><td><b>短历史</b></td><td><b>smoke</b> · 12 例 ~1.5k tok · 管道/模型/裁判快速自检</td><td>—</td></tr>
+<tr><td><b>中历史</b></td><td>—</td><td><b>tool-medium</b> · 6 例 ~3.2k tok + 真实工具结果 · 隔离工具膨胀(§9)</td></tr>
+<tr><td><b>长历史</b></td><td><b>long</b> · 6 例 ~8.7k tok · 压测压缩/chunking</td><td><b>research</b> · 长历史+多工具 · 集成验收(已登记,待建)</td></tr>
 </tbody>
 </table>
-<p>采用 <b>augment 而非 replace</b>:加新档不动旧档,保持纵向可比;结果文件带 <code>dataset_version</code> 字段,换 set 必须 bump,不同版本分数不可直接比。long tier 还经过独立 reviewer 审计——它抓出一个真实的尾部泄漏(某个针的旧值在对话尾部被复述,会让 recency 策略"作弊"通过),据此把那个探针换了个不泄漏的针;还让裸数字正则加了数字边界。<b>数据集也要被 review,不是写完就完。</b></p>
+<p><b>诊断型</b> tier(smoke / long / tool-medium)每个只变一个量,作用是<b>定位策略为什么挂</b>——是历史压缩没搞定,还是工具结果没搞定;<b>集成型</b> tier(research)还原最难的真实场景,是<b>验收</b>而非诊断。两类配合用:research 发现"出问题了",再回诊断型 tier 归因。long tier 的 assistant 针回复 800+ 字、针埋中段,专为压测 chunking。</p>
+<p>纪律:<b>augment 而非 replace</b>——加新档不动旧档,保持纵向可比;结果文件带 <code>dataset_version</code> 字段,换 set 必须 bump,不同版本分数不可直接比。数据集还<b>要被 review</b>:long tier 经独立 reviewer 审计抓出一个真实的尾部泄漏(某针旧值在对话尾部被复述,会让 recency 策略"作弊"通过),据此换了不泄漏的针、并给裸数字正则加了数字边界;tool-medium 也是被独立 review 抓出"历史过短"才补长的(详见 §9)。<b>数据集也要被 review,不是写完就完。</b></p>
 
 <h2>7. 落地时的 learning</h2>
 <ul>
   <li><b>被测模型不能用 agent 封装。</b>最初用应用默认的 <code>supermind-agent-v1</code>,它在上游自跑 agentic loop——我们发 2.5k context,它计费报 100k+,还偶发返回空 content,两者都污染指标。eval 默认换成普通 chat 模型(deepseek-v4-pro / grok-4-fast)。</li>
   <li><b>裁判模型会误判,要验。</b><code>deepseek-v4-flash</code> 当裁判会把明显符合 rubric 的回答判 NO(实测假阴性);换成 <code>kimi-k2.5</code> 可靠。裁判的原始输出存进结果 JSON 的 <code>judge_raw</code> 字段,可审计。</li>
   <li><b>双轨 token 抓异常。</b>见 §3,API 计费偶发暴涨,本地估算更稳健,两者并列才看得出问题。</li>
-  <li><b>tool result 是 context 污染的大头。</b><code>read_page</code> 一次能塞进几千 token,每条 tool result 单独记 token、在可视化里打 <code>+N tok</code> 徽章,一眼看出谁在撑爆下一轮。</li>
+  <li><b>tool result 是 context 污染的大头。</b><code>read_page</code> 一次能塞进上万 token(上限 30k 字符,见 §9),每条 tool result 单独记 token、在可视化里打 <code>+N tok</code> 徽章,一眼看出谁在撑爆下一轮。</li>
 </ul>
 
 <h2>8. 可视化:让 context 看得见</h2>
@@ -139,21 +141,41 @@
 <p>读 CLI 跑批产出的自包含结果 JSON,渲染三块:① <b>策略对比表</b>(每策略一行:ctx 命中、ans 命中、幻觉、input/output tok、轮数、延迟);② <b>维度下钻</b>(按深度/载体/问法分桶的命中率,低于阈值标红——告诉你"为什么"输);③ <b>probe 列表</b>(逐探针的 ctx/ans/幻觉徽章)。列头按 <code>run_id + strategy·model·dataset</code> 区分,同策略不同模型也分得清。</p>
 <blockquote><b>架构:CLI 跑批 + debugger 看结果。</b>跑批是长任务、十几次 LLM 调用,不适合浏览器里等,放 CLI(可进 CI);结果文件自包含所有 context_report,debugger 读文件即可渲染,无需重跑。后端只加两个只读端点(列文件、读文件)。</blockquote>
 
-<h2>9. 这把尺子带来了什么</h2>
+<h2>9. 工具结果维度:tool-medium tier 与一个差点测错的坑</h2>
+<p>smoke 和 long 的脚本对话只有 user/assistant,实跑探针也不触发工具(<code>avg_rounds=1.0</code>)。这忠实于应用"过去轮次的工具中间结果不持久化"的行为,却留下一个盲点:<b>单次提问的 agentic loop 内部</b>,工具结果(尤其 <code>read_page</code> 一次可达上万 token)才是最大的 context 膨胀源——这正是最初的痛点之一,而我们从没量过。Phase 2 起始补上它:<b>tool-medium tier</b>。</p>
+<p>在 §6 那张矩阵里,tool-medium 占"中历史 × 有工具"这一格,专门隔离<b>工具</b>维度:保持中等历史,把变量锁在工具轮上。<b>单一变量纪律</b>很关键——tool-medium 不能又长历史又大工具结果,否则归因又糊了。</p>
+<blockquote><b>确定性靠冻结回放(方案 A)。</b><code>read_page</code> 实时结果每次不同,会破坏跨运行可比。所以<b>生成时真实捕获、eval 时冻结回放</b>:把预置的 <code>[assistant tool_call, tool result]</code> 直接塞进 loop,再让模型出最终答案。这样只测"context 管理对工具结果的处理"(膨胀、carry、针存活),不掺"模型决定调不调工具"的方差。后端 <code>/debug/run</code> 加一个 <code>tool_rounds</code> 回放参数即可。</blockquote>
+
+<h3>坑一:捏造工具结果,会把测量本身测错</h3>
+<p>构造数据集时为了省事,我一开始<b>复刻</b>了 <code>read_page</code> 的提取逻辑,又<b>凭空捏</b>了一个 <code>web_search</code> 的返回——一个 <code>{"results":[…]}</code> 的小 JSON,约 300 字符。等真去 <code>import</code> 并调用应用的 <code>web_search</code>,才发现真实返回是 <code>{"queries":…,"combined_answer":…,"errors":…}</code> 的完全不同结构,而且 <b>约 22000 字符,不是约 300</b>。</p>
+<blockquote class="warn"><b>差了约 70 倍——而这个 tier 存在的全部意义就是量工具结果的膨胀。</b>用捏造的 stub,会把一次 web_search 轮的膨胀量级测错近两个数量级、还把结构搞错,产出一份"精确、自信、且错误"的报告。这是最隐蔽的一类 bug:它不报错、数字也好看,只是悄悄把你最想测的那个量给污染了。</blockquote>
+<p><b>解法:</b>评测要冻结某个组件的输出,就<b>用那个组件本身</b>去产出——直接 <code>from main import read_page, web_search</code>、真实调用、把返回原样冻结进用例,只有"针"是手工插入到捕获到的正文里。<b>规则:"格式看着对"不等于"分布对"——大小、嵌套、字段形状都会喂进指标。</b></p>
+
+<h3>坑二:真实工具输出会和埋的针打架</h3>
+<p>把真 <code>web_search</code> 放在 <code>read_page</code> 针之前,一个"通用统计型"的针就废了:真实搜索"采用率"会涌入几十个真实百分比(连针值 71% 本身都在里面),针不再唯一,模型直接从搜索结果里答、而不是从我们埋针的页面里取。</p>
+<p><b>解法:</b><code>search → read</code> 的多轮结构只留给<b>专有/内部事实</b>型针(如"我们内部锁定 vLLM 0.6.3"——公网搜不到这个"内部"结论);通用公开统计型针保持单轮 <code>read_page</code>,让针在上下文里保持唯一。<b>真实性(用真工具)与干净归因(针唯一)之间有取舍,要在出题时就设计开,别让它们打架。</b></p>
+
+<h3>历史长度:被独立 review 抓出来</h3>
+<p>独立 reviewer 审计 tool-medium 时一针见血:历史只有 ~1.5k token、和 smoke 一个量级,违背了"中历史"的承诺——等于"smoke 历史 + 一个大工具结果",变量没隔离干净。据此把六个填充对话从 ~2.5k 抬到 ~3.2k token(稳稳介于 smoke 1.5k 与 long 8.7k 之间)。又一次印证 §6 那句:<b>数据集也要被 review。</b></p>
+<p>顺带把生产的 <code>read_page</code> 上限从 5k 提到 <b>30k</b>(多数页面整页装下,膨胀更真实),并让 <b>eval 与生产共用同一个上限</b>同步重新捕获。最终 baseline(concat / grok-4-fast):<b>ctx 命中 100% · ans 命中 100% · 幻觉 0% · 平均 input 8.7k tok</b>(单工具针探针 ~9–10k,唯一的多轮探针 ~16.6k,膨胀主要来自真实工具结果)——concat 在这一档仍是满分上限,区分度要等 Phase 2 对工具结果做 chunk / 检索才会拉开。</p>
+<blockquote class="win"><b>顺手立的两条工程纪律:</b>① 跑过不止一次的检查就该是脚本——把生成 / 校验 / 冒烟(<code>_generate.py</code> / <code>_validate.py</code> / <code>_smoketest.py</code>)落盘随用例一起提交,而不是每次重敲一次性命令,数据集才能确定性重建、重测。② 结果文件是实验记录,配置变了(5k→30k)就重跑、替换旧基线,不手改数字。</blockquote>
+
+<h2>10. 这把尺子带来了什么</h2>
 <p>有了它,Phase 1 才有了客观结论:window_summary 用 ~57% 的 token 节省换约 9 个百分点准确度、幻觉零增长(详见 <a href="phase1_window_summary.html">Phase 1 报告</a>)。更意外的是,这套体系在第一次量真实摘要时,把自己 <code>ctx_hit</code> 判定的盲点也照了出来,逼着我们把"精确子串"升级成"LLM 判存在"。<b>一把好尺子不只量被测对象,也会量出自己的刻度问题。</b></p>
 
-<h2>10. 收获清单</h2>
+<h2>11. 收获清单</h2>
 <ul>
   <li>效率和准确度<b>必须一起读</b>——单看任何一条都能被极端策略骗过。</li>
   <li>效率按<b>提问生命周期</b>累计,input/output 分开;token 走<b>双轨</b>(本地估算分层 + API 真值),双轨能抓上游异常。</li>
   <li>准确度<b>两级判定</b>(context 命中确定性 + 答案命中);幻觉靠<b>负向探针</b>,不靠感觉。</li>
-  <li>数据集要<b>确定性冻结</b>、<b>单题材</b>、<b>按维度铺开</b>、<b>分档</b>(smoke 快测 / long 压测),而且<b>要被 review</b>。</li>
+  <li>数据集要<b>确定性冻结</b>、<b>单题材</b>、<b>按维度铺开</b>、按<b>四 tier 矩阵</b>(历史长度 × 工具有无)分档——诊断型每格只变一个量、集成型做验收,而且<b>要被 review</b>。</li>
   <li>评测的两个外部变量——<b>被测模型和裁判模型</b>——都要验,别用 agent 封装、别信没验过的裁判。</li>
   <li>把测量做成<b>结构化数据 + 可视化</b>,而不是日志,排查"模型为什么不知道 X"才有抓手。</li>
+  <li>评测要冻结某个组件的输出,就<b>用那个组件本身</b>去产出——复刻或捏造会带来未知的<b>分布 gap</b>,而 gap 恰好毁掉你要测的那个量("格式对 ≠ 分布对")。真实工具输出还会和埋的针打架,出题时就要把<b>真实性与干净归因</b>设计开。</li>
 </ul>
 
 <div class="footer">
-  归档于 <code>docs/reports/</code> · 关联:<code>docs/eval_plan.md</code>(评测体系完整设计)、<a href="phase1_window_summary.html">Phase 1 报告</a>、<code>docs/design.md</code>(路线总览) · 实现:<code>context_report.py</code>、<code>eval/run.py</code>、<code>eval/cases/{smoke,long}/</code>、<code>static/debugger.html</code>
+  归档于 <code>docs/reports/</code> · 关联:<code>docs/eval_plan.md</code>(评测体系完整设计 §6.7/§6.8 工具维度)、<a href="phase1_window_summary.html">Phase 1 报告</a>、<code>docs/reflections.md</code>(工具捕获等踩坑记录)、<code>docs/design.md</code>(路线总览) · 实现:<code>context_report.py</code>、<code>eval/run.py</code>、<code>eval/cases/{smoke,long,tool-medium}/</code>(后者含 <code>_generate.py</code>/<code>_validate.py</code>/<code>_smoketest.py</code>)、<code>main.py</code> 的 <code>/debug/run</code> 回放、<code>static/debugger.html</code>
 </div>
 </div>
 </body>
