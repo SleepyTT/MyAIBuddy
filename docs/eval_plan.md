@@ -21,6 +21,8 @@
 
 **Phase 1 首轮（2026-06-15，`2026-06-15_2052_window_summary_long.json`）**：strategy=window_summary，model=grok-4-fast，judge=kimi-k2.5，long tier 24 探针 → **ctx 命中 91% · ans 命中 91% · 幻觉 0% · 平均 input 2394 tok（压缩比 0.38，相对 concat 省 57%）· 延迟 16.4s**。详见 `phase1_sliding_window_summary.md` §6。⚠️ 同日有一次错误结果（`...1900_...`，ctx 9%/幻觉 71%）——那是 `ctx_hit` 子串匹配在摘要改写下假阴性 + 幻觉判定漏了"答对不算幻觉"守卫所致的测量伪影，已修 `ctx_hit`（改 LLM 保留判定）与幻觉守卫后重跑，错误结果文件已删除。
 
+**Tool-medium baseline（2026-06-22，`2026-06-22_1233_concat_tool-medium.json`）**：strategy=concat，model=grok-4-fast，judge=kimi-k2.5，6 例 / 8 探针（6 工具针 + 2 负向）→ **ctx 命中 100% · ans 命中 100% · 幻觉 0% · 平均 input 3661 tok/题 · rounds 1.0 · 延迟 1.6s**。工具结果按 §6.7 方案 A 冻结回放，且**由真实调用 FastAPI 的 `read_page`/`web_search` 捕获**（曾误用捏造的 web_search stub，真实返回是 `{queries/combined_answer/errors}` 结构、~22k 字符而非 ~300，会把膨胀量级测错 ~70 倍——详见 `reflections.md`）。单工具针探针 input ~3k；唯一的多轮探针（tool_ml_001，真实 web_search→read_page）input ~9.9k，膨胀全来自真实 web_search，正是 concat 在 Phase 2 检索下会被压缩的部分。concat 在此 tier 同为满分上限；区分度待 Phase 2 RAG 对工具结果做 chunk/检索时体现。数据集生成/校验/冒烟脚本随用例落盘（`eval/cases/tool-medium/_generate.py`、`_validate.py`、`_smoketest.py`）。
+
 **实施中确立的方法论决定**：
 
 1. **eval 不用 `supermind-agent-v1`**：它是上游 agent 封装，内部自跑 agentic loop（2k context 能报出 100k+ 的 usage）且偶发返回空 content，污染效率与准确度指标。eval 默认 `deepseek-v4-pro`。

@@ -1,0 +1,723 @@
+{
+ "run_id": "2026-06-22_1233_concat_tool-medium",
+ "timestamp": "2026-06-22T12:33:45",
+ "strategy": "concat",
+ "model": "grok-4-fast",
+ "judge_model": "kimi-k2.5",
+ "dataset_version": "v1-tool-medium",
+ "summary": {
+  "probes": 8,
+  "needle_probes": 6,
+  "negative_probes": 2,
+  "ctx_hit_rate": 1.0,
+  "ans_hit_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "avg_input_tokens": 3661.1,
+  "avg_estimated_input_tokens": 4649.6,
+  "avg_output_tokens": 44.4,
+  "avg_rounds": 1.0,
+  "avg_latency_s": 1.6,
+  "avg_compression_ratio": 1.0
+ },
+ "dimensions": {
+  "style": {
+   "paraphrase": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "direct": {
+    "probes": 3,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "negative": {
+    "probes": 2,
+    "ctx_hit_rate": null,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "implicit": {
+    "probes": 1,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "carrier": {
+   "tool": {
+    "probes": 6,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "depth": {},
+  "needle_type": {
+   "factual": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "identifier": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "topic": {
+   "ai_trends": {
+    "probes": 1,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "garden": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "health": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "ml": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "stocks": {
+    "probes": 1,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  }
+ },
+ "probes": [
+  {
+   "case_id": "tool_ai_001",
+   "probe_id": "p1",
+   "topic": "ai_trends",
+   "style": "paraphrase",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "根据我刚读取的那个页面里的调研数据，企业整体用上生成式 AI 的比例写的是多少？以页面里的数字为准。",
+   "reply": "根据页面里的内容：\n\n“Survey highlight: across the firms polled, 71% reported using generative AI in at least one business function in the latest wave — up sharply year over year. (An earlier baseline wave had put the comparable figure near 65% of organizations.)”\n\n因此，页面里给出的企业整体采用比例数字是 **71%**（至少在一个业务职能中使用生成式 AI）。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 2817,
+   "output_tokens": 82,
+   "estimated_input_tokens": 3721,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.52,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2380,
+       "items": 17,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 52,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1289,
+       "items": 2,
+       "text": "Generative AI - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\n(Redirected from\nGenerative artificial intelligence\n)\nAI that generates content\n\"GenAI\" redirects here; not to be confused with\nArtificial general intelligence\n.\nThéâtre D'opéra Spatial\n(Space Opera Theater, 2022), an image made with\nMidjourney\nthat won an award at the\nColorado State Fair\n's fine art competition\nPart of\na series\non\nArtificial intelligence (AI)\nMajor goals\nArtificial general intelligence\nIntelligent agent\nRecursive self-improvement\nPlanning\nComputer vision\nGeneral game playing\nKnowledge representation\nNatural language processing\nRobotics\nAI safety\nApproaches\nMachine learning\nSymbolic\nDeep learning\nBayesian networks\nEvolutionary algorithms\nNeuro-symbolic AI\nSystems integration\nOpen-source\nAI data centers\nApplications\nBioinformatics\nDeepfake\nEarth sciences\nFinance\nGenerative AI\nArt\nAudio\nMusic\nGovernment\nHealthcare\nIndustry\nSoftware development\nTranslation\nMilitary\nPhysics\nProjects\nPhilosophy\nAI alignment\nArtificial consciousness\nThe bitter lesson\nChinese room\nFriendly AI\nEthics\nExistential risk\nTuring test\nUncanny valley\nHuman–AI interaction\nHistory\nTimeline\nProgress\nAI winter\nAI boom\nAI bubble\nControversies\nDeepfake pornography\nTaylor Swift deepfake pornography controversy\nGrok sexual deepfake scandal\nGoogle Gemini image generation controversy\nIt's the Most Terrible Time of the Year\nPause Giant AI Experiments\nRemoval of Sam Altman from OpenAI\nStatement on AI Risk\nTay (chatbot)\nThéâtre D'opéra Spatial\nVoiceverse NFT plagiarism scandal\nGlossary\nGlossary\nv\nt\ne\nGenerative artificial intelligence\n(\nGenAI\n) is a subfield of\nartificial intelligence\n(AI) that uses\ngenerative models\nto generate text,\nimages\n,\nvideos\n,\naudio\n,\nsoftware code\n(\nvibe coding\n) or other forms of data.\n[\n1\n]\nThese models\nlearn the underlying patterns\nand structures of their\ntraining data\n, and use them to generate new data\n[\n2\n]\nin response to input, which often takes the form of\nnatural language\nprompts\n.\n[\n3\n]\n[\n4\n]\nThe prevalence of generative AI tools has increased significantly since the\nAI boom\nin the 2020s. This boom was made possible by improvements in\ndeep\nneural networks\n, particularly\nlarge language models\n(LLMs), which are based on the\nSurvey highlight: across the firms polled, 71% reported using generative AI in at least one business function in the latest wave — up sharply year over year. (An earlier baseline wave had put the comparable figure near 65% of organizations.)\ntransformer\narchitecture. Generative AI\napplications\ninclude\nchatbots\nsuch as\nChatGPT\n,\nClaude\n,\nCopilot\n,\nDeepSeek\n,\nDoubao\n,\nGoogle Gemini\n,\nGrok\nand\nQwen\n;\ntext-to-image\nmodels such as\nDALL-E\n,\nFirefly\n,\nStable Diffusion\n, and\nMidjourney\n; and\ntext-to-video\nmodels such as\nVeo\n,\nLTX\nand\nSora\n.\n[\n5\n]\n[\n6\n]\n[\n7\n]\nCompanies in a variety of sectors have used generative AI, including those in software development, healthcare,\n[\n8\n]\nfinance,\n[\n9\n]\nentertainment,\n[\n10\n]\ncustomer service,\n[\n11\n]\nsales and marketing,\n[\n12\n]\nart, writing,\n[\n13\n]\nand product design.\n[\n14\n]\nGenerative AI has been used for\ncybercrime\n, and to deceive and manipulate people through\nfake news\nand\ndeepfakes\n.\n[\n15\n]\n[\n16\n]\nGenerative AI models have been trained on\ncopyrighted\nworks without the\nrightholders\n' permission.\n[\n17\n]\nMany generative AI systems use large-scale\ndata centers\n, whose\nenvironmental impacts\ninclude\nelectronic waste\n, consumption of fresh water for cooling, and high energy consumption that is estimated to be growing steadily.\n[\n18\n]\nHistory\n[\nedit\n]\nMain article:\nHistory of artificial intelligence\nEarly history\n[\nedit\n]\nThe origins of algorithmically generated media can be traced to the development of the\nMarkov chain\n, which has been used to model natural language since the early 20th century. Russian mathematician\nAndrey Markov\nintroduced the concept in 1906,\n[\n19\n]\n[\n20\n]\nincluding an analysis of vowel and consonant patterns in\nEugene Onegin\n. Once trained on a\ntext corpus\n, a Markov chain can generate probabilistic text.\n[\n21\n]\n[\n22\n]\nBy the early 1970s, artists began using computers to extend generative techniques beyond Markov models.\nHarold Cohen\ndeveloped and exhibited works produced by\nAARON\n, a pioneering computer program designed to autonomously create paintings.\n[\n23\n]\nThe terms generative\nAI planning\nor generative planning were used in the 1980s and 1990s to refer to\nAI planning\nsystems, especially\ncomputer-aided process planning\n, used to generate sequences of actions to reach a specified goal.\n[\n24\n]\n[\n25\n]\nGenerative AI planning systems used\nsymbolic AI\nmethods such as\nstate space search\nand\nconstraint satisfaction\nand were a \"relatively mature\" technology by the early 1990s. They were used to generate crisis action plans for military use,\n[\n26\n]\nprocess plans for manufacturing\n[\n24\n]\nand decision plans such as in prototype autonomous spacecraft.\n[\n27\n]\nGenerative neural networks (since the late 2000s)\n[\nedit\n]\nSee also:\nMachine learning\nand\ndeep learning\nAbove"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 3721,
+     "full_history_tokens": 2380,
+     "context_limit": 128000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_garden_001",
+   "probe_id": "p1",
+   "topic": "garden",
+   "style": "direct",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "根据我刚查到的这个页面里写的，月季冬剪每根主枝建议保留几个芽眼？以页面内容为准。",
+   "reply": "根据页面里“Pruning guidance (winter)”这段，明确写到：  \n**established bush roses，每根主枝（cane）建议保留约 5 个芽眼（buds/eyes）。**  \n\n仅当对非常老、非常弱的枝做复壮时，才用更狠的“留 3 个芽眼”剪法；日常冬剪默认标准是留 5 个。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 3241,
+   "output_tokens": 84,
+   "estimated_input_tokens": 4406,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.09,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2786,
+       "items": 17,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 53,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1567,
+       "items": 2,
+       "text": "Rose - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\nGenus of flowering plants\nFor other uses, see\nRose (disambiguation)\n,\nRosé (disambiguation)\n,\nRoses (disambiguation)\n, and\nRosa (disambiguation)\n.\nThis article includes a list of\ngeneral references\n, but\nit lacks sufficient corresponding\ninline citations\n.\nPlease help to\nimprove\nthis article by\nintroducing\nmore precise citations.\n(\nFebruary 2025\n)\n(\nLearn how and when to remove this message\n)\nRose\nTemporal range:\nEocene–Recent\nPreꞒ\nꞒ\nO\nS\nD\nC\nP\nT\nJ\nK\nPg\nN\nRosa rubiginosa\n, a wild rose native to Europe and West Asia\nRosa\n'Precious Platinum'\n, a\nhybrid tea\ngarden cultivar\nScientific classification\nKingdom:\nPlantae\nClade\n:\nEmbryophytes\nClade\n:\nTracheophytes\nClade\n:\nSpermatophytes\nClade\n:\nAngiosperms\nClade\n:\nEudicots\nClade\n:\nRosids\nOrder:\nRosales\nFamily:\nRosaceae\nSubfamily:\nRosoideae\nTribe:\nRoseae\nGenus:\nRosa\nL.\n[\n1\n]\nType species\nRosa cinnamomea\nL.\n[\n2\n]\nSpecies\nSee\nList of\nRosa\nspecies\nSynonyms\n[\n3\n]\nBakeria\n(Gand.) Gand., nom. illeg.\nChabertia\n(Gand.) Gand.\nChavinia\n(Gand.) Gand.\nCottetia\n(Gand.) Gand.\nCrepinia\n(Gand.) Gand., nom. illeg.\nErnestella\nGerm.\nHesperhodos\nCockerell\nHulthemia\nDumort.\n×\nHulthemosa\nJuz.\nJuzepczukia\nChrshan.\nLaggeria\n(Gand.) Gand.\nLowea\nLindl.\nOzanonia\n(Gand.) Gand.\nPlatyrhodon\nDecne. ex Hurst, nom. illeg.\nPugetia\n(Gand.) Gand.\nRhodophora\nNeck., nom. invalid.\nRhodopsis\n(Endl.) Rchb., nom. rejic.\nRipartia\n(Gand.) Gand.\nSaintpierrea\nGerm.\nScheutzia\n(Gand.) Gand., nom. illeg.\nA\nrose\nis either a woody\nperennial\nflowering plant\nof the\ngenus\nRosa\n(\n/\nˈ\nr\noʊ\nz\nə\n/\n),\n[\n4\n]\nin the family\nRosaceae\n(\n/\nr\noʊ\nˈ\nz\neɪ\ns\niː\nˌ\niː\n/\n),\n[\n4\n]\nor the\nflower\nit bears. There are over three hundred species and\ntens of thousands\nof\ncultivars\n.\n[\n5\n]\nThe plants range in size and form, from trailing and erect\nshrubs\nto climbers up to 7 metres (23 ft) in height. Sharp\nprickles\nappear on the stems of many species.\n[\n6\n]\nTheir flowers vary in size and shape and are usually large and showy, in colours ranging from white through pinks, reds, oranges and yellows.\nMost species are native to Asia, with smaller numbers native to Europe, North America, and Northwest Africa.\n[\n6\n]\nSpecies,\ncultivars\nand\nhybrids\nPruning guidance (winter): for established bush roses, cut each main cane back and retain about 5 buds (eyes) per cane to shape next season's growth — a harder cut leaving only 3 buds is used for rejuvenating very old, weak canes, not as the default.\nare all widely grown for their beauty and often are fragrant. Different species hybridize easily, and this has been used in the development of the wide range of\ngarden roses\n. Roses have acquired cultural significance in many societies.\nEtymology\nThe name\nrose\ncomes from Latin\nrosa\n, which was perhaps borrowed from\nOscan\n, from Greek ῥόδον\nrhódon\n(\nAeolic\nβρόδον\nwródon\n), itself borrowed from\nOld Persian\nwrd-\n(\nwurdi\n), related to\nAvestan\nvarəδa\n,\nSogdian\nward\n,\nParthian\nwâr\n.\n[\n7\n]\n[\n8\n]\nBotany\nThe\nleaves\nare borne alternately on the stem. In most species, they are 5 to 15 centimetres (2 to 6 in) long,\npinnate\n, with (3–) 5–9 (−13) leaflets and basal\nstipules\n; the leaflets usually have a serrated margin, and often a few small\nprickles\non the underside of the stem. Most roses are\ndeciduous\nbut a few (particularly from Southeast Asia) are\nevergreen\nor nearly so.\nThorns\nThe sharp growths along a rose stem, though commonly called \"thorns\", are technically prickles, outgrowths of the\nepidermis\n(the outer layer of tissue of the stem), unlike true\nthorns\n, which are\nmodified stems\n. Rose prickles are typically sickle-shaped hooks, which aid the rose in hanging onto other vegetation when growing over it.\nSome species such as\nRosa rugosa\nand\nR. pimpinellifolia\nhave densely packed straight prickles, probably an adaptation to reduce\nbrowsing\nby animals, but also possibly an adaptation to trap wind-blown\nsand\nand so reduce\nerosion\nand protect their\nroots\n(both of these species grow naturally on\ncoastal\nsand dunes\n). Despite the presence of prickles, roses are frequently browsed by\ndeer\n. A few species of roses have only vestigial prickles that have no points.\n[\ncitation needed\n]\nPlant geneticist Zachary Lippman of\nCold Spring Harbor Laboratory\nfound that prickles are controlled by the LOG gene.\n[\n9\n]\n[\n10\n]\nBlocking the LOG gene in roses reduced the thorns (large prickles) into tiny buds.\nRose thorns\nRose leaflets\nFlower\nThe\nflowers\nof most species have five petals, with the exception of\nRosa omeiensis\nand\nRosa sericea\n, which usually have only four. Each\npetal\nis divided into two distinct lobes and is usually white or pink, though in a few species yellow or red. Beneath the petals are five\nsepals\n(or in the case of some\nR. omeiensis\nand\nR. sericea\n, four). These may be long enough to be visible when viewed from above and appear as green points alternating with the rounded petals.\nThe coloured petals are fused on the axis and arranged in five bundles forming a circle, the petal bundles expand further from ea"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 4406,
+     "full_history_tokens": 2786,
+     "context_limit": 128000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_garden_001",
+   "probe_id": "p2",
+   "topic": "garden",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我之前告诉过你我家阳台是朝哪个方向的吗？是朝南还是朝北？",
+   "reply": "你之前没提过阳台朝向。  \n\n你家阳台到底是朝南还是朝北？",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1926,
+   "output_tokens": 23,
+   "estimated_input_tokens": 2985,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.64,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2786,
+       "items": 17,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 38,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2985,
+     "full_history_tokens": 2786,
+     "context_limit": 128000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_health_001",
+   "probe_id": "p1",
+   "topic": "health",
+   "style": "paraphrase",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "根据我刚查到的这份指南页面里写的，一般成年人每天钠摄入大概不该超过多少毫克？以页面里的数值为准。",
+   "reply": "根据页面给出的明确数值，一般成年人每日钠摄入推荐上限是 **2300 mg**。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 3507,
+   "output_tokens": 21,
+   "estimated_input_tokens": 4587,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.23,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2647,
+       "items": 17,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 59,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1881,
+       "items": 2,
+       "text": "Sodium - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\nThis article is about the chemical element. For the nutrient commonly called sodium, see\nsalt\n. For the use of sodium as a medication, see\nSaline (medicine)\n. For other uses, see\nsodium (disambiguation)\n.\n\"Natrium\" redirects here. For other uses, see\nNatrium (disambiguation)\n.\nChemical element with atomic number 11 (Na)\nSodium,\n11\nNa\nSodium\nAppearance\nsilvery white metallic\nStandard atomic weight\nA\nr\n°(Na)\n22.989\n769\n28\n±\n0.000\n000\n02\n[\n1\n]\n22.990\n±\n0.001\n(\nabridged\n)\n[\n2\n]\nSodium in the\nperiodic table\nHydrogen\nHelium\nLithium\nBeryllium\nBoron\nCarbon\nNitrogen\nOxygen\nFluorine\nNeon\nSodium\nMagnesium\nAluminium\nSilicon\nPhosphorus\nSulfur\nChlorine\nArgon\nPotassium\nCalcium\nScandium\nTitanium\nVanadium\nChromium\nManganese\nIron\nCobalt\nNickel\nCopper\nZinc\nGallium\nGermanium\nArsenic\nSelenium\nBromine\nKrypton\nRubidium\nStrontium\nYttrium\nZirconium\nNiobium\nMolybdenum\nTechnetium\nRuthenium\nRhodium\nPalladium\nSilver\nCadmium\nIndium\nTin\nAntimony\nTellurium\nIodine\nXenon\nCaesium\nBarium\nLanthanum\nCerium\nPraseodymium\nNeodymium\nPromethium\nSamarium\nEuropium\nGadolinium\nTerbium\nDysprosium\nHolmium\nErbium\nThulium\nYtterbium\nLutetium\nHafnium\nTantalum\nTungsten\nRhenium\nOsmium\nIridium\nPlatinum\nGold\nMercury (element)\nThallium\nLead\nBismuth\nPolonium\nAstatine\nRadon\nFrancium\nRadium\nActinium\nThorium\nProtactinium\nUranium\nNeptunium\nPlutonium\nAmericium\nCurium\nBerkelium\nCalifornium\nEinsteinium\nFermium\nMendelevium\nNobelium\nLawrencium\nRutherfordium\nDubnium\nSeaborgium\nBohrium\nHassium\nMeitnerium\nDarmstadtium\nRoentgenium\nCopernicium\nNihonium\nFlerovium\nMoscovium\nLivermorium\nTennessine\nOganesson\nLi\n↑\nNa\n↓\nK\nneon\n←\nsodium\n→\nmagnesium\nAtomic number\n(\nZ\n)\n11\nGroup\ngroup 1: hydrogen and\nalkali metals\nPeriod\nperiod 3\nBlock\ns-block\nElectron configuration\n[\nNe\n] 3s\n1\nElectrons per shell\n2, 8, 1\nPhysical properties\nPhase\nat\nSTP\nsolid\nMelting point\n370.944\nK\n​(97.794 °C, ​208.029 °F)\nBoiling point\n1156.090 K ​(882.940 °C, ​1621.292 °F)\nDensity\n(at 20° C)\n0.9688 g/cm\n3\n[\n3\n]\nwhen liquid (at\nm.p.\n)\n0.927 g/cm\n3\nCritical point\n2573 K, 35 MPa\n(extrapolated)\nHeat of fusion\n2.60\nkJ/mol\nHeat of vaporization\n97.42 kJ/mol\nMolar heat capacity\n28.230 J/(mol·K)\nSpecific heat capacity\n1227.925 J/(kg·K)\nVapor pressure\nP\nDietary guidance: for the general adult population the recommended upper limit is about 2300 mg of sodium per day (roughly one teaspoon of salt). A stricter target of 1500 mg/day is advised for some higher-risk groups, but 2300 mg is the general cap.\n(Pa)\n1\n10\n100\n1 k\n10 k\n100 k\nat\nT\n(K)\n554\n617\n697\n802\n946\n1153\nAtomic properties\nOxidation states\ncommon:\n+1\n−1,\n[\n4\n]\nElectronegativity\nPauling scale: 0.93\nIonization energies\n1st: 495.8 kJ/mol\n2nd: 4562 kJ/mol\n3rd: 6910.3 kJ/mol\n(\nmore\n)\nAtomic radius\nempirical: 186\npm\nCovalent radius\n166±9 pm\nVan der Waals radius\n227 pm\nSpectral lines\nof sodium\nOther properties\nNatural occurrence\nprimordial\nCrystal structure\n​\nbody-centered cubic\n(bcc) (\ncI2\n)\nLattice constant\na\n= 428.74 pm (at 20 °C)\n[\n3\n]\nThermal expansion\n69.91\n×\n10\n−6\n/K (at 20 °C)\n[\n3\n]\nThermal conductivity\n142 W/(m⋅K)\nElectrical resistivity\n47.7 nΩ⋅m (at 20 °C)\nMagnetic ordering\nparamagnetic\n[\n5\n]\nMolar magnetic susceptibility\n+16.0\n×\n10\n−6\ncm\n3\n/mol (298 K)\n[\n6\n]\nYoung's modulus\n10 GPa\nShear modulus\n3.3 GPa\nBulk modulus\n6.3 GPa\nSpeed of sound\nthin rod\n3200 m/s (at 20 °C)\nMohs hardness\n0.5\nBrinell hardness\n0.69 MPa\nCAS Number\n7440-23-5\nHistory\nNaming\npossibly from Arabic suda, 'headache', for\nsoda\n's use as an anticephalalgic\nDiscovery\nand first isolation\nHumphry Davy\n(1807)\nSymbol\n\"Na\": from\nNew Latin\nnatrium\n, coined from German\nNatron\n, '\nnatron\n'\nIsotopes of sodium\nv\ne\nMain isotopes\n[\n7\n]\nDecay\nIsotope\nabun­dance\nhalf-life\n(\nt\n1/2\n)\nmode\npro­duct\n22\nNa\ntrace\n2.6019 y\nβ\n+\n22\nNe\n23\nNa\n100%\nstable\n24\nNa\ntrace\n14.956 h\nβ\n−\n24\nMg\nCategory: Sodium\nview\ntalk\nedit\n|\nreferences\nSodium\nis a\nchemical element\n; it has\nsymbol\nNa\n(from\nNeo-Latin\nnatrium\n) and\natomic number\n11. It is a soft, silvery-white, highly reactive\nmetal\n. Sodium is an\nalkali metal\n, being in\ngroup 1\nof the periodic table. Its only stable\nisotope\nis\n23\nNa. The free metal does not occur in nature and must be prepared from compounds. Sodium is the\nsixth–most abundant element in the Earth's crust\nand exists in numerous\nminerals\nsuch as\nfeldspars\n,\nsodalite\n, and\nhalite\n(NaCl). Many salts of sodium are highly water-soluble: sodium ions have been\nleached\nby the action of water from the\nEarth\n's\nminerals\nover eons, and thus sodium and\nchlorine\nare the most common dissolved elements by weight in the oceans.\nSodium was first isolated by\nHumphry Davy\nin 1807 by the\nelectrolysis\nof\nsodium hydroxide\n. Among many other useful sodium compounds, sodium hydroxide (\nlye\n) is used in\nsoap manufacture\n, and\nsodium chloride\n(\nedible salt\n) is a\nde-icing\nagent and a nutrient for animals including humans.\nSodium is an\nessential element\nfor all animals and some plants. Sodium ions are the major cation in the\nextracellular fluid\n(ECF) and as such are the major"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 4587,
+     "full_history_tokens": 2647,
+     "context_limit": 128000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_health_001",
+   "probe_id": "p2",
+   "topic": "health",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我之前跟你说的我那次空腹血糖的具体数值是多少来着？",
+   "reply": "我这边没有保存你之前提到的空腹血糖具体数值（聊天记录里也没有出现过）。如果你记得数值，可以再告诉我一次，我帮你一起看。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1898,
+   "output_tokens": 34,
+   "estimated_input_tokens": 2845,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.61,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2647,
+       "items": 17,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 37,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2845,
+     "full_history_tokens": 2647,
+     "context_limit": 128000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_ml_001",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "tool",
+   "needle_type": "identifier",
+   "depth": null,
+   "question": "根据我刚打开的这个页面里的说明，我们内部要锁定的 vLLM 稳定版本号写的是多少？请以页面内容为准，不要凭印象答。",
+   "reply": "根据你刚才打开的页面内容，**vLLM 稳定版本号被钉死为 v0.6.3**。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 9921,
+   "output_tokens": 28,
+   "estimated_input_tokens": 10909,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.71,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 3,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2500,
+       "items": 19,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 61,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 8348,
+       "items": 4,
+       "text": "{\"queries\": [{\"keyword\": \"vLLM latest stable release version pinned\", \"response\": {\"query\": \"vLLM latest stable release version pinned\", \"follow_up_questions\": null, \"answer\": null, \"images\": [{\"url\": \"https://opengraph.githubassets.com/4c0313ba15aa24c6bc9243210bfaced1e4c6d8114ac21ec1f552eb3b64afae92/vllm-project/vllm\", \"title\": \"Releases · vllm-project/vllm\", \"description\": \"The image displays a presentation slide introducing \\\"vllm,\\\" described as a high-throughput and memory-efficient inference engine for large language models (LLMs), with icons indicating substantial community engagement and repository activity.\"}, {\"url\": \"https://images.technotim.com/assets/img/headers/vllm-gb10.webp\", \"title\": \"Running the Latest vLLM on the NVIDIA DGX Spark | Techno Tim\", \"description\": \"The image features a digital illustration of a container floating above a hardware device, with labels highlighting compatibility with vLLM, CUDA, PyTorch, NCCL, and FlashInfer, and text indicating an update to the DGX Spark with the latest stable vLLM release.\"}, {\"url\": \"https://raw.githubusercontent.com/micytao/vllm-playground/main/assets/vllm-playground-claude-code.png\", \"title\": \"Releases · micytao/vllm-playground\", \"description\": \"The image shows a computer interface of a vLLM Playground with a dark theme, featuring a pixel art ASCII robot icon, version information, and instructions for running and managing a vLLM server, specifically related to the latest stable release of vLLM.\"}, {\"url\": \"https://vllm.ai/blog-assets/figures/vllm-2024-wrapped-2025-roadmap/vllm-contributor-groups.png\", \"title\": \"vLLM 2024 Retrospective and 2025 Vision | vLLM Blog\", \"description\": \"The image shows a stacked area chart titled \\\"vLLM Main Contributor Groups (by Commits)\\\" illustrating the contribution trends of various groups, including Intel, AMD, Roblox, and others, over time from April 2023 to July 2024.\"}, {\"url\": \"https://raw.githubusercontent.com/micytao/vllm-playground/main/assets/vllm-playground-observability.png\", \"title\": \"Releases · micytao/vllm-playground\", \"description\": null}], \"results\": [{\"url\": \"https://docs.vllm.ai/projects/ascend/en/main/user_guide/release_notes.html\", \"title\": \"Release Notes — vllm-ascend\", \"content\": \"Skip to main content\\n\\nBack to top Ctrl+K\\n\\nYou are viewing the latest developer preview docs. Click here to view docs for the latest stable release(v0.18.0).\\n\\nImage 1: vllm-ascend - HomeImage 2: vllm-ascend - Home\\n\\nSearch Ctrl+K\\n\\nGetting Started\\n\\n   Quickstart\\n   Installation\\n   Model Tutorials [...] Fixed mc2 op GroupCoordinator bug in #1711\\n\\n   Fixed the failure to recognize the actual type of quantization in #1721\\n\\n   Fixed DeepSeek bug when tp_size == 1 in #1755\\n\\n   Added support for delay-free blocks in prefill nodes in #1691\\n\\n   MoE alltoallv communication optimization for unquantized RL training & alltoallv support dpo in #1547\\n\\n   Adapted dispatchV2 interface in #1822\\n\\n   Fixed disaggregate prefill hang issue in long output in #1807\\n\\n   Fixed flashcomm_v1 when engine v0 in #1859\\n\\n   ep_group is not equal to word_size in some cases in #1862.\\n\\n   Fixed wheel glibc version incompatibility in #1808.\\n\\n   Fixed mc2 process group to resolve self.cpu_group is None in #1831.\\n\\n   Pin vllm version to v0.9.1 to make mypy check passed in #1904. [...] ### Highlights#\\n\\n   CANN is upgraded to 8.3.RC2. #4332\\n\\n   Ngram spec decode method is back now. #4092\\n\\n   The performance of aclgraph is improved by updating default capture size. #4205\\n\\n### Core#\\n\\n   Speed up vLLM startup time. #4099\\n\\n   Kimi k2 with quantization works now. #4190\\n\\n   Fix a bug for qwen3-next. It’s more stable now. #4025\\n\\n### Other#\\n\\n   Fix an issue for full decode only mode. Full graph mode is more stable now. #4106#4282\\n\\n   Fix a allgather ops bug for DeepSeek V3 series models. #3711\\n\\n   Fix some bugs for EPLB feature. #4150#4334\\n\\n   Fix a bug that vl model doesn’t work on x86 machine. #4285\\n\\n   Support ipv6 for prefill disaggregation proxy. Please note that mooncake connector doesn’t work with ipv6. We’re working on it. #4242\", \"score\": 0.68697983, \"raw_content\": null, \"images\": [{\"url\": \"https://docs.vllm.ai/projects/ascend/en/main/_static/vllm-ascend-logo-text-light.png\", \"description\": \"vllm-ascend - Home\", \"description_source\": \"alt\", \"score\": null}]}, {\"url\": \"https://github.com/vllm-project/vllm/releases\", \"title\": \"Releases · vllm-project/vllm\", \"content\": \"DeepSeek V4: Initial DeepSeek V4 support landed (#40860), with DSML token-leakage fix in DSV4/3.2 (#40806), DSA + MTP IMA fix (#40772), and a silu clamp limit on the shared expert (#40950).\\n   CUDA 13.0 default: Default CUDA wheel on PyPI and `vllm/vllm-openai:v0.20.0` image switched to CUDA 13.0; architecture lists and build-args cleaned up (#39878), and CUDA bumped to 13.0.2 to match PyTorch 2.11.0 (#40669). As a general rule of thumb, our CUDA version policy follows PyTorch's. We highly recommend to install vLLM with `uv` and use `--torch-backend=cu129` if you are on CUDA 12.9.\\n   PyTorch 2.11 upgrade (#34644): vLLM ships on torch 2.11 for CUDA, and XPU is now also on torch 2.11 (#37947) — XPU is no longer pinned to 2.10. This is a breaking change for environment dependency. [...] ### Build & Dependencies\\n\\n   CUDA 12.9 wheel builds switched to PyTorch `manylinux_2_28` base (#41668).\\n   FlashInfer bumped to v0.6.11.post2 (#41711); `nvidia-cutlass-dsl` to 4.5.2 (#42991, #43230, #43745); llguidance to 1.7 (#42150); `triton_kernels` downgraded to v3.5.1 for gpt-oss (#43135).\\n   Rust frontend build: `setuptools-rust` dependency (#43287, #43377), pinned `protoc` in rust-build stages (#43292).\\n   Docker: non-root `vllm-openai` target (#40275), build `mooncake-transfer-engine` from source (#42114), AINIC & Thor NIC support (#40453); Python-only installation made optional (#42293).\\n   vllm-tpu: disable build isolation for CUDA deps (#43038), tpu-inference docker build fix (#43360).\\n   `humming` MoE backend dependency adde...\\n\\nRead more\\n\\n### Contributors [...] Python 3.14: Added to the supported Python version list (#34770).\\n   Transformers v5: vLLM now runs on HuggingFace `transformers>=5` (#30566), with vision-encoder torch.compile bypass (#30518) and continued v4/v5 compat fixes including PaddleOCR-VL image processor `max_pixels` (#38629), Mistral YaRN warning (#37292), and Jina ColBERT rotary inv_freq recompute (#39176).\\n   New large models: Hunyuan v3 (Hy3) preview (#40681) with HYV3 reasoning parser (#40713); Granite 4.1 Vision as a built-in multimodal model (#40282).\\n   FlashAttention 4 as default MLA prefill: FA4 re-enabled as the default MLA prefill backend (#38819) with head-dim 512 and paged-KV support on SM90+ (#38835), plus an upstream FA4 sync (#38690).\", \"score\": 0.60666215, \"raw_content\": null, \"images\": [{\"url\": \"https://avatars.githubusercontent.com/u/136984999?s=80&v=4\", \"description\": \"@vllm-project\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://github.githubassets.com/assets/open_collective-0a706523753d.svg\", \"description\": \"open_collective\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/51931015?s=40&v=4\", \"description\": \"@khluu\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/98028?s=64&v=4\", \"description\": \"@rasmith\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/214450?s=64&v=4\", \"description\": \"@shadeMe\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/1128868?s=64&v=4\", \"description\": \"@taneem-ibrahim\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/1236979?s=64&v=4\", \"description\": \"@tlrmchlsmth\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/1412207?s=64&v=4\", \"description\": \"@rajkiranjoshi\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/1573221?s=64&v=4\", \"description\": \"@chaojun-zhang\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/1864899?s=64&v=4\", \"description\": \"@animeshtrivedi\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/2269039?s=64&v=4\", \"description\": \"@Dao007forever\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/2779410?s=64&v=4\", \"description\": \"@BramVanroy\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/2911134?s=64&v=4\", \"description\": \"@chunyang-wen\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/3195154?s=64&v=4\", \"description\": \"@mgoin\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/3337719?s=64&v=4\", \"description\": \"@varun-sundar-rabindranath\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/4076731?s=64&v=4\", \"description\": \"@charlifu\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/4209369?s=64&v=4\", \"description\": \"@noooop\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/5115126?s=64&v=4\", \"description\": \"@jasonboukheir\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/5842389?s=64&v=4\", \"description\": \"@zzt93\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/6946716?s=64&v=4\", \"description\": \"@brian-dellabetta\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/7311355?s=64&v=4\", \"description\": \"@zvik\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/7554089?s=64&v=4\", \"description\": \"@QwertyJack\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/7577988?s=64&v=4\", \"description\": \"@maeehart\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/7714403?s=64&v=4\", \"description\": \"@jzakrzew\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/7892079?s=64&v=4\", \"description\": \"@walterbm\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/7948940?s=64&v=4\", \"description\": \"@tonyliu312\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/8399211?s=64&v=4\", \"description\": \"@JartX\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/8455015?s=64&v=4\", \"description\": \"@tushar00jain\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/8574759?s=64&v=4\", \"description\": \"@willamhou\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/8823584?s=64&v=4\", \"description\": \"@ilmarkov\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/8854186?s=64&v=4\", \"description\": \"@LucasWilkinson\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/8872493?s=64&v=4\", \"description\": \"@wanghenshui\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/10357969?s=64&v=4\", \"description\": \"@Jie-Fang\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/10526540?s=64&v=4\", \"description\": \"@yubofredwang\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/10584186?s=64&v=4\", \"description\": \"@SunskyXH\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/10706289?s=64&v=4\", \"description\": \"@NickLucche\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/10891919?s=64&v=4\", \"description\": \"@wangxiyuan\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/10901756?s=64&v=4\", \"description\": \"@angelayi\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/11413421?s=64&v=4\", \"description\": \"@Majid-Taheri\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/11801849?s=64&v=4\", \"description\": \"@Wauplin\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/11849056?s=64&v=4\", \"description\": \"@yma11\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/12716535?s=64&v=4\", \"description\": \"@ECMGit\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/12804359?s=64&v=4\", \"description\": \"@ruocco\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/14065538?s=64&v=4\", \"description\": \"@zhejiangxiaomai\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/15029895?s=64&v=4\", \"description\": \"@shreyas269\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/16065489?s=64&v=4\", \"description\": \"@wdhongtw\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/16958488?s=64&v=4\", \"description\": \"@njhill\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/17022745?s=64&v=4\", \"description\": \"@galletas1712\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/17067717?s=64&v=4\", \"description\": \"@ivanium\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/17159645?s=64&v=4\", \"description\": \"@Liangliang-Ma\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/17329931?s=64&v=4\", \"description\": \"@maobaolong\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/17350011?s=64&v=4\", \"description\": \"@kliuae\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/17592131?s=64&v=4\", \"description\": \"@meenchen\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/17771355?s=64&v=4\", \"description\": \"@orozery\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/17880625?s=64&v=4\", \"description\": \"@nholmber\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/17962021?s=64&v=4\", \"description\": \"@chaunceyjiang\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/18140413?s=64&v=4\", \"description\": \"@effi-ofer\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/19733142?s=64&v=4\", \"description\": \"@jeejeelee\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/19794632?s=64&v=4\", \"description\": \"@zexplorerhj\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/19981378?s=64&v=4\", \"description\": \"@hmellor\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/20933496?s=64&v=4\", \"description\": \"@sphinx07\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/21234757?s=64&v=4\", \"description\": \"@wjabbour\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/22145370?s=64&v=4\", \"description\": \"@lucianommartins\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/22260572?s=64&v=4\", \"description\": \"@dsikka\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/22275437?s=64&v=4\", \"description\": \"@Krishnachaitanyakc\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/22476972?s=64&v=4\", \"description\": \"@huanghua1994\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/22584786?s=64&v=4\", \"description\": \"@Kevin-XiongC\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/22648877?s=64&v=4\", \"description\": \"@MatthewBonanni\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/22851944?s=64&v=4\", \"description\": \"@zixi-qi\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/23425475?s=64&v=4\", \"description\": \"@chfeng-cs\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/23566414?s=64&v=4\", \"description\": \"@xwu-intel\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/25862682?s=64&v=4\", \"description\": \"@BugenZhao\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/26440593?s=64&v=4\", \"description\": \"@Vikrantpalle\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/26946864?s=64&v=4\", \"description\": \"@gau-nernst\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/29171856?s=64&v=4\", \"description\": \"@tjtanaa\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/31750416?s=64&v=4\", \"description\": \"@benchislett\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/32029023?s=64&v=4\", \"description\": \"@jwzheng96\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/32208165?s=64&v=4\", \"description\": \"@Terrencezzj\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/32387785?s=64&v=4\", \"description\": \"@ltd0924\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/32987265?s=64&v=4\", \"description\": \"@TheEpicDolphin\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/33788514?s=64&v=4\", \"description\": \"@Dymasik\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/35311602?s=64&v=4\", \"description\": \"@alec-flowers\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/35890237?s=64&v=4\", \"description\": \"@lesj0610\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/37239608?s=64&v=4\", \"description\": \"@ILikeIneine\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/37826670?s=64&v=4\", \"description\": \"@ronensc\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/37990712?s=64&v=4\", \"description\": \"@cakeng\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/38443830?s=64&v=4\", \"description\": \"@fallintoplace\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/38716394?s=64&v=4\", \"description\": \"@ThibaultCastells\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/40085740?s=64&v=4\", \"description\": \"@he-yufeng\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/40604584?s=64&v=4\", \"description\": \"@juliendenize\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/41363108?s=64&v=4\", \"description\": \"@Isotr0py\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/42426329?s=64&v=4\", \"description\": \"@zyongye\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/42451412?s=64&v=4\", \"description\": \"@AndreasKaratzas\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/43040147?s=64&v=4\", \"description\": \"@Sunt-ing\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/43847754?s=64&v=4\", \"description\": \"@izhuhaoran\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/44945378?s=64&v=4\", \"description\": \"@yewentao256\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/45893910?s=64&v=4\", \"description\": \"@Holworth\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/46394894?s=64&v=4\", \"description\": \"@WoosukKwon\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/46561152?s=64&v=4\", \"description\": \"@garrygale\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://avatars.githubusercontent.com/u/47744603?s=64&v=4\", \"description\": \"@bigPYJ1151\", \"description_source\": \"alt\", \"score\": null}]}, {\"url\": \"https://docs.nvidia.com/deeplearning/frameworks/vllm-release-notes/index.html\", \"title\": \"vLLM Release Notes\", \"content\": \"Through core innovations like PagedAttention and continuous batching, vLLM is designed to be powerful and efficient for the most demanding inference workloads. Common use cases include powering generative AI applications, chatbots, and APIs for text generation, summarization, and translation. The vLLM container is released monthly to provide you with the latest NVIDIA deep learning software libraries and GitHub code contributions that have been sent upstream. The libraries and contributions have all been tested, tuned, and optimized.\\n\\nNote: [...] ## Table of Contents\\n\\n   1.vLLM Overview\\n   2.Pulling A Container\\n   3.Running vLLM\\n   4.vLLM Release 26.05\\n   5.vLLM Release 26.04\\n   6.vLLM Release 26.03\\n   7.vLLM Release 26.02\\n   8.vLLM Release 26.01\\n   9.vLLM Release 25.12\\n   10.vLLM Release 25.11\\n   11.vLLM Release 25.10\\n   12.vLLM Release 25.09\\n\\n© Copyright 2026, NVIDIA.Last updated on Jun 10, 2026\\n\\nTopics [...] 21. JAX Release 24.11    \\n           22. JAX Release 24.10    \\n           23. JAX Release 24.09    \\n           24. JAX Release 24.08    \\n           25. JAX Release 24.07    \\n           26. JAX Release 24.06    \\n           27. JAX Release 24.05    \\n           28. JAX Release 24.04    \\n           29. JAX Release 24.03    \\n           30. JAX Release 24.02    \\n           31. JAX Release 23.12    \\n           32. JAX Release 23.10    \\n           33. JAX Release 23.08\", \"score\": 0.4905535, \"raw_content\": null, \"images\": [{\"url\": \"https://docscontent.nvidia.com/c5/45/6c65378e44f3a4f1f7fcc81586bc/nvidia-logo.svg\", \"description\": \"nvidia_logo.svg\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://d4j85rjepgcta.cloudfront.net/images/question_answer_3x.png\", \"description\": null, \"description_source\": null, \"score\": null}, {\"url\": \"https://cdn.cookielaw.org/logos/10ddf4ca-c072-45d0-b3ac-eead0ed93db0/6e17f6e4-c77b-4a11-9f34-c107c42e4bfc/7981.png\", \"description\": \"NVIDIA Logo\", \"description_source\": \"alt\", \"score\": null}, {\"url\": \"https://cdn.cookielaw.org/logos/static/powered_by_logo.svg\", \"description\": \"Powered by Onetrust\", \"description_source\": \"alt\", \"score\": null}]}], \"response_time\": 16.01, \"request_id\": \"987ba2c9-e8cd-4e1d-848f-6cc42fc2fede\"}}], \"combined_answer\": null, \"errors\": null}\nLarge language model - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\nType of machine learning model\n\"LLM\" redirects here. For other uses, see\nLLM (disambiguation)\n.\nPart of a series on\nMachine learning\nand\ndata mining\nParadigms\nSupervised learning\nUnsupervised learning\nSemi-supervised learning\nSelf-supervised learning\nReinforcement learning\nMeta-learning\nOnline learning\nBatch learning\nCurriculum learning\nRule-based learning\nNeuro-symbolic AI\nNeuromorphic engineering\nQuantum machine learning\nProblems\nClassification\nGenerative modeling\nRegression\nClustering\nDimensionality reduction\nDensity estimation\nAnomaly detection\nData cleaning\nAutoML\nAssociation rules\nSemantic analysis\nStructured prediction\nFeature engineering\nFeature learning\nLearning to rank\nGrammar induction\nOntology learning\nMultimodal learning\nSupervised learning\n(\nclassification\n•\nregression\n)\nApprenticeship learning\nDecision trees\nEnsembles\nBagging\nBoosting\nRandom forest\nk\n-NN\nLinear regression\nNaive Bayes\nArtificial neural networks\nLogistic regression\nPerceptron\nRelevance vector machine (RVM)\nSupport vector machine (SVM)\nClustering\nBIRCH\nCURE\nHierarchical\nk\n-means\nFuzzy\nExpectation–maximization (EM)\nDBSCAN\nOPTICS\nMean shift\nDimensionality reduction\nFactor analysis\nCCA\nICA\nLDA\nNMF\nPCA\nPGD\nt-SNE\nSDL\nStructured prediction\nGraphical models\nBayes net\nConditional random field\nHidden Markov\nAnomaly detection\nRANSAC\nk\n-NN\nLocal outlier factor\nIsolation forest\nNeural networks\nAutoencoder\nDeep learning\nFeedforward neural network\nRecurrent neural network\nLSTM\nGRU\nESN\nreservoir computing\nBoltzmann machine\nRestricted\nGAN\nDiffusion model\nSOM\nConvolutional neural network\nU-Net\nLeNet\nAlexNet\nDeepDream\nNeural field\nNeural radiance field\nPhysics-informed neural networks\nTransformer\nVision\nMamba\nSpiking neural network\nMemtransistor\nElectrochemical RAM\n(ECRAM)\nReinforcement learning\nQ-learning\nPolicy gradient\nSARSA\nTemporal difference (TD)\nMulti-agent\nSelf-play\nLearning with humans\nActive learning\nCrowdsourcing\nHuman-in-the-loop\nMechanistic interpretability\nRLHF\nModel diagnostics\nCoefficient of determination\nConfusion matrix\nLearning curve\nROC curve\nMathematical foundations\nKernel machines\nBias–variance tradeoff\nComputational learning theory\nProduction note (internal): the deployment baseline is pinned to vLLM 0.6.3, which stabilized the PagedAttention block-manager API. Do not target the older 0.5.4 line — its KV-cache interface differs and is considered deprecated here.\nEmpirical risk minimization\nOccam learning\nPAC learning\nStatistical learning\nVC theory\nTopological deep learning\nJournals and conferences\nAAAI\nCVPR\nECCV\nECML PKDD\nEMNLP\nICCV\nNeurIPS\nICML\nICLR\nIJCAI\nML\nJMLR\nRelated articles\nGlossary of artificial intelligence\nList of datasets for machine-learning research\nList of datasets in computer vision and image processing\nOutline of machine learning\nv\nt\ne\nA\nlarge language model\n(\nLLM\n) is a\nneural network\ntrained on a vast amount of text for\nnatural language processing\ntasks, especially\nlanguage generation\n. LLMs can typically generate, summarize, translate, and analyze text in many contexts, and are a foundational technology behind modern\nchatbots\n.\n[\n1\n]\nBiased or inaccurate training data can make an LLM's output less reliable.\n[\n2\n]\nLLMs are typically based on\ntransformer\narchitecture, which is more parallelizable than earlier\nrecurrent neural network\nmodels.\n[\n3\n]\n[\nfailed verification\n]\nGenerative pre-trained transformers\n(GPTs) are a type of LLM that is pre-trained to predict the next word.\n[\n4\n]\nGPTs are then often\nfine-tuned\nto follow instructions and to behave as assistants.\n[\n5\n]\nBenchmark\nevaluations for LLMs attempt to measure\nmodel reasoning\n, factual accuracy,\nalignment\n, and\nsafety\n.\n[\n6\n]\nHistory\n[\nedit\n]\nThe number of publications about large language models by year grouped by publication types\nThe training compute of notable large models in FLOPs vs publication date over the period 2010–2024. For overall notable models (top left), frontier models (top right), top language models (bottom left) and top models within leading companies (bottom right). The majority of these models are language models.\nThe training compute of notable large AI models in FLOPs vs publication date over the period 2017–2024. The majority of large models are language models or multimodal models with language capacity.\nBefore the emergence of transformer-based models in 2017, some\nlanguage models\nwere considered large relative to the computational and data constraints of their time. In the early 1990s,\nIBM\n's\nstatistical models\npioneered\nword alignment\ntechniques for machine translation, laying the groundwork for\ncorpus-based language modeling\n. In 2001, a smoothed\nn\n-gram model\n, such as those employing\nKneser–Ney smoothing\n, trained on 300 million words, achieved state-of-the-art\nperplexity\non benchmark tests.\n[\n7\n]\nDuring the 2000s, with the rise of widespread\ninternet access\n, researchers began compiling massive text datasets from the web (\"web as c"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 10909,
+     "full_history_tokens": 2500,
+     "context_limit": 128000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_ml_002",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "tool",
+   "needle_type": "identifier",
+   "depth": null,
+   "question": "根据我刚打开的这个页面里写的，标准缩放点积注意力对应的那个官方函数名是什么？以页面内容为准。",
+   "reply": "以页面内容为准，官方函数名是：  \n**scaled_dot_product_attention**",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 3008,
+   "output_tokens": 18,
+   "estimated_input_tokens": 3823,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.22,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2548,
+       "items": 19,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 54,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1221,
+       "items": 2,
+       "text": "Transformer (deep learning) - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\n(Redirected from\nTransformer (deep learning architecture)\n)\nAlgorithm for modelling sequential data\nThis article has multiple issues.\nPlease help\nimprove it\nor discuss these issues on the\ntalk page\n.\n(\nLearn how and when to remove these messages\n)\nThis article\nneeds additional citations for\nverification\n.\nPlease help\nimprove this article\nby\nadding citations to reliable sources\n. Unsourced material may be challenged and removed.\nFind sources:\n\"Transformer\" deep learning\n–\nnews\n·\nnewspapers\n·\nbooks\n·\nscholar\n·\nJSTOR\n(\nJune 2026\n)\n(\nLearn how and when to remove this message\n)\nSome of this article's\nlisted sources\nmay not be\nreliable\n.\nPlease help improve this article by looking for better, more reliable sources. Unreliable citations may be challenged and removed.\n(\nJune 2026\n)\n(\nLearn how and when to remove this message\n)\n(\nLearn how and when to remove this message\n)\nA standard transformer architecture, showing on the left an encoder, and on the right a decoder. Note: it uses the pre-LN convention, which is different from the post-LN convention used in the original 2017 transformer.\nPart of a series on\nMachine learning\nand\ndata mining\nParadigms\nSupervised learning\nUnsupervised learning\nSemi-supervised learning\nSelf-supervised learning\nReinforcement learning\nMeta-learning\nOnline learning\nBatch learning\nCurriculum learning\nRule-based learning\nNeuro-symbolic AI\nNeuromorphic engineering\nQuantum machine learning\nProblems\nClassification\nGenerative modeling\nRegression\nClustering\nDimensionality reduction\nDensity estimation\nAnomaly detection\nData cleaning\nAutoML\nAssociation rules\nSemantic analysis\nStructured prediction\nFeature engineering\nFeature learning\nLearning to rank\nGrammar induction\nOntology learning\nMultimodal learning\nSupervised learning\n(\nclassification\n•\nregression\n)\nApprenticeship learning\nDecision trees\nEnsembles\nBagging\nBoosting\nRandom forest\nk\n-NN\nLinear regression\nNaive Bayes\nArtificial neural networks\nLogistic regression\nPerceptron\nRelevance vector machine (RVM)\nSupport vector machine (SVM)\nClustering\nBIRCH\nCURE\nHierarchical\nk\n-means\nFuzzy\nExpectation–maximization (EM)\nDBSCAN\nOPTICS\nMean shift\nAPI reference: the standard fused primitive is exposed as scaled_dot_product_attention (the canonical name to target); an older helper named multi_head_attention_forward exists but is the lower-level path, not the one to match.\nDimensionality reduction\nFactor analysis\nCCA\nICA\nLDA\nNMF\nPCA\nPGD\nt-SNE\nSDL\nStructured prediction\nGraphical models\nBayes net\nConditional random field\nHidden Markov\nAnomaly detection\nRANSAC\nk\n-NN\nLocal outlier factor\nIsolation forest\nNeural networks\nAutoencoder\nDeep learning\nFeedforward neural network\nRecurrent neural network\nLSTM\nGRU\nESN\nreservoir computing\nBoltzmann machine\nRestricted\nGAN\nDiffusion model\nSOM\nConvolutional neural network\nU-Net\nLeNet\nAlexNet\nDeepDream\nNeural field\nNeural radiance field\nPhysics-informed neural networks\nTransformer\nVision\nMamba\nSpiking neural network\nMemtransistor\nElectrochemical RAM\n(ECRAM)\nReinforcement learning\nQ-learning\nPolicy gradient\nSARSA\nTemporal difference (TD)\nMulti-agent\nSelf-play\nLearning with humans\nActive learning\nCrowdsourcing\nHuman-in-the-loop\nMechanistic interpretability\nRLHF\nModel diagnostics\nCoefficient of determination\nConfusion matrix\nLearning curve\nROC curve\nMathematical foundations\nKernel machines\nBias–variance tradeoff\nComputational learning theory\nEmpirical risk minimization\nOccam learning\nPAC learning\nStatistical learning\nVC theory\nTopological deep learning\nJournals and conferences\nAAAI\nCVPR\nECCV\nECML PKDD\nEMNLP\nICCV\nNeurIPS\nICML\nICLR\nIJCAI\nML\nJMLR\nRelated articles\nGlossary of artificial intelligence\nList of datasets for machine-learning research\nList of datasets in computer vision and image processing\nOutline of machine learning\nv\nt\ne\nIn\ndeep learning\n, the\ntransformer\nis a family of\nartificial neural network\narchitectures based on the multi-head\nattention\nmechanism, in which text is converted to numerical representations called\ntokens\n, and each token is converted into a vector via lookup from a\nword embedding\ntable.\n[\n1\n]\nAt each layer, each\ntoken\nis then\ncontextualized\nwithin the scope of the\ncontext window\nwith other (unmasked) tokens via a parallel multi-head attention mechanism, allowing the signal for key tokens to be amplified and less important tokens to be diminished. Because self-attention alone is permutation-invariant, transformers inject positional information, typically through positional encodings or learned positional embeddings, so token order can affect the output.\n[\n2\n]\nTransformers have the advantage of having no recurrent units, therefore requiring less training time than earlier\nrecurrent neural architectures\n(RNNs) such as\nlong short-term memory\n(LSTM).\n[\n3\n]\nLater variations have been widely adopted for training\nlarge language models\n(LLMs) on large (language)\ndatasets\n.\n[\n4\n]\nModern transformer designs are commonly"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 3823,
+     "full_history_tokens": 2548,
+     "context_limit": 128000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_stocks_001",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "implicit",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "就用我刚读到的这一页里写的数据中心营收和整体毛利率两个数字，大致估一下这块业务一年的毛利金额是多少？以页面数字为准。",
+   "reply": "根据刚读到的那一页数据：\n\n- **数据中心营收**：475 亿美元  \n- **公司整体毛利率**：75 %\n\n粗估：475 × 0.75 ≈ **356 亿美元**。  \n这就是数据中心业务在这一财年贡献的毛利量级（近似值）。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 2971,
+   "output_tokens": 65,
+   "estimated_input_tokens": 3921,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.75,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2443,
+       "items": 17,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 64,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1414,
+       "items": 2,
+       "text": "Nvidia - Wikipedia\nJump to content\nChecked\nFrom Wikipedia, the free encyclopedia\nThis is the\nlatest accepted revision\n,\nreviewed\non\n22 June 2026\n.\nAmerican multinational technology company\n\"IReady\" redirects here. For the educational platform, see\nI-Ready\n.\nNvidia Corporation\nLogo since 2006\nHeadquarters in\nSanta Clara, California\n, in 2023\nType\nPublic\nTraded as\nNasdaq\n:\nNVDA\nNasdaq-100\ncomponent\nDJIA\ncomponent\nS&P 100\ncomponent\nS&P 500\ncomponent\nIndustry\nSemiconductors\nFounded\nApril 5, 1993\n; 33 years ago\n(\n1993-04-05\n)\n, in\nSunnyvale, California\n, US\nFounders\nJensen Huang\nChris Malachowsky\nCurtis Priem\nHeadquarters\nSanta Clara, California\n,\nUS\nArea served\nWorldwide\nKey people\nJensen Huang (\npresident\nand\nCEO\n)\nBill Dally\n(chief scientist)\nColette Kress\n(CFO)\nRevenue\nUS$215.9 billion\n(FY26)\nOperating income\nUS$130.4 billion\n(FY26)\nNet income\nUS$120.1 billion\n(FY26)\nTotal assets\nUS$206.8 billion\n(FY26)\nTotal equity\nUS$144.3 billion\n(FY26)\nNumber of employees\n42,000 (FY26)\nSubsidiaries\nMental Images\nWebsite\nnvidia.com\nFootnotes\nFinancials as of\nfiscal year\nended January 25, 2026\n[update]\n(FY26).\nReferences:\n[\n1\n]\n[\n2\n]\nNvidia Corporation\n[\na\n]\n(\n/\nɛ\nn\nˈ\nv\nɪ\nd\ni\nə\n/\nen-\nVID\n-ee-ə\n) is an American\nmultinational\ntechnology company headquartered in\nSanta Clara, California\n. The company develops\ngraphics processing units\n(GPUs),\nsystems on chips\n(SoCs), and\napplication programming interfaces\n(APIs) for\ndata science\n,\nhigh-performance computing\n,\nartificial intelligence\n(AI), and mobile and automotive applications.\n[\n5\n]\n[\n6\n]\nFounded in 1993 by\nJensen Huang\n,\nChris Malachowsky\n, and\nCurtis Priem\n, Nvidia has been widely described as a\nBig Tech\ncompany.\nOriginally focused on GPUs for video games, Nvidia broadened their use into other markets, including\nartificial intelligence\n(AI), professional visualization, and\nsupercomputing\n. The company's product lines include\nGeForce\nGPUs for gaming and creative workloads, and professional GPUs for\nedge computing\n, scientific research, and industrial applications. As of the first quarter of 2025, Nvidia held a 92% share of the discrete desktop and laptop GPU market.\n[\n7\n]\n[\n8\n]\nIn the early-to-mid 2000s, the company invested over a billion dollars to develop\nCUDA\nSegment detail (most recent fiscal year): Data Center revenue came in at 475 (US$ billion) for the year, the dominant segment. Company-wide gross margin for the same period was 75% (a prior-year comparison figure of 60% is shown for reference).\n, a software platform and API (Application Programming Interfaces) that enabled GPUs to run massively\nparallel programs\nfor a broad range of compute-intensive applications.\n[\n9\n]\n[\n10\n]\n[\n11\n]\nAs a result, as of 2025, Nvidia controlled more than 80% of the market for GPUs used in training and deploying AI models,\n[\n9\n]\nand provided chips for over 75% of the world's\nTOP500\nsupercomputers.\n[\n1\n]\nThe company has also expanded into gaming hardware and services, with products such as the\nShield Portable\n,\nShield Tablet\n, and\nShield TV\n, and operates the\nGeForce Now\ncloud gaming service.\n[\n12\n]\nFurthermore, it has developed the\nTegra\nline of mobile processors for smartphones, tablets, and automotive infotainment systems.\n[\n13\n]\n[\n14\n]\n[\n15\n]\nIn 2023, Nvidia became the seventh U.S. company to reach a\nUS$1 trillion valuation\n.\n[\n16\n]\nIn 2025, driven by soaring global demand for\nAI data center\nhardware in the midst of the\nAI boom\n, Nvidia became the first company in the world to surpass US$4 trillion\n[\n17\n]\n[\n18\n]\nand US$5 trillion in\nmarket capitalization\n.\n[\n19\n]\nFor its strength, size and market capitalization, Nvidia has been selected as one of\nBloomberg\n's \"\nMagnificent Seven\n\", the seven biggest companies on the stock market in these regards.\n[\n20\n]\nHistory\n[\nedit\n]\nFounding\n[\nedit\n]\nThe\nDenny's\nroadside diner in\nSan Jose, California\n, where Nvidia's three co-founders agreed to start the company in late 1992\nNvidia's former headquarters which was home to the company through most of its pre-AI period (still in use)\nAerial view of Endeavor, the first of the two new Nvidia headquarters buildings, in\nSanta Clara, California\n, in 2017\nEntrance of Endeavor headquarters building in 2018\nNvidia was founded on April 5, 1993,\n[\n21\n]\n[\n22\n]\n[\n23\n]\nby Jensen Huang, a\nTaiwanese-American\nelectrical engineer who was previously the director of CoreWare at\nLSI Logic\nand a\nmicroprocessor\ndesigner at\nAMD\n;\nChris Malachowsky\n, an engineer who worked at\nSun Microsystems\n; and\nCurtis Priem\n, who was previously a senior staff engineer and graphics chip designer at\nIBM\nand Sun Microsystems.\n[\n24\n]\n[\n25\n]\nIn late 1992, the three men agreed to start the company in a meeting at a\nDenny's\nroadside diner on Berryessa Road in East\nSan Jose\n.\n[\n26\n]\n[\n27\n]\n[\n28\n]\n[\n29\n]\nAt the time, Malachowsky and Priem were frustrated with Sun's management and were looking to leave, but Huang was on \"firmer ground\",\n[\n30\n]\nin that he was already running his own division at LSI.\n[\n27\n]\nThe three co-founders discussed a visio"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 3921,
+     "full_history_tokens": 2443,
+     "context_limit": 128000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  }
+ ]
+}
