@@ -26,6 +26,7 @@ open http://localhost:8000/docs
 # Run the context-management eval set (server must be running; see docs/eval_plan.md)
 python eval/run.py --strategy concat --tier smoke    # fast 12-case set → eval/results/*.json
 python eval/run.py --strategy concat --tier long     # 6-case set, ~8.7k-tok histories (chunking stress)
+python eval/run.py --strategy concat --tier tool-medium  # medium history + frozen tool rounds (replayed, not re-executed; tool-result bloat)
 python eval/run.py --strategy concat --tier smoke --case ml_001   # single case
 python eval/run.py --strategy concat --tier long --model grok-4-fast   # pick model under test
 ```
@@ -54,9 +55,10 @@ There are no tests and no linter configured yet.
 | `database.py` | SQLAlchemy async engine setup, `get_db` session dependency, `init_db` |
 | `models.py` | ORM models: `User`, `Chat`, `Message` |
 | `context_report.py` | tiktoken-based token estimation + per-round `context_report` builder |
-| `eval/run.py` | CLI eval runner (`--tier smoke\|long`, two-level judging; see `docs/eval_plan.md`) |
+| `eval/run.py` | CLI eval runner (`--tier smoke\|long\|tool-medium`, two-level judging; see `docs/eval_plan.md`) |
 | `eval/cases/smoke/` | Frozen needle cases, smoke tier (12 cases, ~1.5k-tok histories — fast regression) |
 | `eval/cases/long/` | Frozen needle cases, long tier (6 cases, ~8.7k-tok histories — compression/chunking stress) |
+| `eval/cases/tool-medium/` | Frozen needle cases, tool-medium tier (medium history + preset `tool_rounds` replayed deterministically — loop-internal tool-result bloat; eval_plan §6.7) |
 | `eval/results/` | Self-contained eval result JSONs (tagged `dataset_version`), rendered by the debugger Eval tab |
 | `static/index.html` | Entire frontend (vanilla JS, no build step) |
 | `static/debugger.html` | Context Debugger: Single Run view + Eval tab (standalone page) |
@@ -105,7 +107,7 @@ messages   id (uuid), chat_id → chats, role, content, position
 | Method | Path | Description |
 |---|---|---|
 | `GET` | `/debugger` | Serves `static/debugger.html` |
-| `POST` | `/debug/run` | Runs full agentic loop; **SSE stream** — emits `context_report` (per-round token/layer breakdown) before each LLM call, `round` events carry API `usage`; accepts optional `strategy` (only `"concat"` for now); client abort stops backend |
+| `POST` | `/debug/run` | Runs full agentic loop; **SSE stream** — emits `context_report` (per-round token/layer breakdown) before each LLM call, `round` events carry API `usage`; accepts optional `strategy` (`concat`/`window_summary`) and optional `tool_rounds` (frozen replay for the tool tier — preset `[assistant tool_call, tool result]` injected, tools not re-executed, one final-answer call; eval_plan §6.7); client abort stops backend |
 | `POST` | `/debug/regenerate` | Accepts `{model, messages}`; calls LLM once (no tools); returns `{reply}` (also used by eval runner as LLM judge) |
 | `GET` | `/debug/eval/results` | Lists result files in `eval/results/` |
 | `GET` | `/debug/eval/results/{name}` | Serves one result file (consumed by the debugger Eval tab) |

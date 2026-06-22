@@ -189,3 +189,20 @@ while (true) {
 
 ### Diagnose from the contradiction
 **Learning:** The thread that unravelled the whole artifact was a single inconsistency: ctx-hit 9% but ans-hit 77% — if the context truly retained nothing, how did the model answer most questions? When metrics don't agree with each other, suspect the measurement before the system under test.
+
+## Tool-result eval (tool-medium tier, Phase 2)
+
+### Capture tool results by calling the REAL tools — never reimplement or fabricate them
+**What happened:** Building the tool-medium tier, I needed frozen `read_page`/`web_search` results. To save effort I (a) re-implemented `read_page`'s extraction in a throwaway script instead of importing `main.read_page`, and (b) *invented* the `web_search` return JSON as a small `{"results":[…]}` stub because I didn't know the real shape. When I finally called the actual `main.web_search`, the real payload was a completely different shape (`{"queries":[…],"combined_answer":…,"errors":…}`) and **~22,000 chars, not ~300**. The whole point of this tier is to measure loop-internal tool-result *bloat* — my stub would have under-measured a web_search round by ~70× and mismodelled its structure. The eval would have produced confident, precise, and wrong bloat numbers.
+
+**Fix:** `_generate.py` now imports and `await`s the real `main.read_page` / `main.web_search` (the app's `load_dotenv` gives web_search its key on import). Only the needle sentence is hand-inserted into the captured `read_page` text; web_search output is frozen verbatim. Re-measured, a multi-round probe is ~10k input tokens, dominated by the real web_search — the faithful distribution.
+
+**Rule:** When an eval freezes the output of a system component, capture it by invoking *that exact component*, not a look-alike. A reproduced or imagined output has an unknown distribution gap, and the gap silently corrupts precisely the quantity you're trying to measure. "Format looks right" is not "distribution is right" — size, nesting, and field shape all feed the metric.
+
+### Real tool output competes with planted needles — reserve search-then-read for specific/internal facts
+**What happened:** With the real `web_search` in front of a `read_page` needle, a generic-statistic needle ("71% adoption") stopped being recoverable: the real search for "adoption rate" floods the context with dozens of real percentages (10%, 14%, … and 71% itself), so the planted value is no longer distinctive and the model answers from the search blob. The same structure worked fine for an *internal/specific* needle ("our pinned version is vLLM 0.6.3"), which a public search doesn't competingly answer.
+
+**Rule:** A web_search-before-read_page scaffold only yields a clean needle test when the needle is a specific or internal fact the search won't independently surface. For generic public statistics, keep the probe single-round (read_page only) so the needle is distinctive. Realism (real tools) and clean attribution (isolated needle) trade off — design the question/needle so they don't collide.
+
+### Persist eval tooling in the repo, not throwaway heredocs
+**What happened:** I kept re-typing the generator/validator/smoke-test as inline `python - <<'PY'` blocks, rewriting them every run — wasteful and unreproducible. **Fix:** `_generate.py` (real-tool capture), `_validate.py` (offline structural + coverage gates), `_smoketest.py` (replay check against a live server) now live next to the cases. **Rule:** if you run a check more than once, it's a script; commit it so the dataset can be regenerated and re-verified deterministically. The eval runner ignores non-`.json` files in a cases dir, so helper scripts can sit beside the cases.

@@ -21,6 +21,8 @@
 
 **Phase 1 首轮（2026-06-15，`2026-06-15_2052_window_summary_long.json`）**：strategy=window_summary，model=grok-4-fast，judge=kimi-k2.5，long tier 24 探针 → **ctx 命中 91% · ans 命中 91% · 幻觉 0% · 平均 input 2394 tok（压缩比 0.38，相对 concat 省 57%）· 延迟 16.4s**。详见 `phase1_sliding_window_summary.md` §6。⚠️ 同日有一次错误结果（`...1900_...`，ctx 9%/幻觉 71%）——那是 `ctx_hit` 子串匹配在摘要改写下假阴性 + 幻觉判定漏了"答对不算幻觉"守卫所致的测量伪影，已修 `ctx_hit`（改 LLM 保留判定）与幻觉守卫后重跑，错误结果文件已删除。
 
+**Tool-medium baseline（2026-06-22，`2026-06-22_1253_concat_tool-medium.json`）**：strategy=concat，model=grok-4-fast，judge=kimi-k2.5，6 例 / 8 探针（6 工具针 + 2 负向）→ **ctx 命中 100% · ans 命中 100% · 幻觉 0% · 平均 input 8679 tok/题 · rounds 1.0 · 延迟 2.0s**。工具结果按 §6.7 方案 A 冻结回放，且**由真实导入并调用 FastAPI 的 `main.read_page`/`main.web_search` 捕获**（曾误用捏造的 web_search stub——真实返回是 `{queries/combined_answer/errors}` 结构、~22k 字符而非 ~300，会把膨胀量级测错 ~70 倍；详见 `reflections.md`）。`PAGE_TEXT_LIMIT` 已从 5k 提到 **30k**（整页装下），单工具针探针 input ~9–10k；唯一的多轮探针（tool_ml_001，真实 web_search→read_page）input ~16.6k，膨胀主要来自真实工具结果，正是 concat 在 Phase 2 检索下会被压缩的部分。历史长度 ~3.0–3.4k tok（中历史，按 DS review 反馈从 ~2.5k 抬到 3–4k 区间）。concat 在此 tier 同为满分上限；区分度待 Phase 2 RAG 对工具结果做 chunk/检索时体现。数据集生成/校验/冒烟脚本随用例落盘（`eval/cases/tool-medium/_generate.py`、`_validate.py`、`_smoketest.py`）。
+
 **实施中确立的方法论决定**：
 
 1. **eval 不用 `supermind-agent-v1`**：它是上游 agent 封装，内部自跑 agentic loop（2k context 能报出 100k+ 的 usage）且偶发返回空 content，污染效率与准确度指标。eval 默认 `deepseek-v4-pro`。
@@ -172,9 +174,9 @@ input/output **分开报告**（已定稿）：context 策略几乎只影响 inp
   - 采用 **augment 而非 replace**，保持纵向可比；结果 JSON 带 `dataset_version` 字段（`eval/run.py` 中的 `DATASET_VERSIONS` 映射，换 set 必须 bump），不同版本的分数不可直接对比；`run_id` 含 tier 后缀。
 - **long tier 评审（2026-06-15）**：经独立 reviewer subagent 审计，首轮 ACCEPT WITH FIXES，5 项必修已逐一修复并脚本复核通过——核心两点是（a）每个用例结尾的总结性复述会把 needle 泄漏给 recency-only 策略，已改为"详见前文"式不复述具体值；（b）needle 载体回复原本只有 smoke 量级长度，已扩写到 800+ 字并把针压到回复中段，否则 chunking 压测形同虚设。脚本验证：尾部 25% 区间无 needle 泄漏、各针型/载体/问法覆盖达标。
 
-### 6.7 工具结果维度与四 tier 矩阵（2026-06-16 设计，未实施）
+### 6.7 工具结果维度与四 tier 矩阵（2026-06-16 设计；tool-medium 已实施，research 待建）
 
-到目前为止的 smoke / long 数据集都**不含工具调用**——脚本对话只有 user/assistant,实跑时探针也不触发工具(`avg_rounds=1.0`)。这忠实于"过去轮次的工具中间结果不持久化"的应用行为(DB 只存最终回答),但留下一个真实盲点:**单次提问的 agentic loop 内部**,工具结果(尤其 `read_page` 一次可达 `PAGE_TEXT_LIMIT=5000` 字符)是最大的 context 膨胀源,对应最初的痛点 #2,而我们从没测过它。
+到目前为止的 smoke / long 数据集都**不含工具调用**——脚本对话只有 user/assistant,实跑时探针也不触发工具(`avg_rounds=1.0`)。这忠实于"过去轮次的工具中间结果不持久化"的应用行为(DB 只存最终回答),但留下一个真实盲点:**单次提问的 agentic loop 内部**,工具结果(尤其 `read_page` 一次可达 `PAGE_TEXT_LIMIT=30000` 字符,约 9–10k token,多数页面整页装下)是最大的 context 膨胀源,对应最初的痛点 #2,而我们从没测过它。
 
 #### 两轴矩阵:历史长度 × 工具有无
 
@@ -196,7 +198,7 @@ input/output **分开报告**（已定稿）：context 策略几乎只影响 inp
 
 为保证确定性(`read_page` 实时结果每次不同会破坏跨运行可比):
 
-1. **生成时真实捕获**:构造数据集时真的调 `web_search`/`read_page`,把返回**按应用实际工具格式**写进用例(见 §6.8 格式),`read_page` 取真实截断后的 5000 字正文。想测膨胀就挑会产生接近上限的页面。
+1. **生成时真实捕获**:构造数据集时**真的导入并调用应用的 `main.read_page`/`main.web_search`**(不是复刻、不是捏造——否则工具结果的分布与真实有 gap,膨胀量级会测错),把返回**按应用实际工具格式**写进用例(见 §6.8 格式);`read_page` 取真实截断后的 ≤30000 字正文。想测膨胀就挑会产生接近上限的页面。详见 `eval/cases/tool-medium/_generate.py` 与 `reflections.md`。
 2. **eval 时冻结回放(方案 A 预置 loop)**:不重新执行工具。哪一轮在生成时决定了调用,eval 就**当它必然按预置的调用和结果走**——harness 直接把冻结的 `[assistant tool_call, tool result]` 塞进 loop,再让模型出最终答案。完全确定,且只测 context 管理对工具结果的处理(膨胀、carry、针存活),不掺入"模型是否决定调工具"的方差。
 3. **忠实性约束**:冻结工具轮只挂在**当前被评测探针自己的 loop** 里,不进脚本历史——因为生产里过去的工具结果不持久化。所以 `carrier=tool` 的针测的是"round 1 的工具结果能不能进 round 2+ 的 context",不是"从过去某轮检索回来"。
 4. **后端改动**:`/debug/run` 加可选 replay/预置参数;实现见 §10 排期。
@@ -205,13 +207,15 @@ input/output **分开报告**（已定稿）：context 策略几乎只影响 inp
 
 eval 流水线按成本递增:smoke(秒级)→ long / tool-medium(分钟级)→ research(最贵)。门控**非对称**:
 - "上游便宜 tier 已挂 → 跳过下游贵 tier" 成立(别在已知差的策略上烧资源);
-- 但 "long 过了 ≠ tool 一定过"——策略可能文本处理好却栽在 5000 字工具结果膨胀上,所以对**通过的 finalist** 仍需真跑 tool/research。
+- 但 "long 过了 ≠ tool 一定过"——策略可能文本处理好却栽在 30000 字工具结果膨胀上,所以对**通过的 finalist** 仍需真跑 tool/research。
 
 #### 区分力与排期
 
-`tool-medium` / `research` 的区分力**主要在 Phase 2+**:Phase 1 窗口/摘要对 loop 内工具结果**原样保鲜**(不压缩),所以这两 tier 上 concat≈window_summary,Phase 1 阶段只量个膨胀基线;真正拉开差距要等 Phase 2 对工具结果做 chunk/检索(深度调研里几个 5000 字结果叠起来,正是 concat 爆炸、RAG 价值最大化处)。
+`tool-medium` / `research` 的区分力**主要在 Phase 2+**:Phase 1 窗口/摘要对 loop 内工具结果**原样保鲜**(不压缩),所以这两 tier 上 concat≈window_summary,Phase 1 阶段只量个膨胀基线;真正拉开差距要等 Phase 2 对工具结果做 chunk/检索(深度调研里几个 30000 字结果叠起来,正是 concat 爆炸、RAG 价值最大化处)。
 
 **实现优先级**:`tool-medium` 排 Phase 2 一开始(信号最干净、最便宜,直接服务 chunking 调参);`research` 排 Phase 2 中后段(构造和跑都最贵,塔尖、只对 finalist 跑、跑得最少)。
+
+**实施状态(2026-06-16)**:`tool-medium` 已交付——`/debug/run` 加 `tool_rounds` 冻结回放参数(方案 A,工具不重跑、单次出答案)、`context_report` 的 `tool_loop` 层携带工具结果文本供 `ctx_hit` 判定、`eval/run.py` 支持探针级 needle 并集解析与 `carrier:"tool"` 命中判定、`DATASET_VERSIONS` 登记 `v1-tool-medium`/`v1-research`。`research` tier 仅登记版本号,用例与调高 `MAX_TURNS` 待 Phase 2 中后段再建。
 
 **一个实现依赖**:当前 `MAX_TURNS=3` 上限,"loop 内多轮工具"最多两三轮就被强制收尾。`research` 的深度调研多工具场景可能需要调高 `MAX_TURNS`,否则模拟不出真正的多轮累积——Phase 2 实现 research 时一并考虑。
 
@@ -256,7 +260,7 @@ eval 流水线按成本递增:smoke(秒级)→ long / tool-medium(分钟级)→ 
             { "id": "call_1", "type": "function",
               "function": { "name": "read_page", "arguments": "{\"url\":\"https://…\"}" } } ] },
           "tool": { "role": "tool", "tool_call_id": "call_1",
-                    "content": "<read_page 真实截断后的 5000 字正文>" }
+                    "content": "<read_page 真实截断后的 ≤30000 字正文>" }
         }
       ],
       "needles": [ { "id": "t1", "content": "v4.2", "tool_round": 0, "carrier": "tool", "type": "factual" } ],
@@ -361,7 +365,7 @@ debugger.html 加 tab 切换：[Single Run | Eval]（同页加 tab，回放复�
 3. **Eval 视图**（✅）：debugger 加 tab、对比表、维度下钻（用例回放延后）。
 4. context 管理本体分阶段推进，每阶段用本体系回归：
    - **Phase 1**（✅ 2026-06-15）：滑动窗口 + 滚动摘要。
-   - **Phase 2**（pgvector RAG）：开始时先做 **tool-medium tier**（§6.7,工具结果维度,信号最干净、直接服务 chunking 调参 + `/debug/run` 冻结回放 replay 参数）；中后段做 **research tier**（长历史 + 多工具,塔尖、最贵、只对 finalist 跑,需评估调高 `MAX_TURNS`）。
+   - **Phase 2**（pgvector RAG）：开始时先做 **tool-medium tier**（✅ 2026-06-16：§6.7,工具结果维度,`/debug/run` 冻结回放 replay 参数已实现,数据集已建）；中后段做 **research tier**（长历史 + 多工具,塔尖、最贵、只对 finalist 跑,需评估调高 `MAX_TURNS`）。
    - **Phase 3**（跨 session + memory 注入）：需新建 multi-session tier（§3 跨 session 检索）。
 
 ## 11. 已定稿决定清单
@@ -378,6 +382,6 @@ debugger.html 加 tab 切换：[Single Run | Eval]（同页加 tab，回放复�
 | 跑批方式 | CLI（`eval/run.py`），结果自包含 JSON |
 | 可视化载体 | debugger.html 同页加 [Single Run | Eval] tab |
 | 用例回放 | 延后（结果 JSON 已自包含回放所需数据，后续纯前端实现） |
-| 数据集 tier（2026-06-16） | 两轴矩阵（历史长度 × 工具有无）四 tier：smoke / long（诊断,已交付）+ tool-medium / research（§6.7,未实施）；诊断型单一变量、research 集成验收；分级门控非对称跳过 |
+| 数据集 tier（2026-06-16） | 两轴矩阵（历史长度 × 工具有无）四 tier：smoke / long / **tool-medium**（诊断,已交付）+ research（§6.7,仅登记版本,用例待建）；诊断型单一变量、research 集成验收；分级门控非对称跳过 |
 | 工具结果确定性（2026-06-16） | 真实捕获 + 冻结回放（方案 A 预置 loop）；只挂当前探针 loop、不进历史；`/debug/run` 加 replay 参数 |
 | 工具 tier 排期（2026-06-16） | tool-medium 排 Phase 2 起始、research 排 Phase 2 中后段（需评估调高 `MAX_TURNS`） |

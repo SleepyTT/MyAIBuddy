@@ -72,7 +72,7 @@ SSE event types:
 | Tool | Description |
 |---|---|
 | `web_search(query)` | POST to AI Builder `/v1/search/`, returns top-3 results |
-| `read_page(url)` | Fetches URL, strips HTML tags/scripts/nav, returns first 5000 chars |
+| `read_page(url)` | Fetches URL, strips HTML tags/scripts/nav, returns first 30000 chars (`PAGE_TEXT_LIMIT`, ~whole page) |
 
 ### Authentication
 

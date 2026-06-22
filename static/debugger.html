@@ -543,8 +543,16 @@ function handleDebugEvent(event) {
     state.finalUsage = event.usage || null;
     if (state.rounds.length > 0) {
       state.rounds[state.rounds.length - 1].finalReply = event.reply;
-      renderAll();
+    } else {
+      // Frozen-replay path (tool tier) emits no `round` events; surface the
+      // answer as an AI block so it isn't silently dropped from the view.
+      state.rounds.push({
+        id: 'r_' + uid(), roundNum: 1, active: true, isInserted: false,
+        assistantMessage: { role: 'assistant', content: event.reply },
+        toolResults: [], finalReply: null, usage: event.usage || null,
+      });
     }
+    renderAll();
   } else if (event.type === 'done') {
     const toolRounds = state.rounds.filter(r => r.toolResults.length > 0).length;
     const t = lifecycleTotals();
