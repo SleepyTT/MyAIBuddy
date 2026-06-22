@@ -18,7 +18,8 @@ from auth import (
 )
 from context_report import build_context_report, estimate_tokens
 from context_strategies import (
-    ALLOWED_STRATEGIES, assemble_context, ensure_summary,
+    ALLOWED_STRATEGIES, CONTEXT_BUDGET_DEFAULT, assemble_budgeted,
+    assemble_context, ensure_summary,
 )
 from database import get_db, init_db
 from models import Chat, Message, User
@@ -744,51 +745,43 @@ async def debug_run(body: dict):
     if strategy not in ALLOWED_STRATEGIES:
         raise HTTPException(status_code=400, detail=f"Unknown context strategy: {strategy}")
 
-    # /debug/run is stateless (no DB): assemble via the SAME assemble_context as
-    # /chat so eval and production measure the same thing. For window_summary the
-    # rolling summary is computed on the fly from the passed-in history.
+    # /debug/run is stateless (no DB). `context_budget` (default = full window) is
+    # the Phase 1.5 token budget: assemble_budgeted fits the prompt into it,
+    # strategy-aware (docs/phase1.5_context_budget.md). At the default it reproduces
+    # the non-budgeted behavior, so existing runs are unchanged.
     current_msg = {"role": "user", "content": message}
-    summary_text: Optional[str] = None
-    summary_through = 0
-    summary_cost = 0
-    if strategy == "window_summary":
-        summary_text, summary_through, summary_cost = await ensure_summary(
-            history, api_key=api_key
-        )
-    assembled = assemble_context(
-        strategy, history, current_msg,
-        summary=summary_text, summary_through_position=summary_through,
-    )
-    base_messages = assembled["messages"]
-    base_len = len(base_messages)
-    included_history_ids = assembled["included_history_ids"]
+    budget = int(body.get("context_budget") or CONTEXT_BUDGET_DEFAULT)
 
     async def generate():
-        messages: List[dict[str, Any]] = list(base_messages)
         tools = [WEB_SEARCH_TOOL, READ_PAGE_TOOL]
 
         if tool_rounds:
             # --- Frozen replay path (eval_plan §6.7 method A) ---------------------
-            # Inject the preset tool rounds verbatim (no real tool execution), emit a
-            # single context_report for the final-answer round (so estimated tokens
-            # line up with the one real upstream call), then ask the model to answer
-            # from the injected context with tools OFF (the determinism guarantee).
+            # Inject the preset tool rounds (no real tool execution); fit them + the
+            # history into the budget; emit a single context_report; one final answer
+            # call with tools OFF (the determinism guarantee).
+            frozen: List[dict[str, Any]] = []
             for fr in tool_rounds:
                 if fr.get("assistant"):
-                    messages.append(fr["assistant"])
+                    frozen.append(fr["assistant"])
                 if fr.get("tool"):
-                    messages.append(fr["tool"])
+                    frozen.append(fr["tool"])
+            a = await assemble_budgeted(
+                strategy, history, current_msg, frozen, [], budget, api_key=api_key)
+            messages = a["messages"]
+            base_len = a["base_len"]
             report = build_context_report(
                 round_num=len(tool_rounds) + 1,
                 strategy=strategy,
                 history=history,
-                included_history_ids=included_history_ids,
+                included_history_ids=a["included_history_ids"],
                 current=current_msg,
                 loop_messages=messages[base_len:],
                 tools=[],
-                summary=summary_text,
-                summary_through_position=summary_through,
-                summary_cost_tokens=summary_cost,
+                summary=a["summary"],
+                summary_through_position=a["summary_through_position"],
+                summary_cost_tokens=a["summary_cost"],
+                context_limit=budget,
             )
             yield sse({"type": "context_report", "data": report})
             yield sse({"type": "status", "message": "Replaying frozen tool rounds — getting final answer…"})
@@ -810,6 +803,16 @@ async def debug_run(body: dict):
             yield sse({"type": "done"})
             return
 
+        # --- Normal path: assemble base under budget (no tools appended yet) ------
+        a = await assemble_budgeted(
+            strategy, history, current_msg, [], tools, budget, api_key=api_key)
+        messages: List[dict[str, Any]] = list(a["messages"])
+        base_len = a["base_len"]
+        included_history_ids = a["included_history_ids"]
+        summary_text = a["summary"]
+        summary_through = a["summary_through_position"]
+        summary_cost = a["summary_cost"]
+
         for round_num in range(1, MAX_TURNS + 1):
             # loop_messages: assistant tool-calls / tool results appended after
             # the assembled base context during this question's agentic loop
@@ -824,6 +827,7 @@ async def debug_run(body: dict):
                 summary=summary_text,
                 summary_through_position=summary_through,
                 summary_cost_tokens=summary_cost if round_num == 1 else 0,
+                context_limit=budget,
             )
             yield sse({"type": "context_report", "data": report})
             yield sse({"type": "status", "message": f"Round {round_num} — calling LLM…"})
@@ -919,6 +923,7 @@ async def debug_run(body: dict):
                 summary=summary_text,
                 summary_through_position=summary_through,
                 summary_cost_tokens=0,
+                context_limit=budget,
             )
             yield sse({"type": "context_report", "data": report})
             yield sse({"type": "status", "message": "Max turns reached — getting final answer…"})

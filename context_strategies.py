@@ -231,3 +231,176 @@ def assemble_context(
         "dropped_turns": split_index,        # turns absorbed by the summary
         "window_turns": window_turns,
     }
+
+
+# ── Phase 1.5: budget-aware assembly (docs/phase1.5_context_budget.md) ───────
+# Make assembly respect a token budget B. Priority: current question + tools
+# schema (always) > loop tool results (high) > recent history (window) > older
+# history (summary for window_summary / dropped for concat). At a budget large
+# enough to hold everything, output is identical to the non-budgeted path above.
+
+from context_report import estimate_tokens, message_tokens  # noqa: E402  (token accounting)
+
+CONTEXT_BUDGET_DEFAULT = 128_000  # default token budget == full window → no-op
+
+
+def _truncate_to_tokens(content: str, token_budget: int) -> Tuple[str, bool]:
+    """Head-truncate a string so a message holding it fits `token_budget` tokens.
+
+    Returns (content, truncated). Head-truncation (keep the start) mirrors
+    PAGE_TEXT_LIMIT; our tool needles sit mid-result, so a tight budget cuts them.
+    """
+    if estimate_tokens(content) + 4 <= token_budget:
+        return content, False
+    if token_budget <= 4:
+        return "", True
+    target = token_budget - 4
+    lo, hi = 0, len(content)
+    while hi - lo > 40:
+        mid = (lo + hi) // 2
+        if estimate_tokens(content[:mid]) <= target:
+            lo = mid
+        else:
+            hi = mid
+    return content[:lo], True
+
+
+def _concat_window_capped(history: List[dict], token_budget: int) -> Tuple[List[dict], List[dict], int]:
+    """Newest suffix of history fitting `token_budget` (concat under budget: drop older)."""
+    start = len(history)
+    total = 0
+    while start > 0:
+        t = message_tokens(history[start - 1])
+        if total + t > token_budget:
+            break
+        total += t
+        start -= 1
+    return history[:start], history[start:], start  # (dropped, kept, split_index)
+
+
+def _window_capped(history: List[dict], window_turns: int, token_budget: int
+                   ) -> Tuple[List[dict], List[dict], int]:
+    """Last `window_turns` messages, further trimmed oldest-first to fit `token_budget`."""
+    start = max(0, len(history) - window_turns)  # WINDOW_TURNS cap → default behavior at large budget
+    window = history[start:]
+    while window and sum(message_tokens(m) for m in window) > token_budget:
+        window = window[1:]
+        start += 1
+    return history[:start], window, start
+
+
+async def summarize_text(text: str, *, api_key: str, model: str = SUMMARY_MODEL,
+                         base_url: str = AI_BUILDER_BASE_URL) -> Tuple[str, int]:
+    """Query-blind compression of one big blob (an over-budget tool result),
+    preserving specifics. Returns (summary, cost_tokens); ("", 0) on failure."""
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content":
+                "将以下网页/工具返回内容压缩成要点，保留所有具体数值、名称、版本号、函数名、"
+                "端口、日期等精确信息，去掉导航和无关样板。只输出要点正文。"},
+            {"role": "user", "content": text},
+        ],
+    }
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            resp = await client.post(
+                f"{base_url}/chat/completions", json=payload,
+                headers={"Authorization": f"Bearer {api_key}"})
+        resp.raise_for_status()
+        data = resp.json()
+    except httpx.HTTPError:
+        return "", 0
+    out = (data["choices"][0]["message"].get("content") or "").strip()
+    usage = data.get("usage") or {}
+    return out, (usage.get("prompt_tokens") or 0) + (usage.get("completion_tokens") or 0)
+
+
+async def assemble_budgeted(
+    strategy: str,
+    history: List[dict],
+    current_msg: dict,
+    loop_messages: List[dict],
+    tools: List[dict],
+    budget: int,
+    *,
+    api_key: str,
+    model: str = SUMMARY_MODEL,
+    base_url: str = AI_BUILDER_BASE_URL,
+    window_turns: int = WINDOW_TURNS,
+) -> dict:
+    """Assemble one upstream prompt under token `budget` (Phase 1.5).
+
+    Returns the same shape /debug/run needs, plus `base_len` (messages[:base_len]
+    is summary+window+current; messages[base_len:] are the fitted tool results).
+    """
+    if strategy not in ALLOWED_STRATEGIES:
+        raise ValueError(f"Unknown context strategy: {strategy}")
+
+    reserved = message_tokens(current_msg) + (estimate_tokens(tools) if tools else 0)
+    avail = max(0, budget - reserved)
+
+    # 1) Loop tool results first (they're why the model is answering this turn).
+    fitted_loop: List[dict] = []
+    summary_cost = 0
+    loop_used = 0
+    for m in loop_messages:
+        if m.get("role") != "tool":
+            fitted_loop.append(m)
+            loop_used += message_tokens(m)
+            continue
+        remaining = max(0, avail - loop_used)
+        if message_tokens(m) <= remaining:
+            fitted_loop.append(m)
+            loop_used += message_tokens(m)
+            continue
+        content = m.get("content") or ""
+        if strategy == "window_summary":  # summarize the over-budget tool result
+            summ, cost = await summarize_text(content, api_key=api_key, model=model, base_url=base_url)
+            summary_cost += cost
+            content, _ = _truncate_to_tokens(summ or content, remaining)
+        else:  # concat: head-truncate
+            content, _ = _truncate_to_tokens(content, remaining)
+        fitted = {**m, "content": content}
+        fitted_loop.append(fitted)
+        loop_used += message_tokens(fitted)
+
+    hist_budget = max(0, avail - loop_used)
+
+    # 2) History into the remaining budget.
+    summary_text: Optional[str] = None
+    through = 0
+    if strategy == "concat":
+        _, kept, split_index = _concat_window_capped(history, hist_budget)
+        window_ids = list(range(split_index, len(history)))
+        base = [*kept, current_msg]
+        dropped_turns = split_index
+    else:  # window_summary
+        might_summarize = len(history) > window_turns or \
+            sum(message_tokens(m) for m in history) > hist_budget
+        room = max(0, hist_budget - (SUMMARY_MAX_TOKENS if might_summarize else 0))
+        older, window, split_index = _window_capped(history, window_turns, room)
+        window_ids = list(range(split_index, len(history)))
+        if older:
+            summary_text, cost = await summarize_increment(
+                None, older, api_key=api_key, model=model, base_url=base_url)
+            summary_cost += cost
+            through = split_index
+        base = []
+        if summary_text:
+            base.append({"role": "system",
+                         "content": f"以下是更早对话的摘要，供参考：\n{summary_text}"})
+        base.extend(window)
+        base.append(current_msg)
+        dropped_turns = through if summary_text else 0
+
+    return {
+        "messages": [*base, *fitted_loop],
+        "base_len": len(base),
+        "strategy": strategy,
+        "summary": summary_text,
+        "summary_through_position": through,
+        "included_history_ids": window_ids,
+        "dropped_turns": dropped_turns,
+        "summary_cost": summary_cost,
+    }

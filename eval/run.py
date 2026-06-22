@@ -31,6 +31,9 @@ import httpx
 DEFAULT_MODEL = "deepseek-v4-pro"
 # deepseek-v4-flash misjudges rubric compliance (verified false negatives); kimi-k2.5 is reliable
 DEFAULT_JUDGE_MODEL = "kimi-k2.5"
+# Phase 1.5 context budget (tokens) the backend assembles into; default = full
+# window (no compression). Lower it to force the strategies to drop/compress.
+DEFAULT_CONTEXT_BUDGET = 128_000
 
 # Bump when a case set changes; results from different versions are not comparable.
 # smoke: 12 short cases (~1.5k tok histories) — fast regression / pipeline sanity.
@@ -87,14 +90,18 @@ SUMMARY_PRESENCE_JUDGE_PROMPT = """下面是一段对话历史的压缩摘要。
 
 async def run_probe(client: httpx.AsyncClient, base_url: str, model: str,
                     strategy: str, history: list, question: str,
-                    tool_rounds: list = None) -> dict:
+                    tool_rounds: list = None,
+                    context_budget: int = DEFAULT_CONTEXT_BUDGET) -> dict:
     """Drive /debug/run via SSE; collect context_reports, usage, final reply.
 
     `tool_rounds` (tool tier): preset [assistant tool_call, tool result] pairs the
     backend replays frozen instead of executing tools (eval_plan §6.7 method A).
+    `context_budget` (Phase 1.5): token budget the backend assembles into; the
+    default is the full window, so behavior is unchanged unless lowered.
     """
     reports, usages, reply, error = [], [], None, None
-    payload = {"model": model, "message": question, "history": history, "strategy": strategy}
+    payload = {"model": model, "message": question, "history": history,
+               "strategy": strategy, "context_budget": context_budget}
     if tool_rounds:
         payload["tool_rounds"] = tool_rounds
     t0 = time.monotonic()
@@ -295,6 +302,9 @@ async def main() -> None:
     ap.add_argument("--base-url", default="http://localhost:8000")
     ap.add_argument("--cases", help="override the cases directory (default: cases/<tier>/)")
     ap.add_argument("--case", help="run a single case id, e.g. ml_001")
+    ap.add_argument("--context-budget", type=int, default=DEFAULT_CONTEXT_BUDGET,
+                    help="Phase 1.5 token budget the backend assembles into "
+                         "(default 128000 = full window; lower to force compression)")
     ap.add_argument("--out", default=os.path.join(os.path.dirname(__file__), "results"))
     args = ap.parse_args()
     if not args.cases:
@@ -325,7 +335,8 @@ async def main() -> None:
                 print(f"[{label}] {probe['question'][:40]}…", flush=True)
                 run = await run_probe(client, args.base_url, args.model,
                                       args.strategy, conv, probe["question"],
-                                      tool_rounds=probe.get("tool_rounds"))
+                                      tool_rounds=probe.get("tool_rounds"),
+                                      context_budget=args.context_budget)
                 if run["error"]:
                     print(f"  ERROR: {run['error']}", flush=True)
 
@@ -406,10 +417,14 @@ async def main() -> None:
                       f" · in {run['input_tokens']} tok · {run['latency_s']}s", flush=True)
 
     now = datetime.datetime.now()
-    run_id = f"{now:%Y-%m-%d_%H%M}_{args.strategy}_{args.tier}"
+    # budget suffix on run_id so a budget sweep over one dataset stays distinct
+    # (default 128k = baseline, no suffix); e.g. ..._concat_long_b8k
+    bsuffix = "" if args.context_budget >= DEFAULT_CONTEXT_BUDGET else f"_b{args.context_budget // 1000}k"
+    run_id = f"{now:%Y-%m-%d_%H%M}_{args.strategy}_{args.tier}{bsuffix}"
     result = {
         "run_id": run_id,
         "timestamp": now.isoformat(timespec="seconds"),
+        "context_budget": args.context_budget,
         "strategy": args.strategy,
         "model": args.model,
         "judge_model": args.judge_model,

@@ -64,6 +64,7 @@ def build_context_report(
     summary: Optional[str] = None,
     summary_through_position: int = 0,
     summary_cost_tokens: int = 0,
+    context_limit: int = CONTEXT_LIMIT,
 ) -> dict:
     """Describe exactly what is being sent to the LLM this round.
 
@@ -126,7 +127,7 @@ def build_context_report(
         "layers": layers,
         "estimated_prompt_tokens": estimated,
         "full_history_tokens": full_history_tokens,
-        "context_limit": CONTEXT_LIMIT,
+        "context_limit": context_limit,
         "dropped_turns": dropped_turns,
         "summary_cost_tokens": summary_cost_tokens,
         "candidates": [],  # Phase 2 (RAG): retrieval candidates incl. rejected
