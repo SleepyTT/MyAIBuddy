@@ -27,6 +27,8 @@ from typing import Any, Callable, List, Optional, Tuple
 
 import httpx
 
+from context_report import estimate_tokens, message_tokens  # token accounting (no cycle)
+
 AI_BUILDER_BASE_URL = "https://space.ai-builders.com/backend/v1"
 
 # Phase 1 knobs (docs/phase1 §2). Tunable via env for the N∈{4,6,10} sweep.
@@ -239,8 +241,6 @@ def assemble_context(
 # history (summary for window_summary / dropped for concat). At a budget large
 # enough to hold everything, output is identical to the non-budgeted path above.
 
-from context_report import estimate_tokens, message_tokens  # noqa: E402  (token accounting)
-
 CONTEXT_BUDGET_DEFAULT = 128_000  # default token budget == full window → no-op
 
 
@@ -337,6 +337,9 @@ async def assemble_budgeted(
     if strategy not in ALLOWED_STRATEGIES:
         raise ValueError(f"Unknown context strategy: {strategy}")
 
+    # current question + tools schema are never compressed (priority "必保"), so the
+    # budget is a SOFT floor: below `reserved` the prompt can exceed `budget`. The
+    # documented sweep floor (4k) is well above `reserved`, so this never bites.
     reserved = message_tokens(current_msg) + (estimate_tokens(tools) if tools else 0)
     avail = max(0, budget - reserved)
 
@@ -385,14 +388,21 @@ async def assemble_budgeted(
             summary_text, cost = await summarize_increment(
                 None, older, api_key=api_key, model=model, base_url=base_url)
             summary_cost += cost
-            through = split_index
+            # `through` = positions the summary actually covers. Only set it on
+            # success: if the summary call fails/returns empty the `older` turns are
+            # dropped without coverage, so the summary must NOT claim to cover them.
+            if summary_text:
+                through = split_index
         base = []
         if summary_text:
             base.append({"role": "system",
                          "content": f"以下是更早对话的摘要，供参考：\n{summary_text}"})
         base.extend(window)
         base.append(current_msg)
-        dropped_turns = through if summary_text else 0
+        # `older` turns left the verbatim window regardless of whether the summary
+        # succeeded — report the drop honestly (a failed summary under tight budget
+        # is real information loss, exactly what this phase measures).
+        dropped_turns = split_index if older else 0
 
     return {
         "messages": [*base, *fitted_loop],
