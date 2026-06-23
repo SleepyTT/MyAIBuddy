@@ -72,6 +72,7 @@
 <blockquote><b>关键不变量与方法。</b>① 预算是<b>横切 eval 参数</b>,不是新 tier——复用现有 long / tool-medium 在 5 个预算下跑,区分度从预算里来,不必造新数据。② <b>默认 B=128k → 行为与改造前逐字节一致</b>(已验证:concat 默认 == 旧 <code>assemble_context</code>),旧基线不受影响。结果带 <code>context_budget</code> 字段 + <code>run_id</code> 后缀(<code>_b8k</code>),同数据集不同预算可并排比。</blockquote>
 
 <h2>3. 结果:20 格网格</h2>
+<blockquote class="warn"><b>⚠️ 这批数字来自重设计前的实现。</b>2026-06-23 已按工业界做法重写组装层(历史纯 token 驱动、去掉 6 轮硬帽子;工具结果改为固定 1k 配额;新增主动省钱旋钮)。<b>tool-medium 那两行尤其会变</b>(新版 concat 头截断到 1k 几乎恒丢中段针 ctx≈0、window 盲摘要也大概率丢针),待重跑后替换。下面三个**定性发现**(溢出 regime 激活、历史维度 window&gt;concat、盲压缩对工具针都不行)预计仍成立。</blockquote>
 <p>model=grok-4-fast,judge=kimi-k2.5,2 策略 × 2 tier × 5 预算。格内为 <b>ctx 命中 / ans 命中 / 幻觉</b>:</p>
 <table>
 <thead><tr><th>策略 · tier</th><th class="num">128k</th><th class="num">32k</th><th class="num">16k</th><th class="num">8k</th><th class="num">4k</th></tr></thead>
