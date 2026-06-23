@@ -1,0 +1,1885 @@
+{
+ "run_id": "2026-06-23_1603_concat_long_b4k",
+ "timestamp": "2026-06-23T16:03:15",
+ "context_budget": 4000,
+ "proactive_compress_to": null,
+ "strategy": "concat",
+ "model": "grok-4-fast",
+ "judge_model": "kimi-k2.5",
+ "dataset_version": "v1-long",
+ "summary": {
+  "probes": 24,
+  "needle_probes": 22,
+  "negative_probes": 2,
+  "ctx_hit_rate": 0.1818,
+  "ans_hit_rate": 0.3182,
+  "hallucination_rate": 0.2083,
+  "avg_input_tokens": 2542.4,
+  "avg_estimated_input_tokens": 3836.3,
+  "avg_output_tokens": 95.7,
+  "avg_rounds": 1.0,
+  "avg_latency_s": 2.1,
+  "avg_compression_ratio": 0.4255
+ },
+ "dimensions": {
+  "style": {
+   "direct": {
+    "probes": 11,
+    "ctx_hit_rate": 0.2727,
+    "ans_hit_rate": 0.4545,
+    "hallucination_rate": 0.1818
+   },
+   "paraphrase": {
+    "probes": 8,
+    "ctx_hit_rate": 0.125,
+    "ans_hit_rate": 0.125,
+    "hallucination_rate": 0.375
+   },
+   "implicit": {
+    "probes": 3,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.3333,
+    "hallucination_rate": 0.0
+   },
+   "negative": {
+    "probes": 2,
+    "ctx_hit_rate": null,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "carrier": {
+   "user": {
+    "probes": 16,
+    "ctx_hit_rate": 0.25,
+    "ans_hit_rate": 0.375,
+    "hallucination_rate": 0.1875
+   },
+   "assistant": {
+    "probes": 6,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.1667,
+    "hallucination_rate": 0.3333
+   }
+  },
+  "depth": {
+   "late": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "early": {
+    "probes": 14,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.1429,
+    "hallucination_rate": 0.2143
+   },
+   "middle": {
+    "probes": 4,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.25,
+    "hallucination_rate": 0.5
+   }
+  },
+  "needle_type": {
+   "update": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "factual": {
+    "probes": 13,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.2308,
+    "hallucination_rate": 0.2308
+   },
+   "decision": {
+    "probes": 1,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 1.0
+   },
+   "personal": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.0
+   },
+   "code_identifier": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.5
+   }
+  },
+  "topic": {
+   "ai_trends": {
+    "probes": 4,
+    "ctx_hit_rate": 0.25,
+    "ans_hit_rate": 0.25,
+    "hallucination_rate": 0.25
+   },
+   "gardening": {
+    "probes": 4,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.5,
+    "hallucination_rate": 0.0
+   },
+   "health": {
+    "probes": 4,
+    "ctx_hit_rate": 0.6667,
+    "ans_hit_rate": 0.75,
+    "hallucination_rate": 0.25
+   },
+   "ml": {
+    "probes": 7,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.1429,
+    "hallucination_rate": 0.4286
+   },
+   "stocks": {
+    "probes": 5,
+    "ctx_hit_rate": 0.25,
+    "ans_hit_rate": 0.4,
+    "hallucination_rate": 0.0
+   }
+  }
+ },
+ "probes": [
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p1",
+   "topic": "ai_trends",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我们公司现在的 AI 主路线是什么？",
+   "reply": "AI 主路线：  \nQ3 必须上线面向客户的 AI 客服功能（基于产品文档 + 客户自有知识库的问答，置信度不足即转人工），封闭试点 3-5 家客户，内部效率工具降为次优先。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2470,
+   "output_tokens": 57,
+   "estimated_input_tokens": 3742,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.66,
+   "compression_ratio": 0.4053,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3563,
+       "items": 16,
+       "msg_ids": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 18,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3742,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p2",
+   "topic": "ai_trends",
+   "style": "direct",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "你之前给我引用过一个企业 AI 项目从试点到生产的转化率数字，是多少？",
+   "reply": "我之前并没有给出过具体的“企业 AI 项目从试点到生产的转化率”数字。  \n如果你需要一个可参考的业界数据，我可以帮你查一下最近的研究或报告。需要我现在搜索吗？",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2481,
+   "output_tokens": 45,
+   "estimated_input_tokens": 3758,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.61,
+   "compression_ratio": 0.4053,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3563,
+       "items": 16,
+       "msg_ids": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 34,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3758,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p3",
+   "topic": "ai_trends",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "decision",
+   "depth": "early",
+   "question": "我们最早给今年定的那套打法是什么来着？",
+   "reply": "你最早给今年定的那套打法，核心就三句话：\n\n1. 先把内部工具做成“零信任”试点：把 AI 能力包装成网关，内部先跑通安全、合规、成本三条线，再把同一套架构对外复用。  \n2. 按“最小可行边界 + 评估集先行”推进：每个功能上线前先跑评估集，准确率不达标不放量。  \n3. 商业化路径是“先提升续约率与客单价，再谈独立 AI 收入”，避免把 AI 当利润中心考核。\n\n这三条就是最初的打法。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "llm",
+   "judge_raw": "NO",
+   "judge_error": null,
+   "input_tokens": 2475,
+   "output_tokens": 138,
+   "estimated_input_tokens": 3750,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.56,
+   "compression_ratio": 0.4053,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3563,
+       "items": 16,
+       "msg_ids": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 26,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3750,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p4",
+   "topic": "ai_trends",
+   "style": "paraphrase",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "你给我那份给董事会降温的材料里，有多大比例的企业尝试最后真正用起来了？",
+   "reply": "我手头没有可靠的公开统计数据，所以无法给出一个确切的比例。  \n\n不过，基于 2023–2024 年多家研究机构（Gartner、McKinsey、Stanford HAI、CB Insights 等）发布的零散报告，结论大致可以概括为：  \n\n• 在宣布或启动 AI 客服/生成式 AI 项目的公司里，真正把功能上线并持续使用的比例通常落在 20–35 %；  \n• 如果把“上线”定义得更严格——即至少有 10 % 的真实客服量被 AI 接管、且半年后仍在迭代——比例会进一步降到 10–20 %；  \n• 多数项目卡在“试点不转正”或“上线后因为准确率/成本问题下线”阶段。\n\n这些数字都来自不同样本、不同定义的调研，彼此之间有较大差异，并不构成严谨的统计结论。如果你需要更可信的数据，我建议直接查阅：  \n1. Gartner《生成式 AI 在客户服务中的采用现状》2024；  \n2. McKinsey《生成式 AI 的经济价值》系列报告；  \n3. Stanford HAI《2024 AI Index》。  \n\n需要我帮你把这几份报告里最相关的章节或数据点再帮你翻出来吗？",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2484,
+   "output_tokens": 271,
+   "estimated_input_tokens": 3770,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.89,
+   "compression_ratio": 0.4053,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3563,
+       "items": 16,
+       "msg_ids": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 46,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3770,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p1",
+   "topic": "gardening",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "personal",
+   "depth": "early",
+   "question": "帮我算一下，我这次改造的预算摊到露台每平米上是多少钱？",
+   "reply": "我手里没有你露台的实际面积数字，也不知道你最后实际花了多少钱，所以没法给你算出每平米的单价。\n\n如果你把“露台总面积（平方米）”和“实际总花费”这两个数字告诉我，我可以立刻帮你算出每平米的摊销成本。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2473,
+   "output_tokens": 63,
+   "estimated_input_tokens": 3745,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.56,
+   "compression_ratio": 0.395,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3549,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 35,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3745,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p2",
+   "topic": "gardening",
+   "style": "direct",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "你之前说的预防黑斑病那个药，名字和稀释倍数是多少？",
+   "reply": "代森锰锌（Mancozeb）可湿性粉剂，常规稀释 600-800 倍液（即每 15 L 水加 20-25 g 药）。梅雨前 7-10 天喷一次，叶背叶面全喷，间隔 10-14 天再补一次即可。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2473,
+   "output_tokens": 69,
+   "estimated_input_tokens": 3746,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.6,
+   "compression_ratio": 0.395,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3549,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 36,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3746,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p3",
+   "topic": "gardening",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我一开始说这次露台改造总共能花多少钱来着？",
+   "reply": "你一开始确实没提具体预算，我也没问。  \n根据我刚才列的清单（第一批 4500、第二批 3000、第三批 1500），目前估算的露台改造总投入在 **8000-9000 元** 左右。\n\n如果你有更明确的预算上限（比如 5000 元、6000 元、1 万等），告诉我，我马上把清单和动工顺序重新调整。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2469,
+   "output_tokens": 91,
+   "estimated_input_tokens": 3738,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.74,
+   "compression_ratio": 0.395,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3549,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 28,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3738,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p4",
+   "topic": "gardening",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "personal",
+   "depth": "early",
+   "question": "我家这个要打理的户外空间一共多大面积？",
+   "reply": "我手上没有任何关于你家户外空间的具体数据——既没有平面图、也没有你提供的尺寸或照片，所以无法给出准确的面积。  \n\n如果你能提供以下任意一种信息，我可以立刻帮你算出大概平方米数：  \n- 露台/阳台的长×宽（或至少目测的米数）  \n- 照片里能参考的已知物体（如一米长的花盆、门框宽度）  \n- 小区户型图里标注的阳台面积  \n\n把这些告诉我，我马上给你换算。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2469,
+   "output_tokens": 113,
+   "estimated_input_tokens": 3734,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.12,
+   "compression_ratio": 0.395,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3549,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 24,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3734,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p1",
+   "topic": "health",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我最近一次复查的低密度脂蛋白是多少？",
+   "reply": "**LDL 是 3.1 mmol/L**（上次复查数据）。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2411,
+   "output_tokens": 16,
+   "estimated_input_tokens": 3734,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.53,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3545,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 28,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3734,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p2",
+   "topic": "health",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我跟你说过我用的血压计是什么牌子吗？是什么牌子来着？",
+   "reply": "你没跟我说过具体品牌。  \n如果你想记录或分享，我可以帮你把品牌、型号、最近几次测量值一起记下来——随时告诉我。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2416,
+   "output_tokens": 34,
+   "estimated_input_tokens": 3745,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.37,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3545,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 39,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3745,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p3",
+   "topic": "health",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我那个'坏胆固醇'最近一次查出来是多少？",
+   "reply": "你上一次（三个月复查）LDL 的结果是 **3.1 mmol/L**。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2413,
+   "output_tokens": 21,
+   "estimated_input_tokens": 3736,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.39,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3545,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 30,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3736,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p4",
+   "topic": "health",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "刚开始那会儿，我的甘油三酯基线值是多少来着？",
+   "reply": "我记得你最早提到甘油三酯时，数值是 1.6 mmol/L（和这次复查的数值一样），但你是在“更新数据”那条消息里才正式把基线数值一起公布的，所以我没有记录到更早的“原始基线”值。\n\n如果你当时还有更早的体检报告，或者能回想起来具体数字，告诉我，我可以帮你一起做前后对比。否则我只能以 1.6 mmol/L 作为你第一次公开的基线。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2415,
+   "output_tokens": 108,
+   "estimated_input_tokens": 3739,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.81,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3545,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 33,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3739,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "code_identifier",
+   "depth": "early",
+   "question": "如果要新加一路召回，代码上应该注册到哪个类？",
+   "reply": "**答案：注册到 `RetrieverRegistry`（或你们项目里对应的“召回器注册中心”）。**\n\n具体做法：\n\n1. 新建一个实现 `BaseRetriever` 接口（或 `AbstractRetriever`）的类，命名为 `NewSourceRetriever`。\n2. 在 `RetrieverRegistry`（或 `retriever_registry.py`）里把新类注册进去：\n\n```python\n# retriever_registry.py\nfrom .new_source_retriever import NewSourceRetriever\n\nRetrieverRegistry.register(\"new_source\", NewSourceRetriever)\n```\n\n3. 在配置文件（`config.yaml` / `settings.py`）里把新召回打开：\n\n```yaml\nretrievers:\n  - name: bm25\n  - name: vector\n  - name: new_source          # ← 新增\n```\n\n4. 启动时 `RetrieverRegistry` 会把所有已注册的召回器实例化并注入到 `HybridRetriever`（或 `MultiRetriever`）里，RRF 融合层会自动把新召回的结果并进来。\n\n这样改动最小、耦合最低，也方便以后灰度开关。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2713,
+   "output_tokens": 232,
+   "estimated_input_tokens": 3940,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.07,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3754,
+       "items": 20,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 25,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3940,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p2",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "按你定下来的切分参数，chunk 大小和重叠分别是多少 token？",
+   "reply": "按我之前给出的方案：  \n- chunk 大小：512 token  \n- 重叠：50 token  \n\n这个参数已写入切分管线和评估集对比实验的基线配置。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2715,
+   "output_tokens": 41,
+   "estimated_input_tokens": 3945,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.71,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3754,
+       "items": 20,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 30,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3945,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p3",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "code_identifier",
+   "depth": "early",
+   "question": "我们一开始定的那个召回服务入口类，类名叫什么来着？",
+   "reply": "入口类的命名我没在之前的对话里提到过。  \n如果你需要一个建议，可以叫：  \n\n**HybridRetriever**（或 HybridSearchService）——明确体现“双路召回 + RRF 融合”的职责。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2713,
+   "output_tokens": 47,
+   "estimated_input_tokens": 3946,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.05,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3754,
+       "items": 20,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 31,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3946,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p4",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "切片的颗粒度跟前后衔接的余量，当时拍板的是多大？",
+   "reply": "当时拍板的是：  \n- 基本切片：1200 token  \n- 上下文重叠：前后各 200 token（重叠率≈16 %）  \n- 最大 chunk 长度：1500 token（超过这个就二次切分）  \n- 最小 chunk 长度：100 token（低于这个直接丢弃）  \n\n就是这套参数。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2714,
+   "output_tokens": 77,
+   "estimated_input_tokens": 3949,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.91,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3754,
+       "items": 20,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 34,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3949,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_002",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我们的训练数据放在哪个 S3 路径下？",
+   "reply": "我手头没有你们团队当前的具体 S3 路径信息。要得到准确答案，最快的方式是：\n\n1. 看你们项目里的 `data_config.yaml` / `env.sh` / `Makefile` 等配置文件，通常会有 `S3_DATA_PATH`、`DATA_PREFIX` 或 `bucket/key` 的定义。  \n2. 问一下负责数据管道或基础设施的同学，他们手里一般有 `aws s3 ls` 的常用命令或 IAM 角色对应的 bucket。  \n3. 如果你们已经在用 Prometheus/Grafana 仪表盘，也可以看看 dataloader 相关的指标面板里有没有把路径打出来。\n\n如果方便，把上面任一文件里的片段贴出来，我可以帮你一起确认。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2605,
+   "output_tokens": 147,
+   "estimated_input_tokens": 3833,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.11,
+   "compression_ratio": 0.4202,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3648,
+       "items": 16,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 24,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3833,
+     "full_history_tokens": 8682,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_002",
+   "probe_id": "p2",
+   "topic": "ml",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "新同事要起一个训练任务，把关键配置要点告诉他：数据路径是哪个，dataloader 的 num_workers 应该设多少？",
+   "reply": "关键配置清单（直接抄到脚本里即可）：\n\n1. 数据路径  \n   • 训练集：/mnt/data/train/（parquet + 索引文件）  \n   • 验证集：/mnt/data/val/  \n   • 日志/ckpt：/mnt/ckpt/（本地 NVMe，保留最近 3 份轻量 ckpt）\n\n2. DataLoader 参数（按 8×A100 单卡 8 worker 算，已验证）  \n   • num_workers = 8  \n   • prefetch_factor = 2  \n   • persistent_workers = True  \n   • pin_memory = True  \n\n3. 资源配额（必须加）  \n   • --shm-size=32g（或 docker run --ipc=host）  \n   • cgroups 限制：memory.max=256g, cpu.max=320000（对应 80 核）\n\n4. 训练脚本里务必加入  \n   • NCCL_ASYNC_ERROR_HANDLING=1  \n   • NCCL_TIMEOUT=600  \n   • TORCH_DISTRIBUTED_DEBUG=DETAIL（首轮先开，确认无误再关）\n\n5. 自动恢复  \n   • 启动命令套监护脚本：`train-watchdog.sh your_train.py …`（脚本在 /mnt/scripts/）\n\n6. Checkpoint  \n   • 每 30 min 本地轻量 ckpt，4 h 全量上传 S3；恢复时用 `--resume /mnt/ckpt/latest.pt`\n\n把上面 6 条复制进新任务的 README，跑通后再微调。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2623,
+   "output_tokens": 331,
+   "estimated_input_tokens": 3856,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.86,
+   "compression_ratio": 0.4202,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3648,
+       "items": 16,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 47,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3856,
+     "full_history_tokens": 8682,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_002",
+   "probe_id": "p3",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "排查完那次半夜卡死之后，我们最终把读数据的并行进程数定在几个？",
+   "reply": "我没有在之前的对话中看到你们最终把 num_workers 具体改成了多少。  \n如果你现在手头没有记录，建议直接看：  \n1. 训练脚本里 `DataLoader(num_workers=...)` 的当前值；  \n2. 最近一次启动训练时的启动参数或 config 文件；  \n3. 监控/日志里记录的实际 worker 数量。\n\n如果能把这几个地方截图或贴一下，我可以帮你一起确认。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2616,
+   "output_tokens": 97,
+   "estimated_input_tokens": 3850,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.95,
+   "compression_ratio": 0.4202,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3648,
+       "items": 16,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 41,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3850,
+     "full_history_tokens": 8682,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "如果特斯拉现在是 280 美元，我手里剩下的特斯拉持仓浮盈是多少美元？",
+   "reply": "我无法计算具体浮盈金额，因为你之前没有告诉我特斯拉的买入成本价。  \n\n如果你能提供买入时的每股成本（或总成本），我可以立刻帮你算出当前 280 美元对应的浮盈美元数。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2578,
+   "output_tokens": 51,
+   "estimated_input_tokens": 3973,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.53,
+   "compression_ratio": 0.463,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3769,
+       "items": 17,
+       "msg_ids": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 43,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3973,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p2",
+   "topic": "stocks",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我现在还持有多少股特斯拉？",
+   "reply": "你目前持有 25 股特斯拉。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2565,
+   "output_tokens": 10,
+   "estimated_input_tokens": 3949,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.11,
+   "compression_ratio": 0.463,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3769,
+       "items": 17,
+       "msg_ids": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 19,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3949,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p3",
+   "topic": "stocks",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我之前给过你我券商账户的提现银行卡号，帮我报一下后四位。",
+   "reply": "抱歉，我没有保存或访问任何真实的银行卡号或个人账户信息——之前的对话中也从未提供过这些细节。建议你直接打开券商 App 或登录银行账户查看后四位，以确保准确无误。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2579,
+   "output_tokens": 48,
+   "estimated_input_tokens": 3966,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.85,
+   "compression_ratio": 0.463,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3769,
+       "items": 17,
+       "msg_ids": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 36,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3966,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p4",
+   "topic": "stocks",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我最早建仓特斯拉时的每股成本价是多少美元？",
+   "reply": "我手头没有你最早建仓特斯拉时的具体成本价记录。  \n\n你说“40 股里的 15 股卖掉后还剩 25 股”，但之前对话里既没出现买入日期、每股买入价格，也没有总成本或加权平均成本的数字。  \n\n如果你记得或能翻券商 App 的交易明细，把最早那笔买入记录（日期+价格）告诉我，我可以帮你算出来。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2571,
+   "output_tokens": 95,
+   "estimated_input_tokens": 3959,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.18,
+   "compression_ratio": 0.463,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3769,
+       "items": 17,
+       "msg_ids": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 29,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3959,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p5",
+   "topic": "stocks",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我刚开始把这笔钱投进那只电动车股票时，一股花了我多少？",
+   "reply": "我手头没有你的具体交易记录，无法告诉你特斯拉当时买入的准确单价。  \n\n如果你还记得当时的美元金额和股数，或者能查到券商 App 里的历史成交记录（通常有“成交明细”或“交易历史”一栏），就能直接算出：  \n单价 = 总金额 ÷ 股数（扣除佣金后）。  \n\n需要的话，把那条记录发给我，我可以帮你算。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2577,
+   "output_tokens": 95,
+   "estimated_input_tokens": 3968,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.7,
+   "compression_ratio": 0.463,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3769,
+       "items": 17,
+       "msg_ids": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 38,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3968,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  }
+ ]
+}

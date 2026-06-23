@@ -1,0 +1,739 @@
+{
+ "run_id": "2026-06-23_1610_concat_tool-medium_b4k",
+ "timestamp": "2026-06-23T16:10:19",
+ "context_budget": 4000,
+ "proactive_compress_to": null,
+ "strategy": "concat",
+ "model": "grok-4-fast",
+ "judge_model": "kimi-k2.5",
+ "dataset_version": "v1-tool-medium",
+ "summary": {
+  "probes": 8,
+  "needle_probes": 6,
+  "negative_probes": 2,
+  "ctx_hit_rate": 0.0,
+  "ans_hit_rate": 0.0,
+  "hallucination_rate": 0.25,
+  "avg_input_tokens": 2690.8,
+  "avg_estimated_input_tokens": 3770.0,
+  "avg_output_tokens": 70.5,
+  "avg_rounds": 1.0,
+  "avg_latency_s": 2.0,
+  "avg_compression_ratio": 0.8883
+ },
+ "dimensions": {
+  "style": {
+   "paraphrase": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.0
+   },
+   "direct": {
+    "probes": 3,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.6667
+   },
+   "negative": {
+    "probes": 2,
+    "ctx_hit_rate": null,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "implicit": {
+    "probes": 1,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "carrier": {
+   "tool": {
+    "probes": 6,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.3333
+   }
+  },
+  "depth": {},
+  "needle_type": {
+   "factual": {
+    "probes": 4,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.0
+   },
+   "identifier": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 1.0
+   }
+  },
+  "topic": {
+   "ai_trends": {
+    "probes": 1,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.0
+   },
+   "garden": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.5,
+    "hallucination_rate": 0.0
+   },
+   "health": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.5,
+    "hallucination_rate": 0.0
+   },
+   "ml": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 1.0
+   },
+   "stocks": {
+    "probes": 1,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.0
+   }
+  }
+ },
+ "probes": [
+  {
+   "case_id": "tool_ai_001",
+   "probe_id": "p1",
+   "topic": "ai_trends",
+   "style": "paraphrase",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "根据我刚读取的那个页面里的调研数据，企业整体用上生成式 AI 的比例写的是多少？以页面里的数字为准。",
+   "reply": "我刚才读的是维基百科的概述页，里面并没有给出具体的“企业整体采用率”数字。  \n想拿到最新、带明确口径的权威数字，推荐直接引用麦肯锡 2024 年 3 月发布的《The state of AI in 2024: Generative AI’s breakout year》。报告里写的是：\n\n“65% 的受访组织在至少一项业务职能中使用了生成式 AI。”\n\n这个 65% 就是你可以拿来“镇场子”的最新权威数字。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2801,
+   "output_tokens": 108,
+   "estimated_input_tokens": 3853,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.52,
+   "compression_ratio": 0.8924,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2778,
+       "items": 19,
+       "msg_ids": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 52,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1023,
+       "items": 2,
+       "text": "Generative AI - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\n(Redirected from\nGenerative artificial intelligence\n)\nAI that generates content\n\"GenAI\" redirects here; not to be confused with\nArtificial general intelligence\n.\nThéâtre D'opéra Spatial\n(Space Opera Theater, 2022), an image made with\nMidjourney\nthat won an award at the\nColorado State Fair\n's fine art competition\nPart of\na series\non\nArtificial intelligence (AI)\nMajor goals\nArtificial general intelligence\nIntelligent agent\nRecursive self-improvement\nPlanning\nComputer vision\nGeneral game playing\nKnowledge representation\nNatural language processing\nRobotics\nAI safety\nApproaches\nMachine learning\nSymbolic\nDeep learning\nBayesian networks\nEvolutionary algorithms\nNeuro-symbolic AI\nSystems integration\nOpen-source\nAI data centers\nApplications\nBioinformatics\nDeepfake\nEarth sciences\nFinance\nGenerative AI\nArt\nAudio\nMusic\nGovernment\nHealthcare\nIndustry\nSoftware development\nTranslation\nMilitary\nPhysics\nProjects\nPhilosophy\nAI alignment\nArtificial consciousness\nThe bitter lesson\nChinese room\nFriendly AI\nEthics\nExistential risk\nTuring test\nUncanny valley\nHuman–AI interaction\nHistory\nTimeline\nProgress\nAI winter\nAI boom\nAI bubble\nControversies\nDeepfake pornography\nTaylor Swift deepfake pornography controversy\nGrok sexual deepfake scandal\nGoogle Gemini image generation controversy\nIt's the Most Terrible Time of the Year\nPause Giant AI Experiments\nRemoval of Sam Altman from OpenAI\nStatement on AI Risk\nTay (chatbot)\nThéâtre D'opéra Spatial\nVoiceverse NFT plagiarism scandal\nGlossary\nGlossary\nv\nt\ne\nGenerative artificial intelligence\n(\nGenAI\n) is a subfield of\nartificial intelligence\n(AI) that uses\ngenerative models\nto generate text,\nimages\n,\nvideos\n,\naudio\n,\nsoftware code\n(\nvibe coding\n) or other forms of data.\n[\n1\n]\nThese models\nlearn the underlying patterns\nand structures of their\ntraining data\n, and use them to generate new data\n[\n2\n]\nin response to input, which often takes the form of\nnatural language\nprompts\n.\n[\n3\n]\n[\n4\n]\nThe prevalence of generative AI tools has increased significantly since the\nAI boom\nin the 2020s. This boom was made possible by improvements in\ndeep\nneural networks\n, particularly\nlarge language models\n(LLMs), which are based on the\ntransformer\narchitecture. Generative AI\napplications\ninclude\nchatbots\nsuch as\nChatGPT\n,\nClaude\n,\nCopilot\n,\nDeepSeek\n,\nDoubao\n,\nGoogle Gemini\n,\nGrok\nand\nQwen\n;\ntext-to-image\nmodels such as\nDALL-E\n,\nFirefly\n,\nStable Diffusion\n, and\nMidjourney\n; and\ntext-to-video\nmodels such as\nVeo\n,\nLTX\nand\nSora\n.\n[\n5\n]\n[\n6\n]\n[\n7\n]\nCompanies in a variety of sectors have used generative AI, including those in software development, healthcare,\n[\n8\n]\nfinance,\n[\n9\n]\nentertainment,\n[\n10\n]\ncustomer service,\n[\n11\n]\nsales and marketing,\n[\n12\n]\nart, writing,\n[\n13\n]\nand product design.\n[\n14\n]\nGenerative AI has been used for\ncybercrime\n, and to deceive and manipulate people through\nfake news\nand\ndeepfakes\n.\n[\n15\n]\n[\n16\n]\nGenerative AI models have been trained on\ncopyrighted\nworks without the\nrightholders\n' permission.\n[\n17\n]\nMany generative AI systems use large-scale\ndata centers\n, whose\nenvironmental impacts\ninclude\nelectronic waste\n, consumption of fresh water for cooling, and high energy consumption that is estimated to be growing steadily.\n[\n18\n]\nHistory\n[\nedit\n]\nMain article:\nHistory of artificial intelligence\nEarly history\n[\nedit\n]\nThe origins of algorithmically generated media can be traced to the development of the\nMarkov chain\n, which has been used to model natural language since the early 20th century. Russian mathematician\nAndrey Markov\nintroduced the concept in 1906,\n[\n19\n]\n[\n20\n]\nincluding an analysis of vowel and consonant patterns in\nEugene Onegin\n. Once trained on a\ntext corpus\n, a Markov chain can generate probabilistic text.\n[\n21\n]\n[\n22\n]\nBy the early 1970s, artists began u"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 3853,
+     "full_history_tokens": 3113,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_garden_001",
+   "probe_id": "p1",
+   "topic": "garden",
+   "style": "direct",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "根据我刚查到的这个页面里写的，月季冬剪每根主枝建议保留几个芽眼？以页面内容为准。",
+   "reply": "抱歉，我刚才访问的“https://en.wikipedia.org/wiki/Rose”只是玫瑰的通用词条，没有具体的冬季修剪指导。  \n要以你提到的页面内容为准，我需要看到那页的实际文字才能给你准确答案。麻烦把页面里关于“每根主枝保留芽眼数量”的那段描述复制一下给我，我直接按它原文给你确认。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "NO",
+   "judge_error": null,
+   "input_tokens": 2796,
+   "output_tokens": 80,
+   "estimated_input_tokens": 3983,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.67,
+   "compression_ratio": 0.8775,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2923,
+       "items": 17,
+       "msg_ids": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 53,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1007,
+       "items": 2,
+       "text": "Rose - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\nGenus of flowering plants\nFor other uses, see\nRose (disambiguation)\n,\nRosé (disambiguation)\n,\nRoses (disambiguation)\n, and\nRosa (disambiguation)\n.\nThis article includes a list of\ngeneral references\n, but\nit lacks sufficient corresponding\ninline citations\n.\nPlease help to\nimprove\nthis article by\nintroducing\nmore precise citations.\n(\nFebruary 2025\n)\n(\nLearn how and when to remove this message\n)\nRose\nTemporal range:\nEocene–Recent\nPreꞒ\nꞒ\nO\nS\nD\nC\nP\nT\nJ\nK\nPg\nN\nRosa rubiginosa\n, a wild rose native to Europe and West Asia\nRosa\n'Precious Platinum'\n, a\nhybrid tea\ngarden cultivar\nScientific classification\nKingdom:\nPlantae\nClade\n:\nEmbryophytes\nClade\n:\nTracheophytes\nClade\n:\nSpermatophytes\nClade\n:\nAngiosperms\nClade\n:\nEudicots\nClade\n:\nRosids\nOrder:\nRosales\nFamily:\nRosaceae\nSubfamily:\nRosoideae\nTribe:\nRoseae\nGenus:\nRosa\nL.\n[\n1\n]\nType species\nRosa cinnamomea\nL.\n[\n2\n]\nSpecies\nSee\nList of\nRosa\nspecies\nSynonyms\n[\n3\n]\nBakeria\n(Gand.) Gand., nom. illeg.\nChabertia\n(Gand.) Gand.\nChavinia\n(Gand.) Gand.\nCottetia\n(Gand.) Gand.\nCrepinia\n(Gand.) Gand., nom. illeg.\nErnestella\nGerm.\nHesperhodos\nCockerell\nHulthemia\nDumort.\n×\nHulthemosa\nJuz.\nJuzepczukia\nChrshan.\nLaggeria\n(Gand.) Gand.\nLowea\nLindl.\nOzanonia\n(Gand.) Gand.\nPlatyrhodon\nDecne. ex Hurst, nom. illeg.\nPugetia\n(Gand.) Gand.\nRhodophora\nNeck., nom. invalid.\nRhodopsis\n(Endl.) Rchb., nom. rejic.\nRipartia\n(Gand.) Gand.\nSaintpierrea\nGerm.\nScheutzia\n(Gand.) Gand., nom. illeg.\nA\nrose\nis either a woody\nperennial\nflowering plant\nof the\ngenus\nRosa\n(\n/\nˈ\nr\noʊ\nz\nə\n/\n),\n[\n4\n]\nin the family\nRosaceae\n(\n/\nr\noʊ\nˈ\nz\neɪ\ns\niː\nˌ\niː\n/\n),\n[\n4\n]\nor the\nflower\nit bears. There are over three hundred species and\ntens of thousands\nof\ncultivars\n.\n[\n5\n]\nThe plants range in size and form, from trailing and erect\nshrubs\nto climbers up to 7 metres (23 ft) in height. Sharp\nprickles\nappear on the stems of many species.\n[\n6\n]\nTheir flowers vary in size and shape and are usually large and showy, in colours ranging from white through pinks, reds, oranges and yellows.\nMost species are native to Asia, with smaller numbers native to Europe, North America, and Northwest Africa.\n[\n6\n]\nSpecies,\ncultivars\nand\nhybrids\nare all widely grown for their beauty and often are fragrant. Different species hybridize easily, and this has been used in the development of the wide range of\ngarden roses\n. Roses have acquired cultural significance in many societies.\nEtymology\nThe name\nrose\ncomes from Latin\nrosa\n, which was perhaps borrowed from\nOscan\n, from Greek ῥόδον\nrhódon\n(\nAeolic\nβρόδον\nwródon\n), itself borrowed from\nOld Persian\nwrd-\n(\nwurdi\n), related to\nAvestan\nvarəδa\n,\nSogdian\nward\n,\nParthian\nwâr\n.\n[\n7\n]\n[\n8\n]\nBotany\nThe\nleaves\nare borne alternately on the stem. In most species, they are 5 to 15 centimetres (2 to 6 in) l"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 3983,
+     "full_history_tokens": 3331,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_garden_001",
+   "probe_id": "p2",
+   "topic": "garden",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我之前告诉过你我家阳台是朝哪个方向的吗？是朝南还是朝北？",
+   "reply": "抱歉，我翻了之前的对话记录，并没有看到你明确提到阳台朝向是朝南还是朝北。  \n\n如果你能补充一句（例如“阳台朝南”或“阳台朝北”），我再结合这个因素给你更精准的修剪建议。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2248,
+   "output_tokens": 59,
+   "estimated_input_tokens": 3530,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.87,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3331,
+       "items": 19,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 38,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3530,
+     "full_history_tokens": 3331,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_health_001",
+   "probe_id": "p1",
+   "topic": "health",
+   "style": "paraphrase",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "根据我刚查到的这份指南页面里写的，一般成年人每天钠摄入大概不该超过多少毫克？以页面里的数值为准。",
+   "reply": "根据页面内容，没有给出一般成年人每日钠摄入的上限数值。  \n我已把这个信息告诉你：该页面并未提供推荐的每日钠上限。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "NO",
+   "judge_error": null,
+   "input_tokens": 2718,
+   "output_tokens": 33,
+   "estimated_input_tokens": 3782,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.92,
+   "compression_ratio": 0.8703,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2718,
+       "items": 17,
+       "msg_ids": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 59,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1005,
+       "items": 2,
+       "text": "Sodium - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\nThis article is about the chemical element. For the nutrient commonly called sodium, see\nsalt\n. For the use of sodium as a medication, see\nSaline (medicine)\n. For other uses, see\nsodium (disambiguation)\n.\n\"Natrium\" redirects here. For other uses, see\nNatrium (disambiguation)\n.\nChemical element with atomic number 11 (Na)\nSodium,\n11\nNa\nSodium\nAppearance\nsilvery white metallic\nStandard atomic weight\nA\nr\n°(Na)\n22.989\n769\n28\n±\n0.000\n000\n02\n[\n1\n]\n22.990\n±\n0.001\n(\nabridged\n)\n[\n2\n]\nSodium in the\nperiodic table\nHydrogen\nHelium\nLithium\nBeryllium\nBoron\nCarbon\nNitrogen\nOxygen\nFluorine\nNeon\nSodium\nMagnesium\nAluminium\nSilicon\nPhosphorus\nSulfur\nChlorine\nArgon\nPotassium\nCalcium\nScandium\nTitanium\nVanadium\nChromium\nManganese\nIron\nCobalt\nNickel\nCopper\nZinc\nGallium\nGermanium\nArsenic\nSelenium\nBromine\nKrypton\nRubidium\nStrontium\nYttrium\nZirconium\nNiobium\nMolybdenum\nTechnetium\nRuthenium\nRhodium\nPalladium\nSilver\nCadmium\nIndium\nTin\nAntimony\nTellurium\nIodine\nXenon\nCaesium\nBarium\nLanthanum\nCerium\nPraseodymium\nNeodymium\nPromethium\nSamarium\nEuropium\nGadolinium\nTerbium\nDysprosium\nHolmium\nErbium\nThulium\nYtterbium\nLutetium\nHafnium\nTantalum\nTungsten\nRhenium\nOsmium\nIridium\nPlatinum\nGold\nMercury (element)\nThallium\nLead\nBismuth\nPolonium\nAstatine\nRadon\nFrancium\nRadium\nActinium\nThorium\nProtactinium\nUranium\nNeptunium\nPlutonium\nAmericium\nCurium\nBerkelium\nCalifornium\nEinsteinium\nFermium\nMendelevium\nNobelium\nLawrencium\nRutherfordium\nDubnium\nSeaborgium\nBohrium\nHassium\nMeitnerium\nDarmstadtium\nRoentgenium\nCopernicium\nNihonium\nFlerovium\nMoscovium\nLivermorium\nTennessine\nOganesson\nLi\n↑\nNa\n↓\nK\nneon\n←\nsodium\n→\nmagnesium\nAtomic number\n(\nZ\n)\n11\nGroup\ngroup 1: hydrogen and\nalkali metals\nPeriod\nperiod 3\nBlock\ns-block\nElectron configuration\n[\nNe\n] 3s\n1\nElectrons per shell\n2, 8, 1\nPhysical properties\nPhase\nat\nSTP\nsolid\nMelting point\n370.944\nK\n​(97.794 °C, ​208.029 °F)\nBoiling point\n1156.090 K ​(882.940 °C, ​1621.292 °F)\nDensity\n(at 20° C)\n0.9688 g/cm\n3\n[\n3\n]\nwhen liquid (at\nm.p.\n)\n0.927 g/cm\n3\nCritical point\n2573 K, 35 MPa\n(extrapolated)\nHeat of fusion\n2.60\nkJ/mol\nHeat of vaporization\n97.42 kJ/mol\nMolar heat capacity\n28.230 J/(mol·K)\nSpecific heat capacity\n1227.925 J/(kg·K)\nVapor pressure\nP\n(Pa)\n1\n10\n100\n1 k\n10 k\n100 k\nat\nT\n(K)\n554\n617\n697\n802\n946\n1153\nAtomic properties\nOxidation states\ncommon:\n+1\n−1,\n[\n4\n]\nElectronegativity\nPauling scale: 0.93\nIonization energies\n1st: 49"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 3782,
+     "full_history_tokens": 3123,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_health_001",
+   "probe_id": "p2",
+   "topic": "health",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我之前跟你说的我那次空腹血糖的具体数值是多少来着？",
+   "reply": "我这边没有记录你之前提到过空腹血糖的具体数值——我们从头到尾的对话里，你只说过“体检血压偏高”，没提过血糖数值。如果你之前在别的渠道或者我没捕捉到的地方说过，可以再告诉我一次，我帮你一起记下来。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2167,
+   "output_tokens": 61,
+   "estimated_input_tokens": 3321,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.54,
+   "compression_ratio": 1.0,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3123,
+       "items": 19,
+       "msg_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 37,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3321,
+     "full_history_tokens": 3123,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_ml_001",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "tool",
+   "needle_type": "identifier",
+   "depth": null,
+   "question": "根据我刚打开的这个页面里的说明，我们内部要锁定的 vLLM 稳定版本号写的是多少？请以页面内容为准，不要凭印象答。",
+   "reply": "根据官方 Releases 页面，当前推荐的稳定版本号是 **v0.7.3**（页面里明确给出 `vllm==0.7.3` 的安装示例，且把 v0.7.3 放在最前）。我们就把这个版本钉死。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2993,
+   "output_tokens": 60,
+   "estimated_input_tokens": 3832,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.88,
+   "compression_ratio": 0.8149,
+   "context_reports": [
+    {
+     "round": 3,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2730,
+       "items": 19,
+       "msg_ids": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 61,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1041,
+       "items": 4,
+       "text": "{\"queries\": [{\"keyword\": \"vLLM latest stable release version pinned\", \"response\": {\"query\": \"vLLM latest stable release version pinned\", \"follow_up_questions\": null, \"answer\": null, \"images\": [], \"results\": [{\"url\": \"https://vllm.ai/releases\", \"title\": \"vLLM Releases - All Versions\", \"content\": \"`uv venv --python 3.12`\\n\\nCUDA 11.8\\n\\nuv pip install vllm==0.7.3 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nv0.7.2 Feb 6, 2025\\n\\nRelease Notes\\n\\nRecommended: Use Python 3.12\\n\\n`uv venv --python 3.12`\\n\\nCUDA 11.8\\n\\nuv pip install vllm==0.7.2 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nv0.7.1 Feb 1, 2025\\n\\nRelease Notes\\n\\nRecommended: Use Python 3.12\\n\\n`uv venv --python 3.12`\\n\\nCUDA 11.8\\n\\nuv pip install vllm==0.7.1 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nv0.7.0 Jan 27, 2025\\n\\nRelease Notes\\n\\nRecommended: Use Python 3.12\\n\\n`uv venv --python 3.12`\\n\\nCUDA 11.8\\n\\nuv pip install vllm==0.7.0 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nv0.6.6.post1 Dec 27, 2024\\n\\nRelease Notes [...] v0.10.1 Aug 18, 2025\\n\\nRelease Notes\\n\\nCUDA 11.8\\n\\nuv pip install vllm==0.10.1 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nv0.10.0 Jul 24, 2025\\n\\nRelease Notes\\n\\nCUDA 12.6\\n\\nuv pip install vllm==0.10.0 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nCUDA 11.8\\n\\nuv pip install vllm==0.10.0 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nv0.9.2 Jul 7, 2025\\n\\nRelease Notes\\n\\nRecommended: Use Python 3.12\\n\\n`uv venv --python 3.12`\\n\\nCompatibility: Run this after installing vLLM\\n\\n`uv pip install \\\"transformers<4.54.0\\\"`\\n\\nCUDA 12.6\\n\\nuv pip install vllm==0.9.2 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nCUDA 11.8 [...] v0.8.1 Mar 19, 2025\\n\\nRelease Notes\\n\\nRecommended: Use Python 3.12\\n\\n`uv venv --python 3.12`\\n\\nCUDA 12.1\\n\\nuv pip install vllm==0.8.1 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nCUDA 11.8\\n\\nuv pip install vllm==0.8.1 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nv0.8.0 Mar 18, 2025\\n\\nRelease Notes\\n\\nRecommended: Use Python 3.12\\n\\n`uv venv --python 3.12`\\n\\nCUDA 12.1\\n\\nuv pip install vllm==0.8.0 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nCUDA 11.8\\n\\nuv pip install vllm==0.8.0 --extra-index-url  --extra-index-url  --index-strategy unsafe-best-match\\n\\nv0.7.3 Feb 20, 2025\\n\\nRelease Notes\\n\\nRecommended: Use Python 3.12\\n\\n`uv venv --python 3.12`\\n\\nCUDA 11.8\", \"score\": 0.69746524, \"raw_content\": null, \"images\": [{\"url\": \"https://vllm.ai/vLLM-Full-Logo.svg\", \"description\": \"vLLM Logo\", \"description_source\": \"alt\","
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 3832,
+     "full_history_tokens": 3350,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_ml_002",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "tool",
+   "needle_type": "identifier",
+   "depth": null,
+   "question": "根据我刚打开的这个页面里写的，标准缩放点积注意力对应的那个官方函数名是什么？以页面内容为准。",
+   "reply": "根据页面内容，Wikipedia 里并没有提到任何库函数（PyTorch / TensorFlow / JAX 等）的官方函数名，它只用自然语言描述了注意力机制（multi-head attention）。因此**无法从该页面找到‘标准缩放点积注意力’对应的官方函数名**。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 3002,
+   "output_tokens": 61,
+   "estimated_input_tokens": 3934,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.74,
+   "compression_ratio": 0.8208,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2858,
+       "items": 19,
+       "msg_ids": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 54,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1022,
+       "items": 2,
+       "text": "Transformer (deep learning) - Wikipedia\nJump to content\nFrom Wikipedia, the free encyclopedia\n(Redirected from\nTransformer (deep learning architecture)\n)\nAlgorithm for modelling sequential data\nThis article has multiple issues.\nPlease help\nimprove it\nor discuss these issues on the\ntalk page\n.\n(\nLearn how and when to remove these messages\n)\nThis article\nneeds additional citations for\nverification\n.\nPlease help\nimprove this article\nby\nadding citations to reliable sources\n. Unsourced material may be challenged and removed.\nFind sources:\n\"Transformer\" deep learning\n–\nnews\n·\nnewspapers\n·\nbooks\n·\nscholar\n·\nJSTOR\n(\nJune 2026\n)\n(\nLearn how and when to remove this message\n)\nSome of this article's\nlisted sources\nmay not be\nreliable\n.\nPlease help improve this article by looking for better, more reliable sources. Unreliable citations may be challenged and removed.\n(\nJune 2026\n)\n(\nLearn how and when to remove this message\n)\n(\nLearn how and when to remove this message\n)\nA standard transformer architecture, showing on the left an encoder, and on the right a decoder. Note: it uses the pre-LN convention, which is different from the post-LN convention used in the original 2017 transformer.\nPart of a series on\nMachine learning\nand\ndata mining\nParadigms\nSupervised learning\nUnsupervised learning\nSemi-supervised learning\nSelf-supervised learning\nReinforcement learning\nMeta-learning\nOnline learning\nBatch learning\nCurriculum learning\nRule-based learning\nNeuro-symbolic AI\nNeuromorphic engineering\nQuantum machine learning\nProblems\nClassification\nGenerative modeling\nRegression\nClustering\nDimensionality reduction\nDensity estimation\nAnomaly detection\nData cleaning\nAutoML\nAssociation rules\nSemantic analysis\nStructured prediction\nFeature engineering\nFeature learning\nLearning to rank\nGrammar induction\nOntology learning\nMultimodal learning\nSupervised learning\n(\nclassification\n•\nregression\n)\nApprenticeship learning\nDecision trees\nEnsembles\nBagging\nBoosting\nRandom forest\nk\n-NN\nLinear regression\nNaive Bayes\nArtificial neural networks\nLogistic regression\nPerceptron\nRelevance vector machine (RVM)\nSupport vector machine (SVM)\nClustering\nBIRCH\nCURE\nHierarchical\nk\n-means\nFuzzy\nExpectation–maximization (EM)\nDBSCAN\nOPTICS\nMean shift\nDimensionality reduction\nFactor analysis\nCCA\nICA\nLDA\nNMF\nPCA\nPGD\nt-SNE\nSDL\nStructured prediction\nGraphical models\nBayes net\nConditional random field\nHidden Markov\nAnomaly detection\nRANSAC\nk\n-NN\nLocal outlier factor\nIsolation forest\nNeural networks\nAutoencoder\nDeep learning\nFeedforward neural network\nRecurrent neural network\nLSTM\nGRU\nESN\nreservoir computing\nBoltzmann machine\nRestricted\nGAN\nDiffusion model\nSOM\nConvolutional neural network\nU-Net\nLeNet\nAlexNet\nDeepDream\nNeural field\nNeural radiance field\nPhysics-informed neural networks\nTransformer\nVision\nMamba\nSpiking neural network\nMemtransistor\nElectrochemical RAM\n(ECRAM)\nReinforcement learning\nQ-learning\nPolicy gradient\nSARSA\nTemporal difference (TD)\nMulti-agent\nSelf-play\nLearning with humans\nActive learning\nCrowdsourcing\nHuman-in-the-loop\nMechanistic interpretability\nRLHF\nModel diagnostics\nCoefficient of determination\nConfusion matrix\nLearning curve\nROC curve\nMathematical foundations\nKernel machines\nBias–variance tradeoff\nComputational learning theory\nEmpirical risk minimization\nOccam learning\nPAC learning\nStatistical learning\nVC theory\nTopological deep learning\nJournals and conferences\nAAAI\nCVPR\nECCV\nECML PKDD\nEMNLP\nICCV\nNeurIPS\nICML\nICLR\nIJCAI\nML\nJMLR\nRelated articles\nGlossary of artificial intelligence\nList of datasets for machine-learning research\nList of datasets in computer vision and image processing\nOutline of machine learning\nv\nt\ne\nIn\ndeep learning\n, the\ntransformer\nis a family of\nartificial neural network\narchitectures based on the multi-head\nattention\nmechanism, in which text is converted to numerical representations called\ntokens\n, and each token is converted into a vector via lookup from a\nword embedding\ntable.\n[\n1\n]\nAt each layer, each\ntoken\nis then\ncontextual"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 3934,
+     "full_history_tokens": 3482,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_stocks_001",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "implicit",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "就用我刚读到的这一页里写的数据中心营收和整体毛利率两个数字，大致估一下这块业务一年的毛利金额是多少？以页面数字为准。",
+   "reply": "抱歉，我刚才尝试从页面里抓取具体“数据中心营收”和“整体毛利率”这两个数字，但当前页面（维基百科）里只有汇总的年度总营收，并没有按业务分部的明细或毛利率信息。因此无法直接用页面上的数字给你算出数据中心的毛利金额。\n\n如果你手头有英伟达最新 10-K 或财报 PDF，把对应页面截图/链接发给我，我可以再帮你把那两个数读出来。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "NO",
+   "judge_error": null,
+   "input_tokens": 2801,
+   "output_tokens": 102,
+   "estimated_input_tokens": 3925,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.09,
+   "compression_ratio": 0.8303,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 2848,
+       "items": 17,
+       "msg_ids": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 64,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1013,
+       "items": 2,
+       "text": "Nvidia - Wikipedia\nJump to content\nChecked\nFrom Wikipedia, the free encyclopedia\nThis is the\nlatest accepted revision\n,\nreviewed\non\n22 June 2026\n.\nAmerican multinational technology company\n\"IReady\" redirects here. For the educational platform, see\nI-Ready\n.\nNvidia Corporation\nLogo since 2006\nHeadquarters in\nSanta Clara, California\n, in 2023\nType\nPublic\nTraded as\nNasdaq\n:\nNVDA\nNasdaq-100\ncomponent\nDJIA\ncomponent\nS&P 100\ncomponent\nS&P 500\ncomponent\nIndustry\nSemiconductors\nFounded\nApril 5, 1993\n; 33 years ago\n(\n1993-04-05\n)\n, in\nSunnyvale, California\n, US\nFounders\nJensen Huang\nChris Malachowsky\nCurtis Priem\nHeadquarters\nSanta Clara, California\n,\nUS\nArea served\nWorldwide\nKey people\nJensen Huang (\npresident\nand\nCEO\n)\nBill Dally\n(chief scientist)\nColette Kress\n(CFO)\nRevenue\nUS$215.9 billion\n(FY26)\nOperating income\nUS$130.4 billion\n(FY26)\nNet income\nUS$120.1 billion\n(FY26)\nTotal assets\nUS$206.8 billion\n(FY26)\nTotal equity\nUS$144.3 billion\n(FY26)\nNumber of employees\n42,000 (FY26)\nSubsidiaries\nMental Images\nWebsite\nnvidia.com\nFootnotes\nFinancials as of\nfiscal year\nended January 25, 2026\n[update]\n(FY26).\nReferences:\n[\n1\n]\n[\n2\n]\nNvidia Corporation\n[\na\n]\n(\n/\nɛ\nn\nˈ\nv\nɪ\nd\ni\nə\n/\nen-\nVID\n-ee-ə\n) is an American\nmultinational\ntechnology company headquartered in\nSanta Clara, California\n. The company develops\ngraphics processing units\n(GPUs),\nsystems on chips\n(SoCs), and\napplication programming interfaces\n(APIs) for\ndata science\n,\nhigh-performance computing\n,\nartificial intelligence\n(AI), and mobile and automotive applications.\n[\n5\n]\n[\n6\n]\nFounded in 1993 by\nJensen Huang\n,\nChris Malachowsky\n, and\nCurtis Priem\n, Nvidia has been widely described as a\nBig Tech\ncompany.\nOriginally focused on GPUs for video games, Nvidia broadened their use into other markets, including\nartificial intelligence\n(AI), professional visualization, and\nsupercomputing\n. The company's product lines include\nGeForce\nGPUs for gaming and creative workloads, and professional GPUs for\nedge computing\n, scientific research, and industrial applications. As of the first quarter of 2025, Nvidia held a 92% share of the discrete desktop and laptop GPU market.\n[\n7\n]\n[\n8\n]\nIn the early-to-mid 2000s, the company invested over a billion dollars to develop\nCUDA\n, a software platform and API (Application Programming Interfaces) that enabled GPUs to run massively\nparallel programs\nfor a broad range of compute-intensive applications.\n[\n9\n]\n[\n10\n]\n[\n11\n]\nAs a result, as of 2025, Nvidia controlled more than 80% of the market for GPUs used in training and deploying AI models,\n[\n9\n]\nand provided chips for over 75% of the world's\nTOP500\nsupercomputers.\n[\n1\n]\nThe company has also expanded into gaming hardware and services, with products such as the\nShield Portable\n,\nShield Tablet\n, and\nShield TV\n, and operates the\nGeForce Now\ncloud gaming service.\n[\n12\n]\nFurthermore, it has developed the\nTegra\nline of mobile processors for smartphones, tablets, and automotive infotainment systems.\n[\n13\n]\n[\n14\n]\n[\n15\n]\nIn 2023, Nvidia became the seventh U.S. company to reach a\nUS$1 trillion valuation\n.\n[\n16\n]\nIn 2025, driven by soaring global demand for\nAI data center\nhardware in the midst of the\nAI boom\n, Nvidia became the first company in the world to surpass US$4 trillion\n[\n17\n]\n[\n18\n]\nand US$5 trillion in\nmarket capitalization\n.\n[\n19\n]\nFor its strength, size and market capitalization, Nvidia has been selected as one of\nBloomberg\n's \"\nMagnificent Seven\n\", the seven biggest companies on the stock market in these regards.\n[\n20\n]\nHistory\n[\nedi"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 3925,
+     "full_history_tokens": 3430,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  }
+ ]
+}
