@@ -91,7 +91,8 @@ SUMMARY_PRESENCE_JUDGE_PROMPT = """下面是一段对话历史的压缩摘要。
 async def run_probe(client: httpx.AsyncClient, base_url: str, model: str,
                     strategy: str, history: list, question: str,
                     tool_rounds: list = None,
-                    context_budget: int = DEFAULT_CONTEXT_BUDGET) -> dict:
+                    context_budget: int = DEFAULT_CONTEXT_BUDGET,
+                    proactive_compress_to: int = None) -> dict:
     """Drive /debug/run via SSE; collect context_reports, usage, final reply.
 
     `tool_rounds` (tool tier): preset [assistant tool_call, tool result] pairs the
@@ -102,6 +103,8 @@ async def run_probe(client: httpx.AsyncClient, base_url: str, model: str,
     reports, usages, reply, error = [], [], None, None
     payload = {"model": model, "message": question, "history": history,
                "strategy": strategy, "context_budget": context_budget}
+    if proactive_compress_to:
+        payload["proactive_compress_to"] = proactive_compress_to
     if tool_rounds:
         payload["tool_rounds"] = tool_rounds
     t0 = time.monotonic()
@@ -322,6 +325,9 @@ async def main() -> None:
     ap.add_argument("--context-budget", type=int, default=DEFAULT_CONTEXT_BUDGET,
                     help="Phase 1.5 token budget the backend assembles into "
                          "(default 128000 = full window; lower to force compression)")
+    ap.add_argument("--proactive-compress-to", type=int, default=None,
+                    help="optional cost-saving knob: cap history to N tokens even when "
+                         "the budget is larger (default off)")
     ap.add_argument("--out", default=os.path.join(os.path.dirname(__file__), "results"))
     args = ap.parse_args()
     if not args.cases:
@@ -353,7 +359,8 @@ async def main() -> None:
                 run = await run_probe(client, args.base_url, args.model,
                                       args.strategy, conv, probe["question"],
                                       tool_rounds=probe.get("tool_rounds"),
-                                      context_budget=args.context_budget)
+                                      context_budget=args.context_budget,
+                                      proactive_compress_to=args.proactive_compress_to)
                 if run["error"]:
                     print(f"  ERROR: {run['error']}", flush=True)
 
@@ -446,11 +453,13 @@ async def main() -> None:
     # budget suffix on run_id so a budget sweep over one dataset stays distinct
     # (default 128k = baseline, no suffix); e.g. ..._concat_long_b8k
     bsuffix = "" if args.context_budget >= DEFAULT_CONTEXT_BUDGET else f"_b{args.context_budget // 1000}k"
-    run_id = f"{now:%Y-%m-%d_%H%M}_{args.strategy}_{args.tier}{bsuffix}"
+    psuffix = f"_pc{args.proactive_compress_to // 1000}k" if args.proactive_compress_to else ""
+    run_id = f"{now:%Y-%m-%d_%H%M}_{args.strategy}_{args.tier}{bsuffix}{psuffix}"
     result = {
         "run_id": run_id,
         "timestamp": now.isoformat(timespec="seconds"),
         "context_budget": args.context_budget,
+        "proactive_compress_to": args.proactive_compress_to,
         "strategy": args.strategy,
         "model": args.model,
         "judge_model": args.judge_model,

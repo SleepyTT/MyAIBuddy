@@ -242,6 +242,12 @@ def assemble_context(
 # enough to hold everything, output is identical to the non-budgeted path above.
 
 CONTEXT_BUDGET_DEFAULT = 128_000  # default token budget == full window → no-op
+# Tool results get their own reserved quota (like system prompt / current message):
+# each strategy fits the tool result into it — concat head-truncates, window_summary
+# summarizes, RAG (Phase 2) chunks+retrieves. A 30k-char page ~6-7k tok → ~1k is
+# a ~6x bound that still leaves room for the key facts. Industry: don't dump raw
+# large tool outputs into the persistent context.
+TOOL_RESULT_QUOTA = 1_000
 
 
 def _truncate_to_tokens(content: str, token_budget: int) -> Tuple[str, bool]:
@@ -276,17 +282,6 @@ def _concat_window_capped(history: List[dict], token_budget: int) -> Tuple[List[
         total += t
         start -= 1
     return history[:start], history[start:], start  # (dropped, kept, split_index)
-
-
-def _window_capped(history: List[dict], window_turns: int, token_budget: int
-                   ) -> Tuple[List[dict], List[dict], int]:
-    """Last `window_turns` messages, further trimmed oldest-first to fit `token_budget`."""
-    start = max(0, len(history) - window_turns)  # WINDOW_TURNS cap → default behavior at large budget
-    window = history[start:]
-    while window and sum(message_tokens(m) for m in window) > token_budget:
-        window = window[1:]
-        start += 1
-    return history[:start], window, start
 
 
 async def summarize_text(text: str, *, api_key: str, model: str = SUMMARY_MODEL,
@@ -327,70 +322,84 @@ async def assemble_budgeted(
     api_key: str,
     model: str = SUMMARY_MODEL,
     base_url: str = AI_BUILDER_BASE_URL,
-    window_turns: int = WINDOW_TURNS,
+    tool_result_quota: int = TOOL_RESULT_QUOTA,
+    proactive_compress_to: Optional[int] = None,
 ) -> dict:
-    """Assemble one upstream prompt under token `budget` (Phase 1.5).
+    """Assemble one upstream prompt under token `budget` (Phase 1.5, industry-style).
 
-    Returns the same shape /debug/run needs, plus `base_len` (messages[:base_len]
-    is summary+window+current; messages[base_len:] are the fitted tool results).
+    Reserve-and-fill, PURELY token-driven (no turn count):
+      - reserves: tools schema + current question (always) + a fixed `tool_result_quota`
+        for loop tool results — each strategy fits the tool result into that quota
+        (concat head-truncates, window_summary summarizes, RAG later chunks+retrieves);
+      - the remaining budget is filled with history, MOST-RECENT-FIRST: it fits → keep
+        verbatim; the overflow is DROPPED (concat) or SUMMARIZED (window_summary).
+      - `proactive_compress_to`: optional cost-saving knob — cap the history budget at
+        this many tokens even when `budget` is larger (default off). This is the only
+        place voluntary compression happens; the budget itself never compresses what fits.
+
+    Returns the shape /debug/run needs, plus `base_len` (messages[:base_len] is
+    summary+window+current; messages[base_len:] are the fitted tool results).
     """
     if strategy not in ALLOWED_STRATEGIES:
         raise ValueError(f"Unknown context strategy: {strategy}")
 
-    # current question + tools schema are never compressed (priority "必保"), so the
-    # budget is a SOFT floor: below `reserved` the prompt can exceed `budget`. The
-    # documented sweep floor (4k) is well above `reserved`, so this never bites.
+    # tools schema + current question are never compressed ("必保"); below this the
+    # budget is a soft floor. Tool results get their own fixed quota (see below).
     reserved = message_tokens(current_msg) + (estimate_tokens(tools) if tools else 0)
-    avail = max(0, budget - reserved)
+    has_tool = any(m.get("role") == "tool" for m in loop_messages)
+    tool_quota = tool_result_quota if has_tool else 0
 
-    # 1) Loop tool results first (they're why the model is answering this turn).
+    # 1) Fit loop tool results into their reserved quota (shared across rounds).
     fitted_loop: List[dict] = []
     summary_cost = 0
     loop_used = 0
+    tool_used = 0
     for m in loop_messages:
         if m.get("role") != "tool":
             fitted_loop.append(m)
             loop_used += message_tokens(m)
             continue
-        remaining = max(0, avail - loop_used)
+        remaining = max(0, tool_quota - tool_used)
         if message_tokens(m) <= remaining:
             fitted_loop.append(m)
             loop_used += message_tokens(m)
+            tool_used += message_tokens(m)
             continue
         content = m.get("content") or ""
-        if strategy == "window_summary":  # summarize the over-budget tool result
+        if strategy == "window_summary":  # summarize the tool result down to the quota
             summ, cost = await summarize_text(content, api_key=api_key, model=model, base_url=base_url)
             summary_cost += cost
             content, _ = _truncate_to_tokens(summ or content, remaining)
-        else:  # concat: head-truncate
+        else:  # concat: head-truncate to the quota
             content, _ = _truncate_to_tokens(content, remaining)
         fitted = {**m, "content": content}
         fitted_loop.append(fitted)
         loop_used += message_tokens(fitted)
+        tool_used += message_tokens(fitted)
 
-    hist_budget = max(0, avail - loop_used)
+    hist_budget = max(0, budget - reserved - loop_used)
+    if proactive_compress_to is not None:
+        hist_budget = min(hist_budget, proactive_compress_to)  # voluntary cost cap
 
-    # 2) History into the remaining budget.
+    # 2) Fill history most-recent-first; concat drops the overflow, window summarizes it.
     summary_text: Optional[str] = None
     through = 0
+    might_drop = sum(message_tokens(m) for m in history) > hist_budget
     if strategy == "concat":
         _, kept, split_index = _concat_window_capped(history, hist_budget)
         window_ids = list(range(split_index, len(history)))
         base = [*kept, current_msg]
         dropped_turns = split_index
-    else:  # window_summary
-        might_summarize = len(history) > window_turns or \
-            sum(message_tokens(m) for m in history) > hist_budget
-        room = max(0, hist_budget - (SUMMARY_MAX_TOKENS if might_summarize else 0))
-        older, window, split_index = _window_capped(history, window_turns, room)
+    else:  # window_summary: reserve room for the summary, summarize the dropped overflow
+        room = max(0, hist_budget - (SUMMARY_MAX_TOKENS if might_drop else 0))
+        older, window, split_index = _concat_window_capped(history, room)
         window_ids = list(range(split_index, len(history)))
         if older:
             summary_text, cost = await summarize_increment(
                 None, older, api_key=api_key, model=model, base_url=base_url)
             summary_cost += cost
-            # `through` = positions the summary actually covers. Only set it on
-            # success: if the summary call fails/returns empty the `older` turns are
-            # dropped without coverage, so the summary must NOT claim to cover them.
+            # `through` = positions the summary actually covers; only on success, so a
+            # failed/empty summary doesn't claim to cover the turns it dropped.
             if summary_text:
                 through = split_index
         base = []
@@ -399,9 +408,7 @@ async def assemble_budgeted(
                          "content": f"以下是更早对话的摘要，供参考：\n{summary_text}"})
         base.extend(window)
         base.append(current_msg)
-        # `older` turns left the verbatim window regardless of whether the summary
-        # succeeded — report the drop honestly (a failed summary under tight budget
-        # is real information loss, exactly what this phase measures).
+        # report the drop honestly whether or not the summary succeeded.
         dropped_turns = split_index if older else 0
 
     return {

@@ -751,6 +751,9 @@ async def debug_run(body: dict):
     # the non-budgeted behavior, so existing runs are unchanged.
     current_msg = {"role": "user", "content": message}
     budget = int(body.get("context_budget") or CONTEXT_BUDGET_DEFAULT)
+    # optional cost-saving knob: cap the history budget even when `budget` is larger.
+    pct = body.get("proactive_compress_to")
+    proactive_compress_to = int(pct) if pct else None
 
     async def generate():
         tools = [WEB_SEARCH_TOOL, READ_PAGE_TOOL]
@@ -767,7 +770,8 @@ async def debug_run(body: dict):
                 if fr.get("tool"):
                     frozen.append(fr["tool"])
             a = await assemble_budgeted(
-                strategy, history, current_msg, frozen, [], budget, api_key=api_key)
+                strategy, history, current_msg, frozen, [], budget, api_key=api_key,
+                proactive_compress_to=proactive_compress_to)
             messages = a["messages"]
             base_len = a["base_len"]
             report = build_context_report(
@@ -805,7 +809,8 @@ async def debug_run(body: dict):
 
         # --- Normal path: assemble base under budget (no tools appended yet) ------
         a = await assemble_budgeted(
-            strategy, history, current_msg, [], tools, budget, api_key=api_key)
+            strategy, history, current_msg, [], tools, budget, api_key=api_key,
+            proactive_compress_to=proactive_compress_to)
         messages: List[dict[str, Any]] = list(a["messages"])
         base_len = a["base_len"]
         included_history_ids = a["included_history_ids"]
