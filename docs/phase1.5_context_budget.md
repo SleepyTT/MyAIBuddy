@@ -124,3 +124,30 @@
 | 核心假设 | 紧预算下 准确度 RAG > window_summary > concat;token RAG/window ≪ concat(§5) |
 | 结果标注 | `context_budget` 字段 + `run_id` 后缀 + debugger 列头(§7) |
 | 幻觉 | 本阶段才被真正激活(紧预算 → ctx-miss → 诚实/编造分流) |
+
+## 12. Sweep 结果(2026-06-22,model=grok-4-fast,judge=kimi-k2.5)
+
+完整 20 格(2 策略 × 2 tier × 5 budget);judge 重试加固后本轮 0 个 judge_error。
+
+| 策略 / tier | 128k | 32k | 16k | 8k | 4k |
+|---|---|---|---|---|---|
+| concat · long(ctx/ans/幻觉) | 1.0 / .95 / 0 | 1.0 / .95 / 0 | 1.0 / .95 / 0 | **.55 / .59 / .17** | **.18 / .32 / .38** |
+| window_summary · long | .86 / .86 / .04 | .95 / .95 / 0 | .91 / .82 / .04 | .91 / .95 / 0 | **1.0 / .95 / 0** |
+| concat · tool-medium | 1.0 / .83 / 0 | 1.0 / 1.0 / 0 | 1.0 / 1.0 / 0 | .83 / .83 / 0 | **.67 / .50 / 0** |
+| window_summary · tool-medium | 1.0 / 1.0 / 0 | 1.0 / 1.0 / 0 | 1.0 / 1.0 / 0 | **.50 / .67 / .12** | **.17 / .17 / .38** |
+
+avg input(tok):concat long 5.5k→2.9k、window_summary long 稳定 ~2.3–2.7k;concat tool-medium 8.7k→3.5k、window_summary tool-medium 8.1k→2.4k。
+
+### 三个核心发现
+
+1. **"溢出 regime" 成功激活,幻觉指标第一次有信号。** concat·long 随预算收紧:128k–16k 全装下(ctx 1.0、幻觉 0)→ 8k 丢历史(ctx .55、幻觉 **.17**)→ 4k 重截(ctx .18、幻觉 **.38**)。正是预判的因果链——预算不足 → 被迫丢信息 → 模型编造。此前所有 tier 幻觉恒为 0,现在量出来了。
+
+2. **历史维度:window_summary 完胜 concat(验证假设)。** 紧预算下 long,concat 崩(ctx .55→.18、幻觉冲到 .38),window_summary 全程 ctx .91–1.0、幻觉 ~0,且 token 只有 concat 的一半(~2.5k vs 5k+)。摘要把挤出窗口的历史压缩保留,concat 直接丢整轮。
+
+3. **工具结果维度:反而 concat > window_summary(推翻简单假设,且更要紧)。** tool-medium 紧预算下,concat(头截断)8k ctx .83 / 4k .67;window_summary(对工具结果做 **query 盲**摘要)8k ctx **.50** / 4k **.17**——更差。原因:针是页面里一个**具体事实**(版本号/函数名/数字),query 盲的摘要把它当噪音压掉,而头截断只要预算够到针位(中段)就保住。**对"大工具结果里的具体针",盲压缩比截断还糟。**
+
+### 结论 → 坐实 Phase 2 RAG 的必要性
+
+§5 的假设(RAG > window_summary > concat)**只对历史成立**;对工具结果,**盲压缩(摘要或截断)都不可靠**——要么截掉、要么压没。紧预算下既省 token 又保住工具结果里的具体针,只能靠 **query 感知的检索**(Phase 2:对工具结果 chunk + 按问题检索)。这个 sweep 把"为什么需要 Phase 2 RAG"从直觉变成了数据。
+
+**测量注意**:样本小(long ~22 探针、tool-medium 6 针探针),单点有噪音(如 concat tool-medium 128k ans .83 vs 32k 1.0,二者上下文相同,纯模型/裁判方差);但跨预算趋势单调清晰。结果文件:`eval/results/2026-06-22_*_{concat,window_summary}_{long,tool-medium}[_bNk].json`。

@@ -1,0 +1,705 @@
+{
+ "run_id": "2026-06-22_1704_window_summary_tool-medium_b4k",
+ "timestamp": "2026-06-22T17:04:43",
+ "context_budget": 4000,
+ "strategy": "window_summary",
+ "model": "grok-4-fast",
+ "judge_model": "kimi-k2.5",
+ "dataset_version": "v1-tool-medium",
+ "summary": {
+  "probes": 8,
+  "needle_probes": 6,
+  "negative_probes": 2,
+  "ctx_hit_rate": 0.1667,
+  "ans_hit_rate": 0.1667,
+  "hallucination_rate": 0.375,
+  "avg_input_tokens": 2371.8,
+  "avg_estimated_input_tokens": 3191.5,
+  "avg_output_tokens": 42.8,
+  "avg_rounds": 1.0,
+  "avg_latency_s": 55.0,
+  "avg_compression_ratio": 0.639
+ },
+ "dimensions": {
+  "style": {
+   "paraphrase": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.5
+   },
+   "direct": {
+    "probes": 3,
+    "ctx_hit_rate": 0.3333,
+    "ans_hit_rate": 0.3333,
+    "hallucination_rate": 0.6667
+   },
+   "negative": {
+    "probes": 2,
+    "ctx_hit_rate": null,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "implicit": {
+    "probes": 1,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "carrier": {
+   "tool": {
+    "probes": 6,
+    "ctx_hit_rate": 0.1667,
+    "ans_hit_rate": 0.1667,
+    "hallucination_rate": 0.5
+   }
+  },
+  "depth": {},
+  "needle_type": {
+   "factual": {
+    "probes": 4,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.5
+   },
+   "identifier": {
+    "probes": 2,
+    "ctx_hit_rate": 0.5,
+    "ans_hit_rate": 0.5,
+    "hallucination_rate": 0.5
+   }
+  },
+  "topic": {
+   "ai_trends": {
+    "probes": 1,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.0
+   },
+   "garden": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.5,
+    "hallucination_rate": 0.5
+   },
+   "health": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.5,
+    "hallucination_rate": 0.5
+   },
+   "ml": {
+    "probes": 2,
+    "ctx_hit_rate": 0.5,
+    "ans_hit_rate": 0.5,
+    "hallucination_rate": 0.5
+   },
+   "stocks": {
+    "probes": 1,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.0
+   }
+  }
+ },
+ "probes": [
+  {
+   "case_id": "tool_ai_001",
+   "probe_id": "p1",
+   "topic": "ai_trends",
+   "style": "paraphrase",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "根据我刚读取的那个页面里的调研数据，企业整体用上生成式 AI 的比例写的是多少？以页面里的数字为准。",
+   "reply": "页面里没有直接给出“企业整体采用生成式 AI 的比例”这个最新数字，因此无法以页面内容为准提供。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 1868,
+   "output_tokens": 27,
+   "estimated_input_tokens": 2500,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 68.77,
+   "compression_ratio": 0.6466,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1171,
+       "items": 1,
+       "covers_positions": [
+        0,
+        14
+       ],
+       "text": "**AI 趋势简报要点摘要（生成式 AI 在企业中的真实采用情况）**\n\n**一、采用率：口径比数字更重要**\n\n各家调研差异巨大，核心原因是\"采用\"的定义不同。麦肯锡 2025 年全球调研（2025 年 6–7 月，105 国 1,993 份问卷）显示：88% 的企业在至少一个职能中常态化使用 AI，79% 使用生成式 AI；但仅约 1/3 已着手规模化落地，仅 6% 为\"AI 高绩效企业\"（EBIT 提升超 5%）。斯坦福 HAI《2026 AI Index》显示：企业使用生成式 AI 的比例达 79%；生成式 AI 现身 3 年普及率达 53%，快于 PC（15 年）和互联网（7 年）。中国大陆生成式 AI 常态化使用率 83%，45% 已规模化或全面部署（全球均值 38%）。关键纪律：必须标清来源和\"采用\"定义，区分\"试用过\"和\"进了生产流程\"。\n\n**二、落地最快的三类场景**\n\n共同特点是容错高、有人兜底：①客服与工单/会话摘要（省人力工时，AI 可处理 50%+ 常见问题）；②营销与文案生成（提效明显，AI 辅助初稿+人改稿）；③代码助手（补全、样板代码生成，GitHub Copilot 使开发者速度提升 55%）。高风险领域（医疗诊断、法律意见）因合规和责任归属，落地慢是合理的。\n\n**三、三大核心卡点**\n\n①数据治理跟不上——RAG 的上限取决于上下文质量，多数公司内部文档混乱，建议正式导入前花 2–4 周做数据清洗；②幻觉带来的信任成本——头部模型幻觉率已降至 1.5% 以下（Vectara HHEM 2.1 评测，截至 2025 年 4 月），但一旦出错业务方就不敢放权；③ROI 算不清——仅 39% 企业报告 AI 对 EBIT 有影响，多数贡献率不足 5%。\n\n**四、可操作的 ROI 衡量框架**\n\n收益侧三分类：①工时替代（如工单处理从 8 分钟降到 5 分钟，可审计）；②产能放大（增量产出价值）；③质量/风险收益（错误率下降）。成本侧需含工程投入、数据治理、人工复核（human-in-the-loop）和模型迭代维护，API 费仅占 5–15%。关键纪律：每个场景上线前先定好衡量指标和对照基线。\n\n**五、降幻觉的四道防线**\n\n①RAG 将回答锚定到可信来源；②要求模型给出引用/出处；③结构化输出加校验（数字、日期、ID 做规则核对）；④高风险场景强制 human-in-the-loop。叠加置信度阈值+兜底话术，形成\"纵深防御\"。\n\n**六、Build vs. Buy 判断原则**\n\nMIT NANDA 追踪 300+ 项目发现：5% 的成功项目靠\"Buy（外部合作）而非 Build（内部自建）\"。建议分三阶段：Phase 1 用现成 API/SaaS 快速验证 ROI；Phase 2 混合架构定制工作流；Phase 3 对差异化能力自建。65% 企业已采用混合架构（Gartner 2024）。核心原则：先买后建，用买的速度证明价值，用建的深度构筑壁垒。"
+      },
+      {
+       "layer": "history",
+       "tokens": 842,
+       "items": 6,
+       "msg_ids": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 52,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 435,
+       "items": 2,
+       "text": "The content from the Wikipedia page has been fully extracted and compressed above. The page is the complete \"Generative AI - Wikipedia\" article covering all sections: definition, history (from Markov chains 1906 through GPT-1 2018), adoption statistics (Ipsos 2024, SAS/Coleman Parkes 2023, UN patent data, Just So Soul 2024, Gartner \"trough of disillusionment\" mid-2025), applications (text, audio with WaveNet 2016/Tacotron 2, images, video, robotics, 3D, world models, mathematical discovery with FunSearch/AlphaDev/AlphaEvolve/Leiden Declaration 2026, materials science with GNoME/MatterGen/CDVAE/CrystalFlow, GEO), software/hardware specifications (LLaMA-7B on Raspberry Pi 4, Stable Diffusion on iPhone 11, LLaMA 65B on desktop PC, GPT-4/PaLM on datacenter H100/TPU, export controls NVIDIA A800/Biren BR104, detection tools GPTZero), model architectures (GANs, VAEs, Transformers), law/regulation (US Executive Order 14110 Oct 2023, EU AI Act, China Interim Measures), copyright (ongoing lawsuits Getty Images vs Stability AI, Authors Guild/NYT vs Microsoft/OpenAI, USCO guidance Jan 2025, \"A Single Piece of American Cheese\" registration), and concerns (UN briefing July 2023, academic honesty, 70% job loss in Chinese game illustration, Hollywood strikes 2023, CNET 77 stories/41 corrections, Die Aktuelle Schumacher fake interview, Pravda 10,000 articles/day, Reuters Institute survey 2024, Pew 2025, bias, deepfakes, audio deepfakes). All specific values, names, versions, dates, and statistics are preserved in the compressed output above."
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 2500,
+     "full_history_tokens": 3113,
+     "context_limit": 4000,
+     "dropped_turns": 15,
+     "summary_cost_tokens": 144956,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_garden_001",
+   "probe_id": "p1",
+   "topic": "garden",
+   "style": "direct",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "根据我刚查到的这个页面里写的，月季冬剪每根主枝建议保留几个芽眼？以页面内容为准。",
+   "reply": "基于我刚才访问的页面内容，**月季冬剪时每根主枝建议保留 4–6 个芽眼**。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "llm",
+   "judge_raw": "NO",
+   "input_tokens": 1699,
+   "output_tokens": 29,
+   "estimated_input_tokens": 2528,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 19.67,
+   "compression_ratio": 0.7025,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1213,
+       "items": 1,
+       "covers_positions": [
+        0,
+        12
+       ],
+       "text": "**月季全年养护节奏**\n\n- **早春（休眠后）：** 重剪定型 + 施底肥催春梢，奠定全年株型基础。在冬季会冻伤的地区，重剪推迟到早春萌动前做，避免剪口越冬受冻。\n- **春末至初夏：** 第一轮主力花，花量最大。\n- **花后：** 轻剪残花 + 追肥促二次枝，决定夏秋能否复花。\n- **盛夏（西晒强至下午五六点）：** 遮阴、控水、防叶片灼伤，目标是\"活下来、根壮\"，不追求开花。浇水原则：早晚各看一次盆土，\"干透浇透\"；避开正午高温（盆土发烫时浇凉水会伤根）；叶面勿在烈日下喷水（水珠聚光灼伤叶片）；必要时给盆体套浅色盆套或挪至散射光处降低根温。\n- **秋季：** 天气转凉再开一波秋花，质量通常优于夏花。\n- **入冬休眠：** 冬剪定型，剪掉病弱枝、交叉内向枝、过细枝，保留的主枝按统一标准短截，确定来年骨架（温暖地区冬剪即休眠期定型剪）。\n\n**修剪三类型**\n1. **休眠期定型剪（冬剪/早春重剪）：** 一年最关键，力度重，讲究均衡。\n2. **生长季轻剪：** 残花剪、调整剪，不动骨架。\n3. **更新复壮剪（仅老株）：** 力度最重，将老化主枝剪得更短、保留极少芽眼，逼基部发强壮新主枝，与常规成株标准不同。\n\n**不同苗龄处理**\n- **新苗（当年/一年内）：** 养根养骨架为主，轻剪留更多枝叶，第一年可摘早期花苞让养分长树。\n- **成株（两三年）：** 按标准休眠期定型剪，重剪促壮枝。\n- **老株（枝条变细变弱、开花变差）：** 做更新复壮剪（特例，非通用标准）。\n\n**病虫害防治**\n- **白粉病：** 防重于治。拉开盆距、保证通风、控制夜间叶面长时间挂湿；初发即打药，等白粉铺满嫩叶再治则被动。\n- **蚜虫：** 春季爆发于嫩梢和花苞期。少量时水冲或手抹，多了再上药，每天查看早发现。\n- **通用经验：** 做好通风可省一半农药。\n\n**施肥原则**\n- 禁止随意撒复合肥（易局部浓度过高烧根且养分不均衡）。\n- **薄肥勤施：** 生长期间隔性施均衡型水溶肥，浓度宁淡勿浓；孕蕾期偏磷钾促花促色；高温休眠和冬季休眠期停肥。\n- 底肥用缓释颗粒埋盆边、远离主根；换盆时盆底垫缓释肥加新土。\n\n**伤口与工具处理**\n- 修剪伤口和工具需专门处理，防止剪后招病。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1127,
+       "items": 6,
+       "msg_ids": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 53,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 135,
+       "items": 2,
+       "text": "The user provided a large block of Wikipedia content and asked me to compress it into bullet points preserving all specific values, names, versions, function names, ports, dates, etc. I have already extracted and output the key points from the provided content. The search results I received are irrelevant to the task (they returned results about Blackpink's song \"Jump\", Derrick Rose, rosé wine, etc.) and were not used since the user's content was already fully provided in their message. The answer above contains the compressed, fact-dense output as requested."
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 2528,
+     "full_history_tokens": 3331,
+     "context_limit": 4000,
+     "dropped_turns": 13,
+     "summary_cost_tokens": 32070,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_garden_001",
+   "probe_id": "p2",
+   "topic": "garden",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我之前告诉过你我家阳台是朝哪个方向的吗？是朝南还是朝北？",
+   "reply": "我这里没有您之前提到过阳台朝向的记录。  \n您可以再告诉我一次：阳台是朝南还是朝北？（或者东南、西南等更精确的方向）这样我才能把冬剪后的株型和后续养护建议跟您的光照条件匹配起来。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1701,
+   "output_tokens": 62,
+   "estimated_input_tokens": 2509,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 9.26,
+   "compression_ratio": 0.6935,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1183,
+       "items": 1,
+       "covers_positions": [
+        0,
+        12
+       ],
+       "text": "以下是对话的压缩要点摘要：\n\n**一、全年养护节奏**\n- **早春**：重剪定型、施底肥催春梢。\n- **春末至初夏**：第一轮主力花，花量最大。\n- **花后**：轻剪残花、追肥促二次枝。\n- **盛夏**：遮阴、控水、防叶片灼伤，目标为保命壮根，不追求开花。\n- **秋季**：天气转凉后出秋花，质量通常优于夏花。\n- **入冬**：冬剪定型，定下来年骨架。\n\n**二、西晒浇水**\n- 西晒强时核心矛盾是水分蒸发快与高温浇水伤根。\n- 早晚各看一次盆土，遵循\"干透浇透\"，避免上湿下干。\n- 避开正午高温浇水，宁可傍晚补；烈日下勿向叶面喷水，水珠聚光会灼伤叶片。\n- 必要时用浅色盆套或挪至散射光处降根温。\n\n**三、病虫害**\n- **白粉病**：偏好昼夜温差大、通风差、湿度高环境。第一道防线是拉开盆距、保证通风、控制夜间叶面长时间挂湿。发病初期即打药，白粉铺满嫩叶后难治。\n- **蚜虫**：春季爆发于嫩梢和花苞期。少量时水冲或手抹，多了再上药，需每日检查早发现。\n- 通风做好可省一半农药。\n\n**四、施肥**\n- 禁止随意撒复合肥，易烧根且养分不均。\n- 原则\"薄肥勤施\"：生长期间隔施用均衡型水溶肥，浓度宁淡勿浓；孕蕾期偏磷钾；高温休眠和冬季休眠期停肥。\n- 底肥用缓释颗粒埋在盆边、远离主根；换盆时盆底垫缓释肥加新土。\n\n**五、早春重剪 vs. 冬剪**\n- 冬剪是休眠后定型剪：剪掉病弱枝、交叉内向枝、过细枝，按统一标准短截保留主枝，定来年骨架。\n- 早春重剪与冬剪本质相同，因气候而异：寒冷地区推迟至早春萌动前做，避免剪口越冬受冻；温暖地区冬季即做。\n- 生长季均为轻剪（残花剪、调整剪），不动骨架。\n\n**六、不同苗龄剪法**\n- **新苗（当年或一年内）**：以养根养骨架为主，轻剪留更多枝叶，第一年可摘早期花苞养树。\n- **成株（两三年）**：按标准休眠期定型剪，重剪促壮枝保株型和花量。\n- **老株（枝条变细变弱、开花变差）**：做更新复壮，下狠手剪更短、保留极少芽，逼基部发强壮新主枝，力度最重，属特例，非通用标准。\n\n**七、伤口与工具处理**\n- 需处理，避免剪后招病。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1127,
+       "items": 6,
+       "msg_ids": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 38,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2509,
+     "full_history_tokens": 3331,
+     "context_limit": 4000,
+     "dropped_turns": 13,
+     "summary_cost_tokens": 2349,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_health_001",
+   "probe_id": "p1",
+   "topic": "health",
+   "style": "paraphrase",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "根据我刚查到的这份指南页面里写的，一般成年人每天钠摄入大概不该超过多少毫克？以页面里的数值为准。",
+   "reply": "我刚才访问了 WHO 2023 年版《钠摄入指南》官方页面，里面明确写给一般成年人的每日钠摄入上限是 < 2 000 mg（即 2 g）。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "llm",
+   "judge_raw": "NO",
+   "input_tokens": 1634,
+   "output_tokens": 44,
+   "estimated_input_tokens": 2451,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 41.03,
+   "compression_ratio": 0.7419,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1290,
+       "items": 1,
+       "covers_positions": [
+        0,
+        12
+       ],
+       "text": "钠摄入过多导致水分潴留、血容量增加、外周血管阻力上升，长期高钠还关联血管硬化。控钠的关键是盯\"总钠\"而非仅炒菜那勺盐，隐形钠大头在挂面/方便面（钠揉进面里）、加工肉（火腿肠/培根/午餐肉）、咸菜酱菜豆腐乳、零食（薯片/饼干/话梅）、外卖和预制菜。养成看营养成分表\"钠\"那一行的习惯。\n\n**每日上限**：最新结论——WHO建议成人每日钠摄入<2g（即盐<5g）；《中国居民膳食指南（2022）》建议健康成年人每天食盐不超过5g（1g盐≈400mg钠）。我国居民实际人均日摄入约10.5g，超推荐量一倍多。\n\n**在家减钠技巧**：用酸（柠檬/醋/番茄）和香料（葱姜蒜/孜然/花椒）替部分咸味；盐出锅前再放；蚝油/生抽/豆瓣酱/鸡精本身高钠，用了需相应减盐；多吃高钾食物（香蕉、土豆、菠菜等绿叶菜、豆类），钾助排钠。味觉两三周可适应清淡。\n\n**钾的作用**：最新结论——肾功能正常者，钾可促进钠排出、舒张血管。\"减钠+增钾\"是膳食指南配套推荐。但肾功能不全者盲目补钾有高钾血症风险，必须遵医嘱。\n\n**低钠盐**：最新结论——适用于肾功能正常且血压偏高者。低钠盐用氯化钾替代部分氯化钠（市售品氯化钠占比65%~80%，氯化钾20%~35%），兼顾减钠增钾。SSaSS研究（2021年《新英格兰医学杂志》，中国5省600村，21000名受试者，平均近5年随访）显示，用低钠盐替代普通盐使脑卒中风险降低14%，总心血管事件风险降低13%，全因死亡风险降低12%。但低钠盐不是\"可以多放\"的盐，且肾功能不全、服用保钾类降压药或某些利尿剂者禁用。\n\n**外食技巧**：主动要求\"少盐少酱\"；选清蒸/白灼/清炖，避红烧/糖醋/干锅/麻辣；面食不喝汤（钠在汤里）；带汤汁的菜沥一沥或用清水涮；酱料分开放、点着吃；同一餐重了则其他两餐主动清淡补偿，控钠看全天总量。\n\n**运动与减重**：规律有氧运动（每周至少150分钟中等强度或75分钟高强度）可使收缩压降低4~10 mmHg、舒张压降低5~8 mmHg。2023年《英国运动医学杂志》Meta分析（270项RCT，1.5万余人）显示等长运动（靠墙静蹲/平板支撑）降压最优，可降8.24/4 mmHg。减重效果显著：体重每减2.3kg（约5磅）即可降压；轻度高血压患者减重2.9kg后42%实现血压有效降低。理想体重BMI 18.5~23.9 kg/m²，男性腰围<90cm、女性<80cm。运动1~3个月开始产生降压效果，坚持则持续获益。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1027,
+       "items": 6,
+       "msg_ids": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 59,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 75,
+       "items": 2,
+       "text": "已根据您提供的完整 Wikipedia 内容，将所有核心信息压缩为要点，保留所有精确数值、名称、版本号、函数名、端口、日期等。"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 2451,
+     "full_history_tokens": 3123,
+     "context_limit": 4000,
+     "dropped_turns": 13,
+     "summary_cost_tokens": 76388,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_health_001",
+   "probe_id": "p2",
+   "topic": "health",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我之前跟你说的我那次空腹血糖的具体数值是多少来着？",
+   "reply": "抱歉，我在之前的对话记录里并没有看到你提到过任何具体的空腹血糖数值，所以我手上没有这个数据。如果你记得当时测了多少，或者有化验单/记录，能再贴一下或告诉我，我就可以帮你一起看。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "input_tokens": 1849,
+   "output_tokens": 52,
+   "estimated_input_tokens": 2711,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 31.11,
+   "compression_ratio": 0.8047,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1486,
+       "items": 1,
+       "covers_positions": [
+        0,
+        12
+       ],
+       "text": "好的，信息已经收集齐全。下面我来系统地回答你的问题。\n\n---\n\n**光控钠当然不够，运动和体重管理是另外两大核心支柱，三者协同效果远大于单打独斗。**\n\n## 一、每日钠摄入的“硬指标”\n\n- **WHO建议**：成人每日钠摄入<2000 mg（即盐<5 g，约一啤酒瓶盖）。\n- **《中国居民膳食指南（2022）》**：健康成人每日食盐不超过5 g（1 g盐≈400 mg钠）。\n- 我国居民实际人均日摄入盐约11 g，超推荐量一倍多。\n\n## 二、运动和体重管理有多大用？\n\n### 1. 体重减多少、血压降多少？\n\n| 减重幅度 | 血压下降效果 |\n|---|---|\n| 每减重1 kg | 收缩压约降1 mmHg |\n| 减重2.25 kg（约5斤） | 舒张压平均降7 mmHg |\n| 减重4.5 kg（约10斤） | 舒张压平均降11.6 mmHg |\n| 减重5%~10%基础体重 | 可使部分患者血压正常化，甚至减少/停用降压药 |\n\n**数据来源**：Cochrane系统综述（减重饮食组平均减重4.0 kg，收缩压降4.5 mmHg、舒张压降3.2 mmHg）；Mayo Clinic指出即使只减2.3 kg也能降低血压。\n\n### 2. 运动降血压的具体效果\n\n- **单次运动后**：中等强度有氧运动10~50分钟，血压立即降5~7 mmHg，效果可持续约24小时（称为“运动后低血压”）。\n- **规律运动（≥3次/周、每次30分钟以上，持续≥2个月）**：收缩压可降5~17 mmHg，舒张压降3~10 mmHg。\n- **推荐方案**（《中国高血压防治指南2024年修订版》）：以有氧运动为主（快走、慢跑、游泳、骑自行车），每周5~7次、每次30分钟，中等强度（心率≈170-年龄）；辅以抗阻训练（每周2~3次）。避免清晨6~10点运动高峰时段。\n\n## 三、DASH饮食（得舒饮食）——综合降压饮食方案\n\nDASH饮食被《中国高血压防治指南》及多国指南推荐为一线非药物降压方案。核心原则：\n- **每日钠摄入<3 g**（比一般控钠更严格）\n- 多吃蔬菜（每日约500 g）、水果、全谷物、低脂乳制品\n- 选择鱼、鸡胸肉等精瘦肉，减少红肉和加工肉\n- 限制饱和脂肪、胆固醇和添加糖\n- **DASH饮食+减盐，收缩压平均可降低11 mmHg以上**，效果堪比一种降压药。\n\n## 四、三者协同的完整策略\n\n| 干预手段 | 降压幅度（收缩压） | 关键要点 |\n|---|---|---|\n| **控钠**（每日<5 g盐） | 高钠→低钠饮食，收缩压可降8 mmHg | 警惕隐形钠；低钠盐适合肾功能正常者 |\n| **减重**（每减10 kg） | 收缩压可降5~20 mmHg | 减重5%~10%基础体重即有临床意义 |\n| **运动**（每周≥150分钟中等强度有氧） | 收缩压可降5~17 mmHg | 结合抗阻训练效果更佳 |\n| **三者叠加** | 综合降压效果显著，部分人可避免或减少用药 | 需长期坚持，味觉2~3周适应清淡 |\n\n**重要前提**：肾功能不全、正在服用保钾类降压药（如ACEI/ARB类、某些利尿剂）的人，补钾（包括低钠盐）必须咨询医生，否则有高钾血症风险。\n\n**一句话总结**：控钠是基础，减重是放大器，运动是长效稳压器，三者配合DASH饮食，效果远大于只做其中一项。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1027,
+       "items": 6,
+       "msg_ids": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 37,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2711,
+     "full_history_tokens": 3123,
+     "context_limit": 4000,
+     "dropped_turns": 13,
+     "summary_cost_tokens": 56743,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_ml_001",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "tool",
+   "needle_type": "identifier",
+   "depth": null,
+   "question": "根据我刚打开的这个页面里的说明，我们内部要锁定的 vLLM 稳定版本号写的是多少？请以页面内容为准，不要凭印象答。",
+   "reply": "根据搜索结果，官方最新稳定版号写的是 **v0.21.0**。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 3674,
+   "output_tokens": 20,
+   "estimated_input_tokens": 4423,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 108.02,
+   "compression_ratio": 0.7439,
+   "context_reports": [
+    {
+     "round": 3,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1470,
+       "items": 1,
+       "covers_positions": [
+        0,
+        16
+       ],
+       "text": "推理服务是有状态服务（几十 GB 权重加载 + KV cache 热数据），不中断切换的核心思路是**蓝绿部署 + 流量逐批切 + 优雅关闭（graceful shutdown）**，不能简单用滚动更新直接杀旧 Pod。以下是具体方案：\n\n---\n\n## 1. 架构前提：多副本 + 前置负载均衡\n\n- **至少部署 2 个副本**（蓝/绿），前端通过 API Gateway 或 Kubernetes Service + LoadBalancer 做流量分发\n- 每个副本独立加载完整模型权重（7B FP16 约 14GB，H100 80G 单卡足够）\n- 新版本部署时**不立即切流量**，先启动新副本，等待其 `/health` 端点返回 200（模型加载完毕、KV cache 预热完成）\n\n## 2. 灰度切流（Canary → 全量）\n\n| 阶段 | 操作 | 流量比例 |\n|------|------|----------|\n| 1 | 启动新版本 Pod（绿），通过 readiness probe 确认就绪 | 旧（蓝）100% |\n| 2 | API Gateway 将 5%-10% 流量切到新版本，观察 P50/P95/P99 延迟和错误率 | 蓝 90%-95%，绿 5%-10% |\n| 3 | 灰度观察期（建议至少 5-10 分钟，跑一跑真实请求） | 同上 |\n| 4 | 逐步提升绿版本流量至 100%（每步 25%-50%，观察 2-3 分钟） | 绿 100% |\n| 5 | 确认无误后，对蓝版本执行优雅关闭 | 蓝下线 |\n\n## 3. 优雅关闭（Graceful Shutdown）——关键\n\n直接 kill 旧 Pod 会丢掉正在处理的请求，必须做 drain：\n\n**步骤（vLLM 0.18.0+ 支持 `--shutdown-timeout` 参数，最新结论）：**\n\n1. **从负载均衡摘除**：将旧副本从 Service endpoint 中移除，停止接收新请求\n2. **等待 drain 窗口**：给 30-60 秒让已在途的请求到达（取决于 max_tokens 上限）\n3. **发送 SIGTERM**：vLLM 收到 SIGTERM 后停止接受新 HTTP 请求，允许正在进行的推理请求完成\n4. **超时兜底**：设置 `terminationGracePeriodSeconds`（K8s 中建议 120-300 秒，对应 `--shutdown-timeout`），超时后强制 SIGKILL\n\n**K8s Deployment 配置示例：**\n```yaml\nspec:\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 1        # 允许先起新 Pod\n      maxUnavailable: 0  # 保证至少一个副本在线\n  template:\n    spec:\n      terminationGracePeriodSeconds: 300\n      containers:\n        - name: vllm\n          command: [\"python\", \"-m\", \"vllm.entrypoints.openai.api_server\", \n                    \"--model\", \"...\", \n                    \"--shutdown-timeout\", \"300\"]  # vLLM 0.18.0+\n          lifecycle:\n            preStop:\n              exec:\n                command: [\"/bin/sh\", \"-c\", \"sleep 30\"]  # 额外等待 LB 摘除传播\n```\n\n## 4. 回滚方案\n\n回滚比升级更简单——**蓝版本一直保留**，只需把流量切回蓝版本即可：\n\n- **立即切回**：API Gateway 将 100% 流量切回蓝版本（蓝版本进程仍在运行，权重仍在显存中）\n- **无需重新加载**：蓝版本没有被销毁，零冷启动时间\n- **确认后清理**：稳定运行后删除绿版本 Pod，释放 GPU 显存\n\n## 5. 关键注意事项\n\n| 问题 | 方案 |\n|------|------|\n| **模型加载慢**（7B 约 10-30 秒） | 使用 PVC 缓存模型权重（`~/.cache/huggingface`），避免重复下载；readiness probe 等待 `/health` |\n| **显存不够同时跑两个副本** | H100 80G 单卡跑一个 7B 绰绰有余；如果显存紧张，用 `maxSurge: 0` + `maxUnavailable: 1` 先杀旧再起新（有短暂窗口不可用） |\n| **KV cache 预热** | 新副本刚启动时 cache 为空，前几个请求延迟偏高，灰度切流自然平滑过渡 |\n| **prefix caching 状态丢失** | 新副本的 prefix cache 需要重新填充，灰度期间少量请求即可完成预热 |\n\n## 总结推荐策略\n\n> **蓝绿部署 + 灰度 5%-10% 观察 5-10 分钟 + 全量切流 + graceful shutdown（`--shutdown-timeout 300` + `terminationGracePeriodSeconds 300` + preStop sleep 30s）**  \n> 回滚时直接切回蓝版本，零冷启动，秒级恢复。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1022,
+       "items": 6,
+       "msg_ids": [
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 61,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1870,
+       "items": 4,
+       "text": "以下是 vLLM 最新稳定版信息的要点：\n\n- **最新稳定版**: v0.21.0（最新）；v0.20.0（此前稳定版）\n- **CUDA 13.0 默认**: PyPI 和 `vllm/vllm-openai:v0.20.0` 镜像默认 CUDA 13.0；CUDA 已升至 13.0.2 以匹配 PyTorch 2.11.0 (#40669)；若使用 CUDA 12.9 建议 `--torch-backend=cu129`\n- **PyTorch 2.11 升级** (#34644)：vLLM 在 CUDA 上使用 torch 2.11，XPU 也已升至 torch 2.11 (#37947)，不再锁定 2.10——此为环境依赖的破坏性变更\n- **Python 3.14**: 已加入支持列表 (#34770)\n- **Transformers v5**: vLLM 现可在 HuggingFace `transformers>=5` 上运行 (#30566)，包含 v4/v5 兼容性修复\n- **DeepSeek V4**: 初始支持已落地 (#40860)，含 DSML token 泄漏修复 (#40806)、DSA+MTP IMA 修复 (#40772)、共享 expert silu clamp 限制 (#40950)\n- **新大模型**: Hunyuan v3 (Hy3) 预览 (#40681) + HYV3 推理解析器 (#40713)；Granite 4.1 Vision 作为内置多模态模型 (#40282)\n- **FlashAttention 4 默认 MLA prefill**: FA4 重新设为默认 MLA prefill 后端 (#38819)，支持 head-dim 512 和 SM90+ 上的 paged-KV (#38835)\n- **依赖版本**: FlashInfer v0.6.11.post2 (#41711)；`nvidia-cutlass-dsl` 4.5.2 (#42991, #43230, #43745)；llguidance 1.7 (#42150)；`triton_kernels` 降级至 v3.5.1 (gpt-oss, #43135)\n- **Docker**: 非 root `vllm-openai` 目标 (#40275)；从源码构建 `mooncake-transfer-engine` (#42114)；AINIC & Thor NIC 支持 (#40453)；纯 Python 安装可选 (#42293)\n- **CUDA 12.9 wheel 构建**: 切换到 PyTorch `manylinux_2_28` base (#41668)\n- **已知问题**: v0.21.0 在 DGX Spark/GB10 上存在问题，社区 Docker 回退至 v0.20.0 稳定版\n- **LLM definition**: neural network trained on vast text for NLP (esp. language generation); foundational tech behind modern chatbots; typically based on transformer architecture (more parallelizable than RNNs); GPTs are pre-trained to predict next word, then fine-tuned.\n- **Benchmarks**: evaluate model reasoning, factual accuracy, alignment, safety.\n- **History milestones**: 1990s IBM statistical models (word alignment); 2001 smoothed n-gram model (Kneser–Ney) trained on 300M words; 2013 Word2Vec (Mikolov); 2016 Google NMT (LSTM encoder-decoder); 2017 NeurIPS – transformer (\"Attention Is All You Need\"); 2018 BERT (encoder-only); 2018 GPT-1; 2019 GPT-2 (OpenAI withheld release); 2020 GPT-3 (API-only); late 2022 ChatGPT (GPT-3.5); 2023 GPT-4 (multimodal, architecture/params undisclosed); 2024 OpenAI o1 (reasoning model, chain-of-thought); Jan 2025 DeepSeek R1 (671B params, open-weight, comparable to o1, lower price/token).\n- **Open-weight models**: BLOOM, LLaMA (restrictions); Mistral 7B & Mixtral 8x7B (Apache License); DeepSeek R1 (Jan 2025).\n- **Tokenization**: BPE, WordPiece; special tokens: [MASK] (BERT), [UNK]; GPT-3 BPE tokenizer example: \"tokenizer\" → \"token\"+\"izer\"; compression; padding for jagged arrays.\n- **Dataset cleaning**: remove low-quality, duplicated, toxic data; LLM-generated content may degrade future models.\n- **Synthetic data**: used when natural data insufficient/ low quality.\n- **Training cost examples**: GPT-2 (1.5B params, 2019) ~$50K; PaLM (540B params, 2022) ~$8M; Megatron-Turing NLG 530B (2021) ~$11M.\n- **Fine-tuning**: RLHF, constitutional AI; InstructGPT (2022) – GPT-3 fine-tuned to follow instructions.\n- **Architecture**: transformer + attention; state-space representation models (Peng et al., 2023) as alternative.\n- **Attention/context**: GPT-2 (117M params) – 12 attention heads, 1k token context window; autoregressive (GPTs) vs masked (BERT).\n- **MoE**: mixture of experts – gating routes input to subset of experts, reduces inference cost.\n- **Parameter size**: 1 float16 = 16 bits (2 bytes); 1B params → 2 GB; largest models >100B params.\n- **Quantization**: post-training; static (calibration phase) vs dynamic (per-layer codebook); low-rank adaptation possible.\n- **Prompt engineering**: few-shot prompting (GPT-3, 2020); self-instruct (base GPT-3 generates instruction then uses it).\n- **Chatbot**: ChatGPT (2022) – sibling of InstructGPT, GPT-3.5; system prompt for higher authority.\n- **RAG**: retrieve documents via vector similarity (vector database), LLM generates based on query + retrieved context.\n- **Tool use**: special tokens trigger external API/code execution; fine-tuning on API docs expands tool range.\n- **Agency**: LLM + role/environment inputs + memory + planning + tool use; DEPS method (image descriptions → plans); Reflexion (episodic \"lessons learned\"); Monte Carlo tree search with LLM as rollout heuristic; multi-agent social interaction.\n- **Chaining**: prompt chaining (2022); chain-of-thought prompting (2022) – \"Let's think step by step\".\n- **Model-native reasoning**: OpenAI o1 (Sep 2024), o3 (Apr 2025); GPT-4o 13% vs o1 83% on IMO qualifying exam; DeepSeek-R1 (Jan 2025, 671B params, open-weight, comparable to o1, more cost-effective).\n- **Multimodality**: PaLM → robotic control; LLaMA → image/video inputs; GPT-4o (text, audio, images); early fusion (embedding concatenation) vs intermediate fusion (cross-attention); Flamingo uses cross-attention for visual info.\n- **Non-natural languages**: programming languages (GitHub Copilot); DNA/RNA/protein LLMs (ESMFold – order of magnitude faster than AlphaFold2; ESM Atlas – 772M metagenomic protein structures); protein design beyond nature; nucleic acid models for regulatory sequences, RNA interaction/structure.\n- **Chinchilla scaling law**: C = C₀ N D; L = A/N^α + B/D^β + L₀; C₀=6 (6 FLOPs/param/token training, 1–2 FLOPs/param/token inference); α=0.34, β=0.28, A=406.4, B=410.7, L₀=1.69.\n- **Emergent abilities**: \"breaks\" in scaling law (slope changes on log-log plot); not explicitly programmed."
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 4423,
+     "full_history_tokens": 3350,
+     "context_limit": 4000,
+     "dropped_turns": 17,
+     "summary_cost_tokens": 103570,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_ml_002",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "tool",
+   "needle_type": "identifier",
+   "depth": null,
+   "question": "根据我刚打开的这个页面里写的，标准缩放点积注意力对应的那个官方函数名是什么？以页面内容为准。",
+   "reply": "根据该页面内容，**标准缩放点积注意力** 对应的官方函数名是：\n\n**`scaled_dot_product_attention`**",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "input_tokens": 3667,
+   "output_tokens": 27,
+   "estimated_input_tokens": 4404,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 83.12,
+   "compression_ratio": 0.1235,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 430,
+       "items": 1,
+       "covers_positions": [
+        0,
+        22
+       ],
+       "text": "官方函数名是 **`torch.nn.functional.scaled_dot_product_attention`**（可简写为 `F.scaled_dot_product_attention`）。完整签名如下：\n\n```python\nF.scaled_dot_product_attention(query, key, value, attn_mask=None, dropout_p=0.0, is_causal=False, scale=None, enable_gqa=False) -> Tensor\n```\n\n关键参数说明：\n- **`query`**：形状 `(N, ..., Hq, L, E)`，其中 L 是 query 长度，E 是 head 维度（即 D/h）。\n- **`key`**：形状 `(N, ..., H, S, E)`，S 是 key/value 长度。\n- **`value`**：形状 `(N, ..., H, S, Ev)`。\n- **`is_causal`**：设为 `True` 时自动生成下三角因果掩码（上三角置 `-inf`），不能与 `attn_mask` 同时设置。\n- **`scale`**：缩放因子，默认为 `1/√E`（即 `1/√(head_dim)`）。\n- **`enable_gqa`**：设为 `True` 时启用 GQA 支持，自动对 K/V 做 repeat_interleave 匹配 query head 数。\n- **`dropout_p`**：训练时对注意力权重施加 dropout，评估时必须传 `0.0`。\n\n该函数内部会自动选择最优实现（FlashAttention / Memory-Efficient Attention / C++ 原生实现），你手写的朴素版本只需保证与它在数值上一致（浮点容差内）即可，性能优化直接靠调用它免费获得。"
+      },
+      {
+       "layer": "history",
+       "tokens": 0,
+       "items": 0,
+       "msg_ids": []
+      },
+      {
+       "layer": "current",
+       "tokens": 54,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 3920,
+       "items": 2,
+       "text": "以下是 Wikipedia \"Transformer (deep learning)\" 条目的要点总结，已去除导航和无关样板，保留所有具体数值、名称、版本号、函数名、端口、日期等精确信息：\n\n---\n\n## 核心定义\n- 基于 **multi-head attention** 机制的人工神经网络架构家族\n- 文本 → 数值表示（**tokens**）→ 通过 **word embedding** 表转换为向量\n- 每个 token 在 **context window** 范围内通过并行 multi-head attention 进行 contextualized\n- Self-attention 是排列不变的 → 需要 **positional encodings** 或 learned positional embeddings\n- 无循环单元 → 训练时间少于 RNN/LSTM\n- 现代变体：**encoder-only**、**decoder-only**、**encoder-decoder**\n\n## 原始论文\n- 提出于 **2017** 年论文 **\"Attention Is All You Need\"**，作者为 **Google** 研究人员\n- 原始模型：**100M 参数**，encoder-decoder transformer\n- 发布日期：**2017-06-12**\n\n## 前身与历史\n- **Elman network (1990)** — 早期 RNN\n- **LSTM (1995 技术报告, 1997 正式发表)** — 引入 multiplicative gating units，缓解梯度消失\n- **Fast weight controller (1992)** — 学习计算权重矩阵；后证明等价于 unnormalized linear transformer\n- **Seq2seq (2014)** — 两篇同期论文：**380M 参数**模型使用两个 LSTM；**130M 参数**模型使用 GRU\n- **RNN search** — 将 attention 机制引入 seq2seq 机器翻译\n- **2016: Google Neural Machine Translation** — 替换统计 MT；encoder 和 decoder 均为 **8 层 bidirectional LSTM**；开发耗时 9 个月\n- **2016: Decomposable attention** — 将 self-attention 应用于 feedforward 网络；SOTA 于 textual entailment，参数比 LSTM 少一个数量级；作者 Jakob Uszkoreit 提出 \"attention is all you need\" 假设\n- 同年：**self-attention (intra-attention)** 被提出用于 LSTM\n\n## AI 繁荣时代\n- **2017 年春** — \"Attention Is All You Need\" 预印本发表前，合著者已应用 decoder-only 变体生成虚构 Wikipedia 文章\n- 参考实现使用 **TensorFlow** 库\n- **ELMo (2018)** — 双向 LSTM，生成 contextualized word embeddings\n- **BERT (2018)** — encoder-only transformer\n- **2019 年 10 月** — Google 开始使用 BERT 处理搜索查询\n- **2020 年** — Google Translate 将 RNN-encoder–RNN-decoder 替换为 transformer-encoder–RNN-decoder\n- **OpenAI GPT 系列** — decoder-only transformers；NLG SOTA\n- **2022 年底** — **ChatGPT**（基于 GPT-3.5 微调）引发大语言模型热潮\n- **API 参考**：标准融合原语 = **scaled_dot_product_attention**（规范名称）；旧辅助函数 **multi_head_attention_forward** 存在但为底层路径\n- **\"Attention Is All You Need\" 发表后四天** — **MultiModel**（多模态 transformer）发布\n- 其他示例：**vision transformer**、语音识别、机器人、多模态\n- 图像/视频生成器：**DALL-E (2021)**、**Stable Diffusion 3 (2024)**、**Sora (2024)**\n\n## 训练稳定化\n- 原始论文推荐 **learning rate warmup**：从 0 线性增加到最大值，占训练总步数的前 **2%**，然后衰减\n- **2020 年论文**：**pre-LN**（layer normalization 放在 multihead attention 和 FFN 之前）可稳定训练，无需 warmup；比原始 **post-LN** 更常用\n\n## 预训练-微调\n- 先在大型通用数据集上进行 **self-supervised learning** 预训练（例如 **The Pile**）\n- 然后在小型任务特定数据集上进行 **supervised fine-tuning**\n- 任务：language modeling、next-sentence prediction、question answering、reading comprehension、sentiment analysis、paraphrasing\n- **T5 transformer 报告** 记录了大量 NL 预训练任务\n\n## 任务类别\n1. **Masked** — BERT 系列；预测被掩码的 token；损失 = 掩码 token 的 log-perplexity 之和\n2. **Autoregressive** — GPT 系列；依次预测下一个 token\n3. **PrefixLM** — T5 系列；第一部分作为上下文，预测第二部分\n\n## 架构组件\n\n### Tokenization\n- **Preprocessor** → 文本转换 + 分割为 **pretokens**（pretokenization）\n- **Tokenizer** → 将 pretokens 分割为 **tokens**，来自有限 **vocabulary V**\n- 每个 token 分配整数标识符（双射映射）\n- **Vocabulary size |V|** — 关键超参数\n- Tokens = **subwords**；算法：**byte pair encoding (BPE)**、**unigram language model (ULM)**\n- 特殊 token：**\"[UNK]\"** 表示未知\n- 软件：**Hugging Face tokenizers**（Python，Rust 实现）、**sentencepiece**（Python，C++ 实现）\n\n### Embedding\n- Token 标识符 → 通过查找表（embedding 矩阵 **M**）转换为 embedding 向量\n- One-hot 表示乘以 **M**\n- Token embedding 向量 + positional encoding 向量 = 输入向量\n- 维度 = **hidden size** 或 **embedding size** = **d_emb**（原始论文中称为 **d_model**）\n\n### Un-embedding\n- Linear-softmax 层：**UnEmbed(x) = softmax(xW + b)**\n- 矩阵形状：**(d_emb, |V|)**\n- **Weight tying**：使用 embedding 矩阵 M 的转置作为 un-embedding 矩阵 W\n\n### Positional Encoding\n- 函数 **f: R → R^d**，其中 **d** 为正偶数\n- 原始论文：**N = 10000**\n- 公式：**(f(t)_{2k}, f(t)_{2k+1}) = (sin(θ), cos(θ))**，k ∈ {0,1,...,d/2−1}\n- 其中 **θ = t / r^k**，**r = N^{2/d}**\n- 复数形式：**f(t) = (e^{it/r^k})_{k=0,...,d/2−1}**\n- 关键性质：**f(t+Δt) = diag(f(Δt)) f(t)** — 平移是线性变换\n\n### Encoder–Decoder\n- 堆叠的 encoder layers 和 decoder layers\n- Encoder：通过 self-attention 生成 contextualized representations\n- Decoder：两个 attention 子层 — **(1) cross-attention**（整合 encoder 输出）、**(2) self-attention**（混合 decoder 输入 token）\n- 两者都包含 **feed-forward neural network**、residual connections、layer normalization\n- Feed-forward 层包含大部分参数\n\n### Feedforward Network (FFN)\n- 2 层 MLP：**FFN(x) = φ(xW^{(1)} + b^{(1)}) W^{(2)} + b^{(2)}**\n- 映射 **d_emb** 维向量到 **d_emb** 维向量\n- 原始 transformer 使用 **ReLU** 激活函数\n- 中间层神经元数量称为 **intermediate size**（GPT）、**filter size**（BERT）或 **feedforward size**（BERT）\n- GPT-2 和 BERT 系列中：**d_ffn = 4 × d_emb**\n\n### Scaled Dot-Product Attention\n- 每个 attention head 学习三个权重矩阵：**W^Q**（query）、**W^K**（key）、**W^V**（value）\n- 公式：**Attention(Q,K,V) = softmax(QK^T / √d_k) V**\n- 维度：**d_query**、**d_key**、**d_value**、**d_head**\n- 必要条件：**ℓ_seq_key = ℓ_seq_value**、**d_query = d_key**、**d_value = d_head**\n\n### Multihead Attention\n- 公式：**MultiheadAttention(Q,K,V) = Concat_{i∈[n_heads]}(Attention(XW_i^Q, XW_i^K, XW_i^V)) W^O**\n- 最小 GPT-2 模型：**d_emb = 768**、**n_head = 12**、**d_head = 64**（12×64=768）\n\n### Masked Attention (Causal Masking)\n- 公式：**MaskedAttention(Q,K,V) = softmax(M + QK^T/√d_k) V**\n- **M_causal** 矩阵：上三角为 -∞，下三角和对角线为 0\n- XLNet 使用 **P × M_causal × P^{-1}**（P 为随机置换矩阵）\n\n### Encoder\n- 每个 encoder layer：self-attention → feed-forward network\n- 所有 token 同时处理，无需 causal masking\n\n### Decoder\n- 每个 decoder layer：causally masked self-attention → cross-attention → feed-forward network\n- Cross-attention 从 encoder 输出中提取信息\n- 最后通过 un-embedding 层输出概率分布，自回归生成\n\n## 子层与归一化约定\n- **Post-LN**（原始 2017）：**LayerNorm(x + Sublayer(x))** — 需要 warmup\n- **Pre-LN**（2018 年提出）：**x + Sublayer(LayerNorm(x))** — 无需 warmup，更易训练\n\n## 变体类型\n- **Encoder-only**（BERT-like）：仅 encoder，用于文本嵌入和表示学习\n- **Decoder-only**（GPT-like、Chinchilla-like）：仅 causally masked self-attention + FFN，用于文本生成\n- **Encoder–decoder**（T5-like）：原始 transformer 架构\n- **PrefixLM**：decoder-only，但使用 prefix masking（不同于 causal masking）\n- **混合 seq2seq**：例如 2020 年 Google Translate 使用 transformer-encoder–RNN-decoder\n\n## 后续工作\n\n### 替代激活函数\n- 原始：**ReLU**\n- **Llama 系列** 和 **PaLM**：**SwiGLU**\n- **GPT-1** 和 **BERT**：**GELU**\n\n### 替代归一化\n- **RMSNorm** — 用于 Llama 系列\n- **ScaleNorm**、**FixNorm**\n\n### 替代位置编码\n- **RoPE (Rotary Positional Embedding)**：旋转矩阵乘法，点积仅依赖于相对位置\n- **ALiBi (Attention with Linear Biases)**：向 attention 添加线性偏置矩阵 B（B_{i,j}=j-i），支持短上下文预训练后微调至长上下文\n- **Relative Position Encodings**：使用 Toeplitz 矩阵 B（B_{i,j}=B_{i',j'} 当 i-j=i'-j'）\n\n### 高效实现\n- 框架：**TensorFlow**、**PyTorch**\n- 库：**Hugging Face Transformers**\n- **KV caching**：缓存已计算的 key 和 value 向量\n- **PagedAttention**：对 KV 缓存应用内存分页\n- **Prefilling**：在生成前对输入序列进行前向传播计算 KV 缓存\n- **Disaggregated inference**：prefilling 和 decoding 在独立专用硬件上执行\n- **FlashAttention**：GPU 上的通信避免算法，分块矩阵乘法\n- **FlashAttention-2**：在 A100 GPU 上达到 **230 TFLOPs/s**（FP16/BF16），比原始版本快 **2 倍**，支持 head 维度达 **256**，支持 MQA 和 GQA\n- **FlashAttention-4**：聚焦 pipelining，针对 Blackwell GPU 优化\n- **Multi-Query Attention (MQA)**：所有 head 共享同一组 W^K 和 W^V\n- **Grouped-Query Attention (GQA)**：MQA 为 1 组，标准 MHA 为最大组数\n- **Multihead Latent Attention (MLA)**：低秩近似，最小化 KV 缓存\n- **Speculative decoding**：小型模型生成推测性 token，大型模型并行验证\n- **Multi-Token Prediction**：单次前向传播后通过额外 transformer block 预测后续 token\n\n### 次二次复杂度 Transformer\n- **Reformer (2020)**：使用 locality-sensitive hashing 和可逆层，复杂度从 O(N²) 降至 **O(N ln N)**\n- **Sparse attention**：例如 **BigBird (2020)** 使用随机小世界网络，复杂度 **O(N)**\n- **Attention-free transformers**：线性内存依赖\n- **Random Feature Attention (2021)** / **Performer (2022)**：使用傅里叶随机特征，线性时间近似\n- **Swin transformer**：图像领域，移动窗口内执行 attention\n- **SepTr**：音频领域，解耦时间和频率维度的 attention\n- **Long Range Arena (2020)**：长输入 transformer 架构的标准基准\n\n### 多模态\n- **Vision transformer (ViT)**：将图像分割为 patches 作为 token\n- **Conformer** 和 **Whisper**：语音识别，将语音信号转换为频谱图后类似图像处理\n- **Perceivers**：专为多模态设计的 transformer 变体\n- **LLaVA**：Vicuna-13B（语言模型）+ ViT-L/14（视觉模型），通过线性层连接，仅微调线性层\n- **DALL-E 1 (2021)**：decoder-only transformer，自回归生成文本后接图像 token 表示\n- **Parti (2022)**：encoder-decoder transformer，encoder 处理文本提示，decoder 生成图像 token\n- **Muse (2023)**：encoder-only transformer，预测掩码图像 token\n- **Phenaki (2023)**：text-to-video 模型，双向掩码 transformer\n\n## 应用\n- NLP：**GPT-2**、**GPT-3**、**GPT-4**、**Gemini**、**AlbertAGPT**、**Claude**、**BERT**、**Grok**、**XLNet**、**RoBERTa**、**ChatGPT**\n- 其他：计"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 4404,
+     "full_history_tokens": 3482,
+     "context_limit": 4000,
+     "dropped_turns": 23,
+     "summary_cost_tokens": 154305,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "tool_stocks_001",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "implicit",
+   "carrier": "tool",
+   "needle_type": "factual",
+   "depth": null,
+   "question": "就用我刚读到的这一页里写的数据中心营收和整体毛利率两个数字，大致估一下这块业务一年的毛利金额是多少？以页面数字为准。",
+   "reply": "页面里并没有提供“数据中心分部营收”或“公司整体毛利率”这两个具体数字，因此我无法直接用你提到的“一页里的数字”来算数据中心毛利。  \n\n如果你能把那两个数字（例如“数据中心营收 1,234 亿美元，整体毛利率 65%”）直接贴给我，我立刻帮你算一下毛利金额。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "NO",
+   "input_tokens": 2882,
+   "output_tokens": 81,
+   "estimated_input_tokens": 4006,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 79.29,
+   "compression_ratio": 0.6554,
+   "context_reports": [
+    {
+     "round": 2,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1147,
+       "items": 1,
+       "covers_positions": [
+        0,
+        14
+       ],
+       "text": "好问题。CUDA 的锁定如果开始松动，通常不会只有一个\"爆炸性新闻\"，而是会有一系列**可观测的渐进信号**。我帮你梳理几个关键指标：\n\n## 1. 框架层面的\"一等公民\"迁移\n\n最硬的信号是 **PyTorch/TensorFlow/JAX 官方是否将 ROCm 列为与 CUDA 平级的\"一等后端\"**。PyTorch 2.7.0 已正式将 ROCm 6.3 作为 first-class compute backend（不再是\"实验性\"或\"社区维护\"），这是 AMD 最大的框架胜利。如果后续版本中 ROCm 的 nightly 测试覆盖率和 CUDA 持平、官方文档中两种后端的示例代码篇幅相当，说明迁移门槛在实质性降低。\n\n## 2. 大客户在公开场合的\"软硬兼施\"\n\n当微软、Meta、OpenAI 这类大客户在财报电话会或技术博客中，**明确提及\"我们正在用 AMD MI300X/MI350 运行生产级推理负载\"且给出具体比例**（比如\"30% 推理已迁移至非英伟达平台\"），这是比任何跑分都更有说服力的信号。Meta 已承诺 6GW 的 AMD GPU 部署，这本身说明 ROCm 的可靠性已达到大规模生产标准。\n\n## 3. Hugging Face 模型生态的\"去 CUDA 化\"\n\n跟踪 Hugging Face 上**排名前 100 的模型中，有多少提供了官方、经过 nightly 测试的 ROCm 版本**。当这个比例从个位数快速上升到 30%+，意味着开发者选模型时不再默认\"只有 CUDA 版\"。另一个指标是 MLPerf 提交中，使用 Triton 或 SYCL 作为主要软件栈的参赛者数量和成绩变化。\n\n## 4. 开发者工具链的\"中间层\"兴起\n\n**Triton（OpenAI 开源的类 CUDA 编程语言）和 SYCL 的采用率**是关键的领先指标。这些硬件无关的抽象层正在系统性地拆除 CUDA 的专有围墙——开发者用 Triton 写的算子可以自动编译到不同 GPU 后端，迁移成本从\"重写整个代码库\"降为\"换个编译目标\"。当 Triton 生态中主流算子的覆盖率达到 80%+，CUDA 的锁定就会从\"铁板一块\"变成\"可选之一\"。\n\n## 5. 一个反直觉的信号：CUDA Tile 本身\n\n英伟达在 CUDA 13.1 中推出了 CUDA Tile 编程模型，这被传奇芯片架构师 Jim Keller（苹果 A 系列、AMD Zen 架构、特斯拉 FSD 芯片的开发者）认为是**可能加速 CUDA 护城河消失**的更新。理由：Tile IR 是一套虚拟指令集，让开发者不再面向底层硬件开发。一旦主流 AI 生态都转向 Tiling（它们已经在做了），CUDA Tile 代码与其他 Tiling 体系之间的互译就变得可行，开发者可以轻松将 CUDA 软件移植到其他芯片生态，而不必从底层结构重新梳理。英伟达本想降低开发门槛，却可能意外地为对手铺了一条\"兼容之路\"。\n\n**总结：盯住 PyTorch 官方对 ROCm 的支持等级 + 大客户公开的 AMD 部署比例 + Hugging Face 模型 ROCm 覆盖率 + Triton/SYCL 在 MLPerf 中的出现频率。这四组数据的变化，会比任何\"CUDA 是否被取代\"的争论更早告诉你答案。**"
+      },
+      {
+       "layer": "history",
+       "tokens": 1101,
+       "items": 6,
+       "msg_ids": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 64,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 1694,
+       "items": 2,
+       "text": "以下是Wikipedia \"Nvidia\"词条（最新接受版本，2026年6月22日审核）的内容要点：\n\n- **公司全称**：Nvidia Corporation（Nasdaq: NVDA），Nasdaq-100、DJIA、S&P 100、S&P 500成分股\n- **行业**：半导体\n- **成立时间**：1993年4月5日（33年前），地点：美国加州桑尼韦尔\n- **创始人**：Jensen Huang、Chris Malachowsky、Curtis Priem\n- **总部**：美国加州圣克拉拉\n- **关键人物**：Jensen Huang（总裁兼CEO）、Bill Dally（首席科学家）、Colette Kress（CFO）\n- **财务数据（FY26，截至2026年1月25日）**：营收2159亿美元、运营利润1304亿美元、净利润1201亿美元、总资产2068亿美元、总权益1443亿美元、员工42,000人\n- **子公司**：Mental Images\n- 截至2025年Q1，Nvidia在独立桌面和笔记本GPU市场占有92%份额；控制AI模型训练/部署GPU市场80%以上；为全球超75%的TOP500超算提供芯片\n- 2023年成为第七家市值达1万亿美元的美国公司；2025年先后成为全球首家市值超4万亿美元和5万亿美元的公司；入选Bloomberg“Magnificent Seven”\n- **历史**：1993年4月5日成立，最初在Priem位于加州弗里蒙特的联排别墅办公，启动资金4万美元（约合2025年的8.9万美元）；获Sequoia Capital、Sutter Hill Ventures等2000万美元风投\n- **产品线**：GeForce（游戏/创意）、Quadro（后更名RTX，专业/边缘计算/科研/工业）、Tegra（移动/汽车SoC）、Shield系列（Shield Portable、Shield Tablet、Shield TV）、GeForce Now云游戏服务\n- **关键收购**：3dfx（2000年达成协议，2002年4月完成）、Exluna（2002年7月，金额未披露）、MediaQ（2003年8月，约7000万美元）、iReady（2004年4月22日）、ULI Electronics（2005年12月14日）、Hybrid Graphics（2006年3月）、PortalPlayer, Inc.（2007年1月5日完成）、Ageia（PhysX，2008年2月）、Icera（2011年5月，3.67亿美元）、PGI（来自STMicroelectronics，2013年7月29日）、Mellanox Technologies（2019年3月11日宣布，69亿美元）、Cumulus Networks（2020年5月）\n- **CUDA**：投入超10亿美元开发；**NV1**（四边形图元）；**RIVA 128**（1997年8月发布，4个月内售出约100万片）；**RIVA TNT**（1998年）；**GeForce 256**（NV10，1999年底，首个标称GPU的产品，引入T&L，120MHz，4像素管线）\n- **1999年1月22日上市**；2001年入选S&P 500（取代Enron）\n- **关键合作**：为微软Xbox开发图形硬件（含2亿美元预付款）；为索尼PlayStation 3设计RSX图形处理器；与丰田合作Drive PX系列自动驾驶平台（2017年5月）；与百度AI合作（2017年7月，Drive PX 2）；与Broad Institute of MIT and Harvard合作Clara AI医疗软件套件（2022年9月）；与Getty Images合作Generative AI by Getty Images（2023年9月，使用Nvidia Edify模型）\n- **Arm收购案**：2020年9月13日宣布从SoftBank以400亿美元收购Arm，SoftBank保留Nvidia 10%股份；2022年2月初因重大监管挑战而放弃\n- **架构/产品发布**：Pascal（GeForce 10系列，GTX 1080/1070，2016年5月6日，16nm）；Titan V（2017年12月7日）；Quadro GV100（2018年3月27日）；RTX 2080（2018年9月27日）；Ampere（A100，2020年5月14日；GeForce 30系列，2020年9月1日）；Blackwell（2024年3月18日，以数学家David Blackwell命名）\n- **Drive Thor**（2022年9月宣布，下一代汽车级芯片）\n- **A800 GPU**（2022年11月，为符合美国对华出口管制规则而推出）\n- **H100 GPU**：售价约25,000–30,000美元（Raymond James，2024年1月），eBay上单个超40,000美元\n- **NVLM 1.0**（2024年10月，开源多模态大语言模型，旗舰版720亿参数）\n- **2024年6月18日**市值超3.3万亿美元，成为全球市值最高公司；**2024年11月**加入道琼斯工业平均指数（DJIA）\n- **2024年11月**Morgan Stanley报告称Nvidia Blackwell芯片“2025年全部产能已售罄”\n- **剑桥-1超算**（2021年7月上线，投资1亿美元）\n- **以色列-1超算**（2023年发布，以色列最强AI超算）\n- **2022年3月**Jensen Huang表示未来可能让Intel代工芯片\n- **2022年4月**计划在亚美尼亚埃里温开设新研究中心\n- **2024年**Forbes“最佳工作场所”排名第3；2023年半数员工年薪超228,000美元\n- **2024年**FTC和DOJ对Nvidia、Microsoft、OpenAI启动反垄断调查（DOJ负责Nvidia）"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 0,
+       "items": 0
+      }
+     ],
+     "estimated_prompt_tokens": 4006,
+     "full_history_tokens": 3430,
+     "context_limit": 4000,
+     "dropped_turns": 15,
+     "summary_cost_tokens": 96321,
+     "candidates": []
+    }
+   ]
+  }
+ ]
+}
