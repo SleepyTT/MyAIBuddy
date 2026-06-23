@@ -143,18 +143,35 @@ async def run_probe(client: httpx.AsyncClient, base_url: str, model: str,
     }
 
 
+class JudgeError(Exception):
+    """The LLM judge call failed after retries — caught per-probe so one flaky
+    upstream call degrades a single probe instead of crashing the whole run."""
+
+
 async def judge_yes(client: httpx.AsyncClient, base_url: str, judge_model: str,
-                    prompt: str) -> tuple:
-    """Returns (is_yes, raw_verdict) — raw kept in the result file for auditing."""
-    resp = await client.post(
-        f"{base_url}/debug/regenerate",
-        json={"model": judge_model, "messages": [{"role": "user", "content": prompt}]},
-        timeout=120.0,
-    )
-    resp.raise_for_status()
-    raw = (resp.json().get("reply") or "").strip()
-    first_line = raw.upper().splitlines()[0] if raw else ""
-    return ("YES" in first_line and "NO" not in first_line.replace("YES", "")), raw
+                    prompt: str, *, retries: int = 3) -> tuple:
+    """Returns (is_yes, raw_verdict) — raw kept in the result file for auditing.
+
+    The upstream judge (kimi via /debug/regenerate) intermittently 5xx's / drops
+    the connection; retry a few times, then raise JudgeError so the caller can
+    mark just this probe as judge-errored and still write the result file.
+    """
+    last = None
+    for attempt in range(retries):
+        try:
+            resp = await client.post(
+                f"{base_url}/debug/regenerate",
+                json={"model": judge_model, "messages": [{"role": "user", "content": prompt}]},
+                timeout=120.0,
+            )
+            resp.raise_for_status()
+            raw = (resp.json().get("reply") or "").strip()
+            first_line = raw.upper().splitlines()[0] if raw else ""
+            return ("YES" in first_line and "NO" not in first_line.replace("YES", "")), raw
+        except Exception as e:  # noqa: BLE001 — any upstream/transport failure is retryable
+            last = e
+            await asyncio.sleep(1.5 * (attempt + 1))
+    raise JudgeError(f"judge call failed after {retries} tries: {last}")
 
 
 def _substring_present(content: str, text: str) -> bool:
@@ -345,36 +362,45 @@ async def main() -> None:
                 needles = {**case_needles, **{n["id"]: n for n in probe.get("needles", [])}}
                 probe_needles = [needles[nid] for nid in probe["needle_ids"]]
                 is_negative = probe["style"] == "negative"
-                hit_ctx = None if is_negative else await ctx_hit(
-                    probe_needles, run["context_reports"],
-                    client=client, base_url=args.base_url, judge_model=args.judge_model)
-
                 judge = probe["judge"]
                 judge_detail = judge["method"]
                 judge_raw = None
-                if judge["method"] == "regex":
-                    hit_ans = regex_judge(judge, run["reply"])
-                else:
-                    hit_ans, judge_raw = await judge_yes(
-                        client, args.base_url, args.judge_model,
-                        ANSWER_JUDGE_PROMPT.format(
-                            question=probe["question"], reply=run["reply"] or "",
-                            rubric=judge["rubric"]))
+                judge_error = None
+                # A flaky judge call should cost one probe, not the whole run: on
+                # JudgeError, null out the judgments and keep going (the result file
+                # still gets written; aggregate() skips None ctx/ans).
+                try:
+                    hit_ctx = None if is_negative else await ctx_hit(
+                        probe_needles, run["context_reports"],
+                        client=client, base_url=args.base_url, judge_model=args.judge_model)
 
-                # Hallucination: negative probe answered with fabricated specifics,
-                # or a needle probe that MISSED context AND gave a wrong answer the
-                # model nonetheless stated as confident fact. A correct answer is
-                # never a hallucination, so `not hit_ans` guards the needle branch —
-                # without it, a needle correctly recalled from the summary (ctx-miss
-                # by the strict position check) would be mislabeled as fabrication.
-                hallucination = False
-                if is_negative:
-                    hallucination = not hit_ans
-                elif hit_ctx is False and not hit_ans:
-                    hallucination, _ = await judge_yes(
-                        client, args.base_url, args.judge_model,
-                        FABRICATION_JUDGE_PROMPT.format(
-                            question=probe["question"], reply=run["reply"] or ""))
+                    if judge["method"] == "regex":
+                        hit_ans = regex_judge(judge, run["reply"])
+                    else:
+                        hit_ans, judge_raw = await judge_yes(
+                            client, args.base_url, args.judge_model,
+                            ANSWER_JUDGE_PROMPT.format(
+                                question=probe["question"], reply=run["reply"] or "",
+                                rubric=judge["rubric"]))
+
+                    # Hallucination: negative probe answered with fabricated specifics,
+                    # or a needle probe that MISSED context AND gave a wrong answer the
+                    # model nonetheless stated as confident fact. A correct answer is
+                    # never a hallucination, so `not hit_ans` guards the needle branch —
+                    # without it, a needle correctly recalled from the summary (ctx-miss
+                    # by the strict position check) would be mislabeled as fabrication.
+                    hallucination = False
+                    if is_negative:
+                        hallucination = not hit_ans
+                    elif hit_ctx is False and not hit_ans:
+                        hallucination, _ = await judge_yes(
+                            client, args.base_url, args.judge_model,
+                            FABRICATION_JUDGE_PROMPT.format(
+                                question=probe["question"], reply=run["reply"] or ""))
+                except JudgeError as e:
+                    hit_ctx, hit_ans, hallucination = None, None, False
+                    judge_error = str(e)
+                    print(f"  JUDGE ERROR (probe skipped): {e}", flush=True)
 
                 first_report = run["context_reports"][0] if run["context_reports"] else None
                 compression = None
@@ -402,7 +428,7 @@ async def main() -> None:
                     "question": probe["question"],
                     "reply": run["reply"], "error": run["error"],
                     "ctx_hit": hit_ctx, "ans_hit": hit_ans, "hallucination": hallucination,
-                    "judge_detail": judge_detail, "judge_raw": judge_raw,
+                    "judge_detail": judge_detail, "judge_raw": judge_raw, "judge_error": judge_error,
                     "input_tokens": run["input_tokens"], "output_tokens": run["output_tokens"],
                     "estimated_input_tokens": sum(
                         r["estimated_prompt_tokens"] for r in run["context_reports"]),

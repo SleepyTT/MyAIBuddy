@@ -957,12 +957,17 @@ async def debug_regenerate(body: dict):
     messages = body.get("messages", [])
 
     payload = {"model": model, "messages": messages}
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        resp = await client.post(
-            f"{AI_BUILDER_BASE_URL}/chat/completions",
-            json=payload,
-            headers={"Authorization": f"Bearer {api_key}"},
-        )
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            resp = await client.post(
+                f"{AI_BUILDER_BASE_URL}/chat/completions",
+                json=payload,
+                headers={"Authorization": f"Bearer {api_key}"},
+            )
+    except httpx.HTTPError as e:
+        # Upstream transport error (connection reset / read timeout) — return a clean
+        # 502 the caller can retry, instead of a 500 ASGI traceback.
+        raise HTTPException(status_code=502, detail=f"upstream error: {e}")
     if resp.status_code != 200:
         raise HTTPException(status_code=502, detail=resp.text)
 
