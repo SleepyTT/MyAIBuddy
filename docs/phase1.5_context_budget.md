@@ -146,8 +146,11 @@ avg input(tok):concat long 5.5k→2.9k、window_summary long 稳定 ~2.3–2.7k;
 
 3. **工具结果维度:反而 concat > window_summary(推翻简单假设,且更要紧)。** tool-medium 紧预算下,concat(头截断)8k ctx .83 / 4k .67;window_summary(对工具结果做 **query 盲**摘要)8k ctx **.50** / 4k **.17**——更差。原因:针是页面里一个**具体事实**(版本号/函数名/数字),query 盲的摘要把它当噪音压掉,而头截断只要预算够到针位(中段)就保住。**对"大工具结果里的具体针",盲压缩比截断还糟。**
 
-### 结论 → 坐实 Phase 2 RAG 的必要性
+### 推论(注意边界:本轮没测 RAG)
 
-§5 的假设(RAG > window_summary > concat)**只对历史成立**;对工具结果,**盲压缩(摘要或截断)都不可靠**——要么截掉、要么压没。紧预算下既省 token 又保住工具结果里的具体针,只能靠 **query 感知的检索**(Phase 2:对工具结果 chunk + 按问题检索)。这个 sweep 把"为什么需要 Phase 2 RAG"从直觉变成了数据。
+**本轮只跑了 concat 和 window_summary,RAG 还没实现、零数据点。** 所以分两层:
+
+- **测到的(有数据)**:历史维度 window_summary > concat;工具结果维度 concat > window_summary。合起来——我们试过的**两种 query 盲压缩(截断 / 摘要),对"大工具结果里的具体针"都救不了**(一个截掉、一个压没)。
+- **推断的(假设,待 Phase 2 验证)**:既然盲压缩不行,一个**看问题**的方法(按相关度挑 chunk)原理上应能保住针,RAG 是这样的方法。但 §5 那条 "RAG > window_summary > concat" 始终是**未验证假设**——RAG 行不行、是否真的更优,**得等 Phase 2 真跑出数才算数**,本轮不下结论。sweep 只是把"想试 RAG"从随口一说升级成"有数据支撑的假设"。
 
 **测量注意**:样本小(long ~22 探针、tool-medium 6 针探针),单点有噪音(如 concat tool-medium 128k ans .83 vs 32k 1.0,二者上下文相同,纯模型/裁判方差);但跨预算趋势单调清晰。结果文件:`eval/results/2026-06-22_*_{concat,window_summary}_{long,tool-medium}[_bNk].json`。

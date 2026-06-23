@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 1.5 技术总结 — 可调 context 预算与"被迫取舍"</title>
+<style>
+  :root {
+    --bg:#0d1117; --card:#161b22; --border:#21262d; --text:#c9d1d9; --muted:#8b949e;
+    --blue:#58a6ff; --green:#3fb950; --red:#f85149; --amber:#d29922; --purple:#bc8cff;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:820px; margin:0 auto; padding:48px 24px 80px; }
+  header { border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:36px; }
+  h1 { font-size:30px; line-height:1.3; margin:0 0 12px; color:#f0f6fc; }
+  h2 { font-size:22px; margin:44px 0 14px; color:#f0f6fc; padding-top:10px; border-top:1px solid var(--border); }
+  h3 { font-size:17px; margin:28px 0 8px; color:var(--blue); }
+  .meta { color:var(--muted); font-size:14px; }
+  .meta span { margin-right:16px; }
+  .langswitch { float:right; font-size:13px; color:var(--muted); }
+  .langswitch a { color:var(--blue); text-decoration:none; }
+  p { margin:14px 0; }
+  code { background:#1f2530; padding:2px 6px; border-radius:4px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13.5px; color:#e6edf3; }
+  pre { background:#010409; border:1px solid var(--border); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.55; }
+  pre code { background:none; padding:0; }
+  .lead { font-size:18px; color:var(--text); }
+  blockquote { margin:18px 0; padding:12px 18px; border-left:3px solid var(--blue); background:rgba(88,166,255,.06); border-radius:0 6px 6px 0; }
+  blockquote.warn { border-left-color:var(--amber); background:rgba(210,153,34,.07); }
+  blockquote.win { border-left-color:var(--green); background:rgba(63,185,80,.07); }
+  table { border-collapse:collapse; width:100%; margin:18px 0; font-size:14px; }
+  th,td { border:1px solid var(--border); padding:8px 12px; text-align:left; vertical-align:top; }
+  thead th { background:var(--card); color:var(--muted); font-weight:600; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .bad { color:var(--red); font-weight:700; }
+  .good { color:var(--green); font-weight:700; }
+  ul { padding-left:22px; } li { margin:6px 0; }
+  .footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--border); color:var(--muted); font-size:13px; }
+  .kicker { color:var(--blue); font-size:13px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="langswitch">中文 · <a href="phase1_5_context_budget_en.html">English</a></div>
+  <div class="kicker">My AI Buddy · 上下文管理 · 阶段总结</div>
+  <h1>Phase 1.5：给预算装上旋钮,把"被迫取舍"逼出来——一个反直觉的结论</h1>
+  <div class="meta">
+    <span>📅 2026-06-22</span>
+    <span>🏷 context budget sweep</span>
+    <span>📊 20 格网格 · 2 策略 × 2 tier × 5 预算</span>
+  </div>
+</header>
+
+<p class="lead">我们做了 needle 数据集、四 tier 矩阵、工具结果维度——但有一个指标一直是 <b>0:幻觉</b>。不是模型不幻觉,是没有任何 case 把上下文逼到"装不下、必须丢"的地步(全程远不到 128k)。这篇讲我们怎么把 context 预算做成<b>可调旋钮</b>,在紧预算下逼出"被迫取舍",第一次量出幻觉,并撞上一个反直觉的结果:<b>工具结果里的具体事实,我们测过的两种盲压缩(摘要、截断)都救不了。</b>这<b>指向</b>——但还没证明——需要 query 感知的检索(RAG),那是 Phase 2 要去验证的假设,本轮没测它,不下结论。</p>
+
+<h2>1. 缺的那个 regime:被迫溢出</h2>
+<p>到目前为止的评测只覆盖了一种场景——<b>"自愿压缩省钱"</b>:上下文装得下,策略主动丢一些以省 token。但生产里幻觉真正高发的是<b>另一种</b>:上下文逼近/超过可用预算 → 模型<b>被迫</b>做 context 管理 → 丢了关键信息 → 该说"不记得"却编一个出来。这个 regime 我们从没测过,因为所有数据集全程都塞得进 128k。</p>
+<blockquote class="warn"><b>一个差点白做的坑:<code>CONTEXT_LIMIT=128k</code> 当时只是个"显示数字"。</b>它只用来算"利用率 %",策略本身不读它——<code>window_summary</code> 是按<b>轮数</b>(<code>WINDOW_TURNS=6</code>)切的,不是按 token 切的。所以单把这个常数调小,<b>什么都不会变</b>。真正要做的不是改一个数,而是<b>让策略变成 budget-aware</b>(按 token 预算压)。这也顺带让 window_summary 更贴近现实:按轮数切本就不合理——一条 30k 的工具结果和一句"好的"各算一轮。</blockquote>
+
+<h2>2. 让策略 budget-aware</h2>
+<p>预算 <code>B</code> 是一次 prompt 的 token 上限。组装按优先级填,先保命、再压可压的:<b>当前问题 + tools schema(必保)> loop 内工具结果(高)> 最近历史(verbatim 窗口)> 更早历史(摘要 / 丢弃)</b>。三个策略各按自己的哲学在预算压力下退化:</p>
+<table>
+<thead><tr><th>策略</th><th>预算不足时</th><th>对"当前问题"</th></tr></thead>
+<tbody>
+<tr><td><b>concat</b></td><td>截断:头截断超预算的工具结果、丢最老的历史(不摘要)</td><td>位置盲</td></tr>
+<tr><td><b>window_summary</b></td><td>token 窗口(≤ WINDOW_TURNS,再按预算收) + 把挤出的历史和超预算工具结果做<b>摘要</b></td><td><b>query 盲</b></td></tr>
+<tr><td><b>RAG</b>(Phase 2)</td><td>切块 + 按问题<b>检索</b> top-k 填进预算</td><td><b>query 感知</b></td></tr>
+</tbody>
+</table>
+<blockquote><b>关键不变量与方法。</b>① 预算是<b>横切 eval 参数</b>,不是新 tier——复用现有 long / tool-medium 在 5 个预算下跑,区分度从预算里来,不必造新数据。② <b>默认 B=128k → 行为与改造前逐字节一致</b>(已验证:concat 默认 == 旧 <code>assemble_context</code>),旧基线不受影响。结果带 <code>context_budget</code> 字段 + <code>run_id</code> 后缀(<code>_b8k</code>),同数据集不同预算可并排比。</blockquote>
+
+<h2>3. 结果:20 格网格</h2>
+<p>model=grok-4-fast,judge=kimi-k2.5,2 策略 × 2 tier × 5 预算。格内为 <b>ctx 命中 / ans 命中 / 幻觉</b>:</p>
+<table>
+<thead><tr><th>策略 · tier</th><th class="num">128k</th><th class="num">32k</th><th class="num">16k</th><th class="num">8k</th><th class="num">4k</th></tr></thead>
+<tbody>
+<tr><td>concat · <b>long</b></td><td class="num">1.0/.95/0</td><td class="num">1.0/.95/0</td><td class="num">1.0/.95/0</td><td class="num"><span class="bad">.55/.59/.17</span></td><td class="num"><span class="bad">.18/.32/.38</span></td></tr>
+<tr><td>window_summary · <b>long</b></td><td class="num">.86/.86/0</td><td class="num">.95/.95/0</td><td class="num">.91/.82/0</td><td class="num"><span class="good">.91/.95/0</span></td><td class="num"><span class="good">1.0/.95/0</span></td></tr>
+<tr><td>concat · <b>tool-medium</b></td><td class="num">1.0/.83/0</td><td class="num">1.0/1.0/0</td><td class="num">1.0/1.0/0</td><td class="num">.83/.83/0</td><td class="num">.67/.50/0</td></tr>
+<tr><td>window_summary · <b>tool-medium</b></td><td class="num">1.0/1.0/0</td><td class="num">1.0/1.0/0</td><td class="num">1.0/1.0/0</td><td class="num"><span class="bad">.50/.67/.12</span></td><td class="num"><span class="bad">.17/.17/.38</span></td></tr>
+</tbody>
+</table>
+<p style="color:var(--muted);font-size:13px;margin-top:0">avg input(tok):concat·long 5.5k→2.9k;window_summary·long 稳定 ~2.3–2.7k;concat·tool-medium 8.7k→3.5k;window_summary·tool-medium 8.1k→2.4k。128k/32k/16k 对我们的数据基本不咬(都装得下),所以前三列大多持平,差异从 8k/4k 出现。</p>
+
+<h2>4. 三个发现</h2>
+<h3>① 溢出 regime 被激活,幻觉指标第一次有信号</h3>
+<p><code>concat·long</code> 随预算收紧一路崩:128k–16k 全装下(ctx 1.0、幻觉 0)→ 8k 开始丢历史(ctx .55、幻觉 <b>.17</b>)→ 4k 重截(ctx .18、幻觉 <b>.38</b>)。这正是预判的因果链——<b>预算不足 → 被迫丢信息 → 模型编造</b>。此前所有 tier 幻觉恒为 0,现在终于量出来了。</p>
+<h3>② 历史维度:window_summary 完胜 concat(验证假设)</h3>
+<p>紧预算下的 long:concat 崩(ctx .55→.18、幻觉冲到 .38),而 window_summary <b>全程 ctx .91–1.0、幻觉 ~0</b>,且 token 只有 concat 的一半(~2.5k vs 5k+)。因为摘要把挤出窗口的历史<b>压缩保留</b>了,concat 直接<b>丢整轮</b>。</p>
+<h3>③ 工具结果维度:反而 concat > window_summary(反直觉,且更要紧)</h3>
+<blockquote class="warn">tool-medium 紧预算下,<b>concat(头截断)8k ctx .83 / 4k .67;window_summary(对工具结果做 query 盲摘要)8k ctx <b class="bad">.50</b> / 4k <b class="bad">.17</b></b>——明显更差。<br><br>原因:针是页面里一个<b>具体事实</b>(版本号 / 函数名 / 数字)。query 盲的摘要不知道哪句重要,<b>把它当噪音压掉了</b>;而 concat 的头截断只要预算够到针的位置(我们故意把针埋在中段),就<b>原样保住</b>。<b>对"大工具结果里的具体针",盲压缩比笨截断还糟。</b></blockquote>
+
+<h2>5. 推论(注意:不是结论):盲压缩到头了,指向待验证的 query 感知检索</h2>
+<p><b>先说清楚边界:本轮只跑了 concat 和 window_summary,RAG 还没实现、没测过。</b>所以下面分两层——<b>测到的</b>和<b>推断的</b>,别混。</p>
+<p><b>测到的(有数据):</b>① 历史维度,window_summary &gt; concat(摘要保留 vs 截断丢轮);② 工具结果维度,concat &gt; window_summary(头截断保住中段针 vs query 盲摘要把具体针压没)。两条合起来:<b>我们试过的两种 query 盲压缩,在不同维度各有失手——对"大工具结果里的具体针",两种盲压缩都救不了。</b></p>
+<p><b>推断的(假设,待 Phase 2 验证):</b>既然盲压缩(不看问题)在工具结果上不行,一个<b>看问题</b>的方法(按相关度挑 chunk)原理上应该能保住针。RAG 就是这样的方法。<b>但这只是把"为什么想试 RAG"从随口一说升级成"有数据支撑的假设"——RAG 到底行不行、是不是真的 &gt; window_summary,得等 Phase 2 真跑出数才算数。</b>设计阶段那条"RAG &gt; window_summary &gt; concat"始终是<b>未验证假设</b>,本轮一个 RAG 数据点都没有。</p>
+<blockquote class="warn"><b>一句话(校准过的):</b>历史可以靠盲摘要救;工具结果里的具体针,两种盲压缩都救不了。<b>是不是 query 感知的检索就能救——这是 Phase 2 要回答的问题,本轮没测 RAG,不下结论。</b></blockquote>
+
+<h2>6. 工程旁注:长批处理要"单点失败不拖垮整批"</h2>
+<p>这个 sweep 第一次跑,20 个 run <b>丢了 4 个</b>,耗了两小时还没结果。根因:上游 judge(<code>/debug/regenerate</code> → kimi)偶发 500,而 runner 里一个裸的 <code>raise_for_status()</code> 没人接——一次 judge 失败就把<b>整轮</b>(已经算完的、慢的摘要活)crash 掉,且不写结果文件。最慢的 <code>window_summary·long</code>(每探针一次摘要 + 多次裁判调用)三个紧预算 run 全死在这,白跑一个多小时。</p>
+<p>修复:judge 调用<b>重试 3 次 + 退避</b>,失败抛 <code>JudgeError</code> 被<b>单探针捕获</b>(只让这一题判为 judge_error),整轮照常完成并<b>落盘</b>;<code>/debug/regenerate</code> 把上游传输错误转成干净的 <b>502</b>(而非 500 ASGI traceback)。重跑后 <b>0 个 judge_error</b>。教训:<b>长批处理里每一步外部调用都要能单点失败而不拖垮整批</b>,且中间产物要尽早落盘。生成 / 校验 / 跑批脚本一律落盘(<code>eval/sweep_budget.sh</code> 等)。</p>
+
+<h2>7. 收获清单</h2>
+<ul>
+  <li>要测"被迫取舍"这个 regime,<b>把预算做成可调旋钮</b>——但前提是策略真的 budget-aware,光改显示常数没用。</li>
+  <li>预算做成<b>横切 eval 参数</b>扫现有数据集,比造新 tier 划算;默认值要<b>等于改造前行为</b>以免破坏基线。</li>
+  <li><b>压缩对不对,可能取决于它知不知道"当前问题"。</b>实测:历史可被盲摘要救;工具结果里的具体针,两种盲压缩都不可靠。是否要靠 query 感知检索(RAG)来救——<b>是假设,留待 Phase 2 真跑后才能下结论</b>。</li>
+  <li>幻觉只有在<b>紧预算逼出丢信息</b>时才有信号——评测要主动制造这个压力,而不是等它自然发生。</li>
+  <li>长批处理:<b>每步外部调用单点容错 + 尽早落盘</b>,否则一次上游抽风吃掉几小时。</li>
+</ul>
+
+<div class="footer">
+  归档于 <code>docs/reports/</code> · 关联:<code>docs/phase1.5_context_budget.md</code>(完整设计 + §12 数据)、<a href="measurement_system.html">评测体系总结</a>、<a href="phase1_window_summary.html">Phase 1 报告</a>、<code>docs/eval_plan.md</code> · 实现:<code>context_strategies.py</code> 的 <code>assemble_budgeted</code>、<code>eval/run.py</code>(<code>--context-budget</code> + judge 重试)、<code>eval/sweep_budget.sh</code> · 结果:<code>eval/results/2026-06-22_*_b*k.json</code>
+</div>
+</div>
+</body>
+</html>
