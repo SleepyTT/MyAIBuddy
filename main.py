@@ -808,6 +808,9 @@ async def debug_run(body: dict):
             return
 
         # --- Normal path: assemble base under budget (no tools appended yet) ------
+        # NOTE (Phase 1.5): the tool-result quota is enforced on the frozen-replay path
+        # above (the eval tool tier). Here, real tool results executed in the live loop
+        # are appended raw below — quota-bounding live tool output waits for Phase 2.
         a = await assemble_budgeted(
             strategy, history, current_msg, [], tools, budget, api_key=api_key,
             proactive_compress_to=proactive_compress_to)

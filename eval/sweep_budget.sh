@@ -17,13 +17,14 @@ MODEL="${MODEL:-grok-4-fast}"
 BUDGETS="${BUDGETS:-128000 32000 16000 8000 4000}"
 STRATEGIES="${STRATEGIES:-concat window_summary}"
 TIERS="${TIERS:-long tool-medium}"
+OUT="${OUT:-eval/results}"
 
 for strat in $STRATEGIES; do
   for tier in $TIERS; do
     for b in $BUDGETS; do
-      echo ">>> strategy=$strat tier=$tier budget=$b"
+      echo ">>> strategy=$strat tier=$tier budget=$b out=$OUT"
       python eval/run.py --strategy "$strat" --tier "$tier" --model "$MODEL" \
-        --context-budget "$b" --base-url "$BASE" 2>&1 | tail -4
+        --context-budget "$b" --base-url "$BASE" --out "$OUT" 2>&1 | tail -4
       echo
     done
   done

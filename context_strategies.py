@@ -356,6 +356,8 @@ async def assemble_budgeted(
     tool_used = 0
     for m in loop_messages:
         if m.get("role") != "tool":
+            # assistant tool-call carriers are assumed small (tool_call shells) and
+            # pass through un-quota'd; only `role=="tool"` results are bound to the quota.
             fitted_loop.append(m)
             loop_used += message_tokens(m)
             continue
