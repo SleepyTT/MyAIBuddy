@@ -1,0 +1,1930 @@
+{
+ "run_id": "2026-06-22_2231_window_summary_long_b4k",
+ "timestamp": "2026-06-22T22:31:12",
+ "context_budget": 4000,
+ "strategy": "window_summary",
+ "model": "grok-4-fast",
+ "judge_model": "kimi-k2.5",
+ "dataset_version": "v1-long",
+ "summary": {
+  "probes": 24,
+  "needle_probes": 22,
+  "negative_probes": 2,
+  "ctx_hit_rate": 1.0,
+  "ans_hit_rate": 0.9545,
+  "hallucination_rate": 0.0,
+  "avg_input_tokens": 2690.5,
+  "avg_estimated_input_tokens": 3759.3,
+  "avg_output_tokens": 72.5,
+  "avg_rounds": 1.0,
+  "avg_latency_s": 15.9,
+  "avg_compression_ratio": 0.3525
+ },
+ "dimensions": {
+  "style": {
+   "direct": {
+    "probes": 11,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "paraphrase": {
+    "probes": 8,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 0.875,
+    "hallucination_rate": 0.0
+   },
+   "implicit": {
+    "probes": 3,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "negative": {
+    "probes": 2,
+    "ctx_hit_rate": null,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "carrier": {
+   "user": {
+    "probes": 16,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 0.9375,
+    "hallucination_rate": 0.0
+   },
+   "assistant": {
+    "probes": 6,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "depth": {
+   "late": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "early": {
+    "probes": 14,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 0.9286,
+    "hallucination_rate": 0.0
+   },
+   "middle": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "needle_type": {
+   "update": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "factual": {
+    "probes": 13,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 0.9231,
+    "hallucination_rate": 0.0
+   },
+   "decision": {
+    "probes": 1,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "personal": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "code_identifier": {
+    "probes": 2,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "topic": {
+   "ai_trends": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "gardening": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "health": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "ml": {
+    "probes": 7,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "stocks": {
+    "probes": 5,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 0.8,
+    "hallucination_rate": 0.0
+   }
+  }
+ },
+ "probes": [
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p1",
+   "topic": "ai_trends",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我们公司现在的 AI 主路线是什么？",
+   "reply": "公司当前 AI 主路线（截至今天最后一次更新）：\n\n• 核心方向：把对客 AI 客服功能作为 Q3 试点的首要目标，内部效率工具降为维护模式。  \n• 功能边界：仅基于产品文档与客户自有知识库做问答；不触碰替客户做 HR 决策类问题；低置信度一律转人工。  \n• 上线路径：选 3-5 家关系好、规模适中的客户做封闭试点；用四步质量管控（模板库、评估集、合规硬规则、AI 生成标注）；试点成功后再向董事会申请更大范围上线。  \n• 技术与组织：30 名工程师、零专职 ML；5 人正式小组直报 CTO；API 优先、网关统一管理；ML 工程师招聘中（目标画像：RAG 类产品落地经验）。  \n• 商业化：先追求“成本覆盖＋高级版渗透率提升”，不把 AI 作为独立利润中心考核；混合定价（基础额度并入高级套餐，超额按用量阶梯收费）。  \n\n以上即为当前官方主路线。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2092,
+   "output_tokens": 244,
+   "estimated_input_tokens": 2991,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 15.28,
+   "compression_ratio": 0.3199,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1432,
+       "items": 1,
+       "covers_positions": [
+        0,
+        33
+       ],
+       "text": "**公司 AI 主路线正式变更：Q3 上线对客 AI 客服功能，内部效率工具降为次优先。**\n\n**行业格局（引用出处）：**\n- 麦肯锡 2025 年企业 AI 调研：AI 项目从 PoC 到生产环境转化率仅 22%（定义：真实业务流量、运行超一个季度）。主要卡点：数据质量、与现有流程的集成成本、缺乏可量化 ROI。转化成功率最高行业为金融和制造（非科技业）。\n- 启示：场景选择比技术选型重要一个数量级；竞品功能有八成概率停留在演示阶段。\n\n**资源禀赋与约束：**\n- 30 名工程师，零专职 ML 人员，十年 HR 业务数据（但需审计合规性）。\n- 数据审计（已安排）：为期一个月，摸清可用数据、授权需求、清洗成本。\n\n**技术选型：**\n- 全部调用 API 起步（客服工单摘要月 API 成本几百至一两千美元；自部署月成本轻松上万）。\n- 架构要求：内部 AI 调用网关（一周搭建），统一管理供应商切换、限流、日志、成本核算；数据脱敏在网关出口做。\n\n**团队组建（已执行）：**\n- 原虚拟小组（3 人）整体转为对客客服核心组；从产品后端再抽 2 人，组成 5 人正式小组，汇报线直通 CTO。\n- 内部工具进入维护模式：只修 bug 不加功能，每周半人天。\n- 启动 ML 工程师招聘：目标画像为\"做过 RAG 类产品落地\"，招聘周期两个月。\n\n**对客 AI 客服（Q3 试点上线——需向董事会争取的关键措辞）：**\n- 第一期范围：仅基于产品文档和客户自有知识库的问答，不碰\"替客户做 HR 决策\"类问题。\n- 准确率不够一律转人工；先选 3-5 家关系好的客户做封闭试点。\n- 质量管控四步：①约束生成空间（优质 JD 模板库填充改写）；②100 个真实职位评估集；③合规硬规则拦截（性别/年龄/地域歧视）；④产品标注\"AI 生成，请审核后发布\"。\n\n**供应商绑定风险预案（\"架构上多供应商、运营上主从制\"）：**\n- 网关已就位；补充：prompt 资产版本化管理、业务语义接口抽象层（摘要/分类/问答）、评估集作为切换验收标准。\n- 运营：主供应商承载全部流量；备选保持\"热替身\"（账号开通、网关适配写好、每月冒烟测试）。\n\n**安全审查清单：**\n- Prompt 注入面：标记外部输入路径，测试\"忽略以上指令\"样本，系统指令与用户内容边界隔离，高危操作人工确认。\n- 数据泄漏面：网关出口脱敏覆盖、供应商合同数据使用条款（是否用于训练、留存期、DPA）、日志系统脱敏。\n- 权限面：员工问答机器人\"问答可见范围不超过提问者本人数据权限\"已写入设计约束。\n- 审查设为上线固定关卡，每个新 AI 功能过一遍。\n\n**客户合同处理（分三档，由法务出标准文本）：**\n1. 纯生成式、不碰客户存量数据（如 JD 生成）：现有条款通常已覆盖，产品内功能开关+管理员自主开启即同意记录。\n2. 需用客户存量数据（如员工问答机器人读制度文档）：产品内电子授权流程（管理员勾选+电子签），每客户五分钟。\n3. 跨客户数据做模型优化：近两年不碰。\n\n**内部工具已交付成果（一个月）：**\n- 客服工单处理时长降 18%（需做归因检查——前后各八周对照拆解）。\n- 销售邮件起草时间省 50%。\n- 建议正式测一次内部满意度（NPS 式）。\n- 工单摘要积累的结构化问题库将作为产品侧员工问答机器人的种子语料（需立数据治理规范）。\n\n**预算：**\n- API 成本单独立项——对客功能调用量比内部工具高一个量级，提前向董事会说明。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1380,
+       "items": 6,
+       "msg_ids": [
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 18,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2991,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 34,
+     "summary_cost_tokens": 5551,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p2",
+   "topic": "ai_trends",
+   "style": "direct",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "你之前给我引用过一个企业 AI 项目从试点到生产的转化率数字，是多少？",
+   "reply": "22%。  \n（来源：麦肯锡 2025 年企业 AI 调研，PoC→生产环境转化率）",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 1881,
+   "output_tokens": 26,
+   "estimated_input_tokens": 2676,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 10.0,
+   "compression_ratio": 0.2822,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1101,
+       "items": 1,
+       "covers_positions": [
+        0,
+        33
+       ],
+       "text": "**AI 战略对话要点摘要（最新结论）**\n\n**公司现状**：200 人 SaaS 公司，30 名工程师，无专职 ML 人员，拥有十年 HR 业务数据。\n\n**行业格局**：麦肯锡 2025 年企业 AI 调研显示，AI 项目从 PoC 到生产环境的转化率仅 22%（近八成试点未能落地），转化成功率最高的行业是金融和制造。主要卡点：数据质量、与现有流程的集成成本、缺乏可量化 ROI 口径。\n\n**数据审计**：HR 数据存在三个合规坑——合规敏感度、标注质量参差、客户数据所有权问题。立即启动为期一个月的数据审计。\n\n**2025 年 AI 主路线（最新决定）**：董事会要求 Q3 上线对客 AI 客服功能，内部效率工具降为次优先。最小可行边界：第一期只做基于产品文档和客户知识库的问答，不碰 HR 决策类问题；准确率不够的查询转人工；先选 3-5 家关系好的客户做封闭试点。争取将\"Q3 上线\"措辞改为\"Q3 试点上线\"。\n\n**团队重排**：原虚拟小组三人整体转为对客客服功能核心组，从产品后端抽两人补入，成立五人正式小组（汇报线直通 CTO）。内部工具进入维护模式（只修 bug 不加功能，每周半人天）。启动 ML 工程师招聘，目标画像为\"做过 RAG 类产品落地\"，招聘周期两个月。\n\n**技术选型**：全部调用 API 起步，不自部署。所有 AI 调用收口到内部网关服务，统一管理供应商切换、限流、日志和成本核算。数据脱敏在网关出口做，敏感字段不出内网。\n\n**供应商策略**：架构上多供应商、运营上主从制。主供应商承载全部流量，备选供应商保持\"热替身\"状态（账号开通、网关适配写好、每月用评估集跑冒烟测试）。切换为小时级配置变更。\n\n**质量把关**：JD 生成功能——约束生成空间（优质 JD 模板库）、建评估集（100 个真实职位）、合规过滤层（硬规则拦截歧视性表述）、产品交互兜底（标注\"AI 生成，请审核后发布\"）。\n\n**内部工具效果**（一个月数据）：客服工单处理时长降 18%，销售邮件起草时间省 50%。需做归因检查（前后各八周对照拆解），正式测量内部满意度。\n\n**安全审查清单**：prompt 注入面——标记外部输入进入 prompt 的所有路径，测试\"忽略以上指令\"类样本，确认系统指令与用户内容边界隔离；数据泄漏面——审查网关出口脱敏覆盖、供应商合同数据使用条款（是否用于训练、留存多久、能否签 DPA）、日志脱敏；权限面——员工问答机器人确保\"问答可见范围不超过提问者本人数据权限\"。\n\n**法务处理**：三档处理——纯生成式（不碰客户存量数据）无需补充协议，产品内开启即同意；用客户存量数据的功能做产品内电子授权流程（管理员勾选+电子签）；跨客户数据做模型优化近两年不碰。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1380,
+       "items": 6,
+       "msg_ids": [
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 34,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2676,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 34,
+     "summary_cost_tokens": 5339,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p3",
+   "topic": "ai_trends",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "decision",
+   "depth": "early",
+   "question": "我们最早给今年定的那套打法是什么来着？",
+   "reply": "最早的打法（董事会变更前）是：  \n- 主线：内部效率优先。  \n- 具体路线：客服工单摘要、销售邮件助手先行；产品侧仅把 JD 生成作为低风险试点。  \n- 成果（上线一个月）：工单处理时长降 18%，销售邮件起草时间省一半。  \n- 策略：内部工具先跑通、积累经验，再逐步外推到产品端。  \n\n（以上就是董事会前定的那套内部效率优先的打法。）",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 1957,
+   "output_tokens": 108,
+   "estimated_input_tokens": 2825,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 11.0,
+   "compression_ratio": 0.3001,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1258,
+       "items": 1,
+       "covers_positions": [
+        0,
+        33
+       ],
+       "text": "根据对话内容，以下是压缩后的要点摘要：\n\n- **公司背景**：200人SaaS公司，做HR管理系统，30个工程师，无专职ML人员，有十年HR业务数据。\n- **行业AI落地现状**：麦肯锡2025年企业AI调研显示，AI项目从PoC到生产环境的转化率仅22%（最新结论）。主要卡点：数据质量、与现有流程的集成成本、缺乏可量化的ROI口径。转化成功率最高的行业是金融和制造。\n- **数据合规**：HR数据存在三个坑——合规敏感度高（简历、薪酬、绩效需授权和脱敏）、历史数据标注质量参差、客户数据所有权问题（数据在系统但合同属于客户）。已安排启动为期一个月的数据审计。\n- **原定AI主路线（后已变更）**：内部效率优先——客服工单摘要、销售邮件助手先行；产品侧仅JD生成为低风险试点。内部工具上线一个月效果：工单处理时长降18%，销售邮件起草时间省一半。\n- **最新变更（董事会后）**：公司AI主路线正式改为\"Q3上线对客AI客服功能\"，内部效率工具降为次优先。资源重排：原虚拟小组三人转为对客客服功能核心组，从产品后端再抽两人，组成五人正式小组（汇报线直接到CTO）。内部工具进入维护模式（只修bug不加功能，每周半人天维护预算）。启动招聘ML工程师，目标画像\"做过RAG类产品落地\"，招聘周期两个月。API成本口径单独立项。\n- **Q3对客AI客服功能最小可行边界**：第一期只做基于产品文档和客户自己知识库的问答，不碰\"替客户做HR决策\"类问题；准确率不够的查询一律转人工；先选3-5家关系好的客户做封闭试点。措辞争取为\"Q3试点上线\"。\n- **技术选型**：全部调API起步，不搞自部署。架构上设内部AI网关服务，统一管理供应商切换、限流、日志和成本核算，数据脱敏在网关出口做。供应商策略：架构上多供应商、运营上主从制——主供应商承载全部流量，备选供应商保持\"热替身\"状态（账号开通、网关适配写好、每月用评估集跑一次冒烟测试）。\n- **JD生成质量把关四步**：①用十年数据优质JD做模板库，模型填充改写而非从零创作；②建评估集（100个真实职位，含必备字段、禁用表述、合规红线）；③合规过滤层（性别、年龄、地域歧视硬规则拦截）；④产品交互标注\"AI生成，请审核后发布\"，要求用户确认后才能发出。\n- **安全审查清单**：prompt注入面（外部输入路径标记、测试\"忽略以上指令\"样本、系统指令与用户内容边界隔离）；数据泄漏面（网关出口脱敏覆盖、供应商合同数据使用条款、日志脱敏）；权限面（员工问答机器人可见范围不超过提问者本人数据权限）。安全审查做成上线流程固定关卡。\n- **客户合同处理三档**：①纯生成式不碰客户数据的功能（如JD生成），现有条款通常已覆盖，产品内开关开启即同意记录；②要用客户存量数据的功能（如员工问答机器人），做成产品内电子授权流程（管理员勾选授权范围+电子签），法务起草标准授权文本；③跨客户数据做模型优化，需显式选择加入机制加匿名化承诺，近两年不碰。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1380,
+       "items": 6,
+       "msg_ids": [
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 26,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2825,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 34,
+     "summary_cost_tokens": 5402,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p4",
+   "topic": "ai_trends",
+   "style": "paraphrase",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "你给我那份给董事会降温的材料里，有多大比例的企业尝试最后真正用起来了？",
+   "reply": "给董事会降温的材料里引用的是**麦肯锡 2025 年调研**（样本近 2000 家企业、按收入分层、明确定义“生产环境运行超一季”）：\n\n**22% 的 PoC 最终真正转化到生产环境**，近八成（78%）的试点在规模化前就止步了。\n\n这个数字和你之前提到的“近八成试点未落地”完全一致。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 12673,
+   "output_tokens": 160,
+   "estimated_input_tokens": 16152,
+   "usage_source": "api",
+   "rounds": 2,
+   "latency_s": 23.31,
+   "compression_ratio": 0.3446,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1649,
+       "items": 1,
+       "covers_positions": [
+        0,
+        33
+       ],
+       "text": "**对话要点摘要（最新结论）**\n\n**一、行业 AI 落地现状**\n- 基础模型是租得到的商品，非竞争壁垒；应用层是战场。\n- 麦肯锡 2025 年企业 AI 调研显示：PoC 到生产环境转化率仅 22%（近八成试点未落地），样本上千家、按收入分层，定义清晰（真实业务流量、运行超一季）。主要卡点：数据质量、集成成本、缺乏可量化 ROI。转化成功率最高行业为金融和制造（流程标准化），非科技业。\n- 启示：场景选择比技术选型重要一个数量级。\n\n**二、资源禀赋与约束**\n- 30 名工程师，零专职 ML 人员，十年 HR 业务数据（真壁垒但需审计）。\n- HR 数据三坑：合规敏感（需授权+脱敏）、历史标注质量参差、客户数据所有权归客户（不得用于训练服务其他客户）。\n- 立即启动一个月数据审计：摸清可用数据、所需授权、清洗成本。\n\n**三、战略路线（已变更）**\n- **原定路线（已降级）**：内部效率优先——客服工单摘要、销售邮件助手先行；产品侧仅 JD 生成一个低风险试点。\n- **最新变更（董事会 Q3 拍板）**：主路线改为 **Q3 上线对客 AI 客服功能**，内部工具降为次优先。\n- 对客客服最小可行边界：第一期仅做基于产品文档+客户知识库的问答；不碰 HR 决策类问题；准确率不够转人工；先选 3-5 家关系好的客户做封闭试点。\n- 措辞争取：将\"Q3 上线\"改为\"Q3 试点上线\"。\n\n**四、组织与资源重排**\n- 原虚拟小组 3 人转为对客客服核心组，再从产品后端抽 2 人，组成 5 人正式小组（汇报线直通 CTO）。\n- 内部工具进入维护模式：只修 bug 不加功能，每周半人天。\n- 启动 ML 工程师招聘：目标画像为\"做过 RAG 类产品落地\"，预留两个月招聘周期。\n- API 成本单独立项，对客功能调用量将高一个量级，提前告知董事会。\n\n**五、技术选型**\n- 全部调 API 起步（月成本几百至两千美元，自部署月轻松上万）。\n- 架构：所有 AI 调用收口到内部网关服务，统一管理供应商切换、限流、日志、成本核算。\n- 数据脱敏在网关出口做，敏感字段不出内网。\n\n**六、供应商绑定应对（最新结论）**\n- 策略：架构上多供应商、运营上主从制。\n- 补三块：prompt 资产管理（集中存储版本化）、能力抽象层（对内暴露业务语义接口，切供应商业务代码零改动）、评估集兜底（切换时跑分达标才许切）。\n- 运营：主供应商承载全部流量，备选保持\"热替身\"（账号开通、网关适配写好、每月评估集冒烟测试）。切换为小时级配置变更。\n\n**七、安全审查清单**\n- Prompt 注入：标记外部输入进入 prompt 的所有路径，测试经典注入样本，系统指令与用户内容边界隔离，高危操作需人工确认。\n- 数据泄漏：网关出口脱敏覆盖所有敏感字段、供应商合同数据使用条款（是否用于训练、留存多久、能否签 DPA）、日志系统 prompt 和响应脱敏。\n- 权限：员工问答机器人可见范围不超过提问者本人数据权限。\n\n**八、客户合同处理（最新结论）**\n- 分三档：①纯生成式不碰客户存量数据（如 JD 生成）→ 现有条款通常已覆盖，产品内自主开启即为同意记录；②要用客户存量数据（如员工问答机器人读制度文档）→ 产品内电子授权流程（管理员勾选+电子签）；③跨客户数据做模型优化 → 深水区，近两年不碰。\n\n**九、已上线效果**\n- 内部工具上线一个月：工单处理时长降 18%、销售邮件起草时间省 50%。\n- 建议：夯实数字（做前后各八周对照拆解）；立数据治理规范；正式测内部满意度（NPS 式）。\n\n**十、JD 生成质量把关**\n- 约束生成空间：用十年数据优质 JD 做模板库，模型填空改写非从零创作。\n- 建评估集：100 个真实职位，人工写好质量标准（必备字段、禁用表述、合规红线）。\n- 合规过滤层：性别/年龄/地域歧视表述硬规则拦截。\n- 产品交互兜底：标注\"AI 生成，请审核后发布\"，用户确认后才能发出。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1380,
+       "items": 6,
+       "msg_ids": [
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 46,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3236,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 34,
+     "summary_cost_tokens": 5681,
+     "candidates": []
+    },
+    {
+     "round": 2,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1649,
+       "items": 1,
+       "covers_positions": [
+        0,
+        33
+       ],
+       "text": "**对话要点摘要（最新结论）**\n\n**一、行业 AI 落地现状**\n- 基础模型是租得到的商品，非竞争壁垒；应用层是战场。\n- 麦肯锡 2025 年企业 AI 调研显示：PoC 到生产环境转化率仅 22%（近八成试点未落地），样本上千家、按收入分层，定义清晰（真实业务流量、运行超一季）。主要卡点：数据质量、集成成本、缺乏可量化 ROI。转化成功率最高行业为金融和制造（流程标准化），非科技业。\n- 启示：场景选择比技术选型重要一个数量级。\n\n**二、资源禀赋与约束**\n- 30 名工程师，零专职 ML 人员，十年 HR 业务数据（真壁垒但需审计）。\n- HR 数据三坑：合规敏感（需授权+脱敏）、历史标注质量参差、客户数据所有权归客户（不得用于训练服务其他客户）。\n- 立即启动一个月数据审计：摸清可用数据、所需授权、清洗成本。\n\n**三、战略路线（已变更）**\n- **原定路线（已降级）**：内部效率优先——客服工单摘要、销售邮件助手先行；产品侧仅 JD 生成一个低风险试点。\n- **最新变更（董事会 Q3 拍板）**：主路线改为 **Q3 上线对客 AI 客服功能**，内部工具降为次优先。\n- 对客客服最小可行边界：第一期仅做基于产品文档+客户知识库的问答；不碰 HR 决策类问题；准确率不够转人工；先选 3-5 家关系好的客户做封闭试点。\n- 措辞争取：将\"Q3 上线\"改为\"Q3 试点上线\"。\n\n**四、组织与资源重排**\n- 原虚拟小组 3 人转为对客客服核心组，再从产品后端抽 2 人，组成 5 人正式小组（汇报线直通 CTO）。\n- 内部工具进入维护模式：只修 bug 不加功能，每周半人天。\n- 启动 ML 工程师招聘：目标画像为\"做过 RAG 类产品落地\"，预留两个月招聘周期。\n- API 成本单独立项，对客功能调用量将高一个量级，提前告知董事会。\n\n**五、技术选型**\n- 全部调 API 起步（月成本几百至两千美元，自部署月轻松上万）。\n- 架构：所有 AI 调用收口到内部网关服务，统一管理供应商切换、限流、日志、成本核算。\n- 数据脱敏在网关出口做，敏感字段不出内网。\n\n**六、供应商绑定应对（最新结论）**\n- 策略：架构上多供应商、运营上主从制。\n- 补三块：prompt 资产管理（集中存储版本化）、能力抽象层（对内暴露业务语义接口，切供应商业务代码零改动）、评估集兜底（切换时跑分达标才许切）。\n- 运营：主供应商承载全部流量，备选保持\"热替身\"（账号开通、网关适配写好、每月评估集冒烟测试）。切换为小时级配置变更。\n\n**七、安全审查清单**\n- Prompt 注入：标记外部输入进入 prompt 的所有路径，测试经典注入样本，系统指令与用户内容边界隔离，高危操作需人工确认。\n- 数据泄漏：网关出口脱敏覆盖所有敏感字段、供应商合同数据使用条款（是否用于训练、留存多久、能否签 DPA）、日志系统 prompt 和响应脱敏。\n- 权限：员工问答机器人可见范围不超过提问者本人数据权限。\n\n**八、客户合同处理（最新结论）**\n- 分三档：①纯生成式不碰客户存量数据（如 JD 生成）→ 现有条款通常已覆盖，产品内自主开启即为同意记录；②要用客户存量数据（如员工问答机器人读制度文档）→ 产品内电子授权流程（管理员勾选+电子签）；③跨客户数据做模型优化 → 深水区，近两年不碰。\n\n**九、已上线效果**\n- 内部工具上线一个月：工单处理时长降 18%、销售邮件起草时间省 50%。\n- 建议：夯实数字（做前后各八周对照拆解）；立数据治理规范；正式测内部满意度（NPS 式）。\n\n**十、JD 生成质量把关**\n- 约束生成空间：用十年数据优质 JD 做模板库，模型填空改写非从零创作。\n- 建评估集：100 个真实职位，人工写好质量标准（必备字段、禁用表述、合规红线）。\n- 合规过滤层：性别/年龄/地域歧视表述硬规则拦截。\n- 产品交互兜底：标注\"AI 生成，请审核后发布\"，用户确认后才能发出。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1380,
+       "items": 6,
+       "msg_ids": [
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 46,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 9680,
+       "items": 3,
+       "text": "{\"queries\": [{\"keyword\": \"McKinsey 2025 enterprise AI survey PoC to production conversion rate OR success rate AI pilots 2025\", \"response\": {\"query\": \"McKinsey 2025 enterprise AI survey PoC to production conversion rate OR success rate AI pilots 2025\", \"follow_up_questions\": null, \"answer\": null, \"images\": [{\"url\": \"https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/november%202025/pub-stateofai2025-2_ex16.svgz?cq=50&cpy=Center\", \"title\": \"The State of AI: Global Survey 2025 | McKinsey\", \"description\": null}, {\"url\": \"https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/november%202025/pub-stateofai2025-2_ex1.svgz?cq=50&cpy=Center\", \"title\": \"The State of AI: Global Survey 2025 | McKinsey\", \"description\": null}, {\"url\": \"https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/november%202025/pub-stateofai2025-2_ex5.svgz?cq=50&cpy=Center\", \"title\": \"The State of AI: Global Survey 2025 | McKinsey\", \"description\": null}, {\"url\": \"https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/november%202025/pub-stateofai2025-2_ex2.svgz?cq=50&cpy=Center\", \"title\": \"The State of AI: Global Survey 2025 | McKinsey\", \"description\": null}, {\"url\": \"https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/november%202025/pub-stateofai2025-2_ex9.svgz?cq=50&cpy=Center\", \"title\": \"The State of AI: Global Survey 2025 | McKinsey\", \"description\": null}], \"results\": [{\"url\": \"https://www.softwareseni.com/why-88-to-95-percent-of-enterprise-ai-pilots-never-reach-production\", \"title\": \"Why 88 to 95 Percent of Enterprise AI Pilots Never Reach Production\", \"content\": \"IDC/Lenovo (88%): The AI CIO Playbook 2025 found that for every 33 AI POCs an enterprise starts, only four reach production. IDC Group VP Ashish Nadkarni: “The high number of AI POCs but low conversion to production indicates the low level of organisational readiness in terms of data, processes and IT infrastructure.”\\n\\nMIT NANDA (95%): The GenAI Divide report found 95% of generative AI pilots fail to deliver measurable ROI despite $35–40 billion in aggregate spending — not just failure to ship, but failure to return value from what does ship. [...] McKinsey (88% adoption, limited high performers): 88% of organisations report using AI in at least one business function, but only 39% report any EBIT impact, and most attribute less than 5% of EBIT to AI. Nearly two-thirds haven’t begun scaling AI across the enterprise. Adoption is not value.\\n\\nPwC (56% of CEOs, no financial impact): PwC’s 29th Global CEO Survey found 56% report no significant financial benefit from AI investments. Only 12% report both cost reduction and revenue growth. The failure is visible right at the top.\\n\\nS&P Global (17% to 42% abandonment): The share of enterprises abandoning most of their AI initiatives jumped from 17% in 2024 to 42% in 2025. Nearly half of all AI POCs are now scrapped before launch. Purgatory doesn’t persist indefinitely. [...] The definitional confusion here is not a semantic nuisance. It is itself a cause of purgatory. When an organisation can’t tell the difference between “we have a POC” and “we have a production deployment,” it can’t accurately assess what transition work is actually required. That gap lets projects stall while everyone believes progress is happening.\\n\\nPOC (Proof of Concept): A short, low-resource test of whether an AI capability is technically feasible. Uses synthetic or sample data. Answers one question: can we build something that works at all? Duration: days to weeks.\\n\\nPilot: A time-boxed test using real users, real data, and real workflows — bounded scope. Success criterion: evidence of value at limited scale with stakeholder buy-in to expand.\", \"score\": 0.7316155, \"raw_content\": null, \"images\": [{\"url\": \"https://www.softwareseni.com/wp-content/uploads/2026/03/CSW20260319103612_ART001_header_image.jpg\", \"description\": null, \"description_source\": \"og:image\", \"score\": 10}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/img/ssau-2023/navbar/softwareseni-logo-light.svg\", \"description\": \"Logo\", \"description_source\": \"alt\", \"score\": 3}, {\"url\": \"https://www.softwareseni.com/wp-content/uploads/2025/04/The-best-method-for-balancing-AI-automation-with-human-input-2048x2048.png\", \"description\": null, \"description_source\": null, \"score\": 2}, {\"url\": \"https://www.softwareseni.com/wp-content/uploads/2026/02/Personal-AI-Assistants-Are-Here-and-They-Are-Lobsters-2048x2048.png\", \"description\": null, \"description_source\": null, \"score\": 2}, {\"url\": \"https://www.softwareseni.com/wp-content/uploads/2022/08/How_to_get_your_app_to_market_faster.png\", \"description\": null, \"description_source\": null, \"score\": 2}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/img/our-product.svg\", \"description\": null, \"description_source\": null, \"score\": 1}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/nav-chevron-down.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/img/ssau-2023/navbar/indonesian-flag.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/img/ssau-2023/navbar/australian-flag.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/img/ssau-2023/navbar/hamburger-light.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/home-breadcrumb.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/chevron-breadcrumb.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/facebook-share.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/linkedin-share.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/twitter-share.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/whatsapp-share.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/link-copy-share.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/uploads/2026/05/image-01.webp\", \"description\": \"cybermatika ads banner 1\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/uploads/2026/05/image-03.webp\", \"description\": \"cybermatika ads banner 3\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/uploads/2026/05/image-04.webp\", \"description\": \"cybermatika ads banner 4\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/blog-bottom-dots.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/arrow-right-cta.svg\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/img/ssau-2023/partnership/partnership-bg-image.png\", \"description\": null, \"description_source\": null, \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/img/ssau-2023/locations/footer-office-dots.png\", \"description\": \"Offices Dots\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/img/ssau-2023/locations/footer-office.png\", \"description\": \"Offices\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/linkedin-new.svg\", \"description\": \"Linkedin\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/x-new.svg\", \"description\": \"X-Thread\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/facebook.svg\", \"description\": \"Facebook\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/icons/ssau-2023/instagram.svg\", \"description\": \"Instagram\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/img/ssau-2023/locations/sydney.png\", \"description\": \"Sydney\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/img/ssau-2023/locations/yogyakarta.png\", \"description\": \"Yogyakarta\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.softwareseni.com/wp-content/themes/ssau-theme/assets/img/ssau-2023/locations/bandung.png\", \"description\": \"Bandung\", \"description_source\": \"alt\", \"score\": 0}]}, {\"title\": \"State of AI 2025: McKinsey Report\", \"url\": \"https://digitalstrategy-ai.com/2025/11/23/ai-mckinsey-report-2025\", \"content\": \"According to the State of AI 2025, 88% of organizations now use AI in at least one function, up from 78% last year. This is a seismic leap in adoption, showing AI is no longer experimental , it’s operational.\\n\\nBut here’s the twist:  \\nMost companies are still stuck in experimentation and pilot mode.  \\nOnly about one-third report scaling AI across the enterprise.\\n\\nFrom my perspective, this “pilot purgatory” is the single biggest barrier to value creation. Businesses launch dozens of POCs, but without redesigned workflows, governance, or platform thinking, the impact stays isolated and fragmented.\\n\\nThe takeaway:  \\nEvery company “uses AI,” but few have industrialized it.\\n\\n## 2. AI agents are gaining traction fast but remain early-stage\", \"score\": 0.72184175, \"raw_content\": null, \"images\": [{\"url\": \"https://i0.wp.com/digitalstrategy-ai.com/wp-content/uploads/2025/11/image-4.png\", \"description\": null, \"description_source\": \"og:image\", \"score\": 10}, {\"url\": \"https://digitalstrategy-ai.com/wp-content/uploads/2019/12/digitization-4667376_640.jpg\", \"description\": \"AI Maturity Assessment and AI Agent readinessTake the unique assessment survey NOW!\", \"description_source\": \"figcaption\", \"score\": 2}]}, {\"title\": \"State of AI 2025: McKinsey Report — Libertify\", \"url\": \"https://www.libertify.com/interactive-library/state-of-ai-2025-mckinsey-report\", \"content\": \"Perhaps the most consequential finding in the entire McKinsey AI report 2025 is the scaling gap. While adoption is widespread, only about one-third of organizations report scaling AI across the enterprise. The remaining two-thirds are trapped in what industry observers call “pilot purgatory” — running experiments that never graduate to production at scale.\\n\\nSplit screen contrasting scattered AI pilot programs versus scaled AI deployment\\n\\nSplit screen contrasting scattered AI pilot programs versus scaled AI deployment\\n\\nThe blockers are consistent across industries and company sizes: [...] McKinsey’s survey identified a striking outlier cohort. Out of nearly 2,000 respondents, only 109 — roughly 5.5% — reported that more than 5% of their organization’s EBIT is attributable to AI. These are the “AI high performers,” and their practices diverge sharply from the mainstream.\\n\\nThis finding is remarkably consistent with MIT’s independent research, which found that only 5% of AI pilot programs generate measurable P&L impact. The alignment across two major studies makes this one of the most robust AI ROI statistics 2025 has produced.\\n\\n### The High Performer Playbook\\n\\nWhat do these 5.5% do differently? McKinsey identifies six consistent patterns:\", \"score\": 0.7101667, \"raw_content\": null, \"images\": [{\"url\": \"https://www.libertify.com/wp-content/uploads/2026/03/state-of-ai-2025-2.png\", \"description\": null, \"description_source\": \"og:image\", \"score\": 10}, {\"url\": \"https://www.libertify.com/wp-content/uploads/2026/03/state-of-ai-2025-1.png\", \"description\": null, \"description_source\": \"schema.org\", \"score\": 10}, {\"url\": \"https://www.libertify.com/wp-content/uploads/2026/03/state-of-ai-2025-3.png\", \"description\": \"Before and after visualization of business workflow transformation with AI\", \"description_source\": \"alt\", \"score\": 1}, {\"url\": \"https://www.libertify.com/wp-content/uploads/2025/12/Logo_Libertify_Horizontal_fond_noir_RVB.png.webp\", \"description\": null, \"description_source\": null, \"score\": 1}, {\"url\": \"https://www.libertify.com/wp-content/uploads/2026/03/state-of-ai-2025-5.png\", \"description\": \"Autonomous AI agents working inside a modern enterprise environment with connected data streams\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.libertify.com/wp-content/uploads/2026/03/state-of-ai-2025-4.png\", \"description\": \"Balanced scale illustration showing AI benefits versus risks with human hand maintaining balance\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.libertify.com/wp-content/uploads/elementor/thumbs/Goofl-rlezahmjjjefzjhzorolifs0egqqy2bk8kgdbes8hg.png\", \"description\": \"Goofl\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.libertify.com/wp-content/uploads/elementor/thumbs/Capture-decran-2025-03-14-a-3.22.52 AM-rm9dxsj8hp10k26ypsj3954umj5ujgkywlwui96lou.png\", \"description\": \"Capture d’écran 2025-03-14 à 3.22.52 AM\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://www.libertify.com/wp-content/uploads/elementor/thumbs/Accenture-FIL-Asia-Pacific-CMYK-live-724x204-1-qqa6dpdmp96xbd30gdmbs3c4kbymjaoz0769sl4zzk.webp\", \"description\": \"Accenture-FIL-Asia-Pacific-CMYK-live-724x204-1\", \"description_source\": \"alt\", \"score\": 0}]}], \"response_time\": 2.89, \"request_id\": \"22ef91e9-53fa-47e6-bdd1-5e2f0cfab5f2\"}}], \"combined_answer\": null, \"errors\": null}\n{\"queries\": [{\"keyword\": \"企业 AI PoC 到生产转化率 2024 OR 2025 麦肯锡 OR McKinsey\", \"response\": {\"query\": \"企业 AI PoC 到生产转化率 2024 OR 2025 麦肯锡 OR McKinsey\", \"follow_up_questions\": null, \"answer\": null, \"images\": [{\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2025/12/the-state-of-ai-in-2025-%E5%9B%BE1-scaled.jpg\", \"title\": \"2025麦肯锡AI应用现状调研：仅6%企业成为高绩效赢家，他们做对了什么？ – McKinsey Greater China\", \"description\": null}, {\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2025/12/the-state-of-ai-in-2025-%E5%9B%BE4.jpg\", \"title\": \"2025麦肯锡AI应用现状调研：仅6%企业成为高绩效赢家，他们做对了什么？ – McKinsey Greater China\", \"description\": null}, {\"url\": \"https://n.sinaimg.cn/sinakd20250620s/670/w1050h1220/20250620/2020-52b0848122820d440fe544ab20800c83.png\", \"title\": \"近六成生成式AI项目会失败，如何避雷？\", \"description\": \"A line and bar chart combination illustrating the rapid increase in the application of artificial intelligence across organizations from 2017 to the first half of 2024, highlighting key events such as the rise of statistical learning, support vector machines, ImageNet, backpropagation, and GPU computing's influence on the AI boom and bust cycles, as well as funding shifts and expert discussions on AI failures and limitations.\"}, {\"url\": \"https://picx.zhimg.com/v2-18e4ee1b2e976f0478f1bb43ec932baf_1440w.jpg\", \"title\": \"2025麦肯锡AI现状报告解读：现状、高效、岗位、风险、趋势- 知乎\", \"description\": \"A table ranking the percentage of respondents in various industries who regularly use AI across different business functions, with notable emphasis on the adoption rates in media, telecommunications, technology, and insurance sectors.\"}, {\"url\": \"https://api.ibos.cn/v4/weapparticle/accesswximg?aid=127641&url=aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy90N3k5eUFYSWxzRktEOU5CdGNUNjJ0bHdrN1BFVUpsTkhpY1VONE9MUzdXSkdycHpwejFLVW02aDkwWjFUbmR2NWFiaWMzS2FpYlQ2Wlc5cEw4RVY1eDJwUS82NDA/d3hfZm10PXBuZyZhbXA=;from=appmsg\", \"title\": \"麦肯锡2025AI状态报告- 53AI-AI知识库|企业AI知识库|大模型知识库|前线部署工程师|FDE|AIHub\", \"description\": \"The graph illustrates the increasing percentage of organizations adopting AI for at least one business function from 2017 to 2025, with a notable rise in AI implementation, especially from 2023 onwards, and a breakdown of AI usage phases in 2025.\"}], \"results\": [{\"url\": \"https://www.mckinsey.com.cn/2025%E9%BA%A6%E8%82%AF%E9%94%A1ai%E5%BA%94%E7%94%A8%E7%8E%B0%E7%8A%B6%E8%B0%83%E7%A0%94%EF%BC%9A%E4%BB%856%E4%BC%81%E4%B8%9A%E6%88%90%E4%B8%BA%E9%AB%98%E7%BB%A9%E6%95%88%E8%B5%A2%E5%AE%B6%EF%BC%8C\", \"title\": \"2025麦肯锡AI应用现状调研：仅6%企业成为高绩效赢家，他们做对了 ...\", \"content\": \"AI高绩效企业部署的AI用例数量是其他企业的两倍，报告的负面事件比例也更高，尤其集中在知识产权侵权与监管合规方面。同时，这些企业也在更系统地治理更广泛的风险类型。\\n\\n尽管AI应用愈发普及，但本次调研显示，其价值潜能尚未完全释放。多数组织仍处在从试点向规模化部署过渡的阶段。即便一些业务已开始显现价值，但距离真正意义上的全域性财务影响仍有距离。而AI高绩效企业的经验提供了明晰方向：它们不满足于渐进式效率提升，而是将AI视为推动组织重塑的催化剂，通过重构工作流和加速创新，实现突破。随着AI工具（包括智能体）能力持续跃升，以及企业在技术与管理上的成熟度提升，将AI更深地融入运营，将为企业打开全新的价值通道，构筑更持久的竞争优势。\\n\\n### 研究方法\\n\\n本次线上调研于2025年6月25日至7月29日开展，共收集到来自105个国家的1993份有效问卷，受访者覆盖不同地区、行业、企业规模、职能类型与任职年限。38%的受访者来自年营收超过10亿美元的企业。为平衡各国响应率差异，调研数据已按受访者所在国家对全球GDP的贡献进行加权处理。\\n\\n点击此处，获取本文PDF版本。\\n\\n关于作者：\\n\\nAlex Singla是QuantumBlack，AI by McKinsey全球负责人兼麦肯锡全球资深董事合伙人，常驻芝加哥分公司；Alexander Sukharevsky是麦肯锡全球资深董事合伙人，常驻伦敦分公司；Lareina Yee是麦肯锡全球资深董事合伙人，常驻湾区分公司；Michael Chui是麦肯锡高级研究员，常驻湾区分公司；Bryce Hall是麦肯锡全球副董事合伙人，常驻华盛顿特区分公司；Tara Balakrishnan是麦肯锡全球副董事合伙人，常驻西雅图分公司。 [...] ### 智能体崭露头角\\n\\n更多企业开始积极探索智能体，这类系统基于基础模型、能够在真实场景中自主规划并执行多步骤任务。23%的受访者表示企业已在至少一个职能中启动智能体的规模化应用，另有39%正处于试验阶段。但距离更广泛的普及仍有距离：即便在推动规模化落地的企业中，其应用也往往局限在一两个职能领域。在任一具体职能中报告“正在扩大智能体应用”的受访者比例均未超过10%（图2）。\\n\\n在职能层面，IT与知识管理的智能体采用率最高，IT服务台管理与知识管理中的深度研究等场景发展迅速，率先形成相对成熟的应用体系。从行业视角来看，科技、媒体与电信及医疗行业的智能体采用率领先其他板块。\\n\\n|  |\\n\\n| 23%的受访者表示企业已在部分职能中推进智能体系统的规模部署。 |\\n\\n### 多数机构的AI应用仍停留在试点阶段\\n\\n总体而言，AI在组织内部的渗透面持续拓宽。更多受访者表示组织正在更多职能中使用AI。超过三分之二的受访者称其组织至少在两个职能采用AI，半数表示应用已覆盖三个以上职能（各行业情况请见边栏“各行业AI应用率普遍提升”）。\\n\\n|  |\\n\\n| 边栏 各行业AI应用率普遍提升  除科技行业（应用率已超90%）外，其他所有行业中，受访者报告其所在企业“至少在一个业务板块常态化使用AI”的比例均较上一轮调研明显上升。在去年调研中，科技企业AI应用领先优势明显；如今，媒体与电信、保险行业的应用率已与科技行业并驾齐驱。过去8年的调研显示，IT、营销与销售始终是AI应用最集中的职能。今年的最新结果中，知识管理也首次跻身这一行列。  从具体场景来看，AI最常被用于信息获取、处理与分发（如通过对话式界面）；营销策略内容支持（包括方案起草、创意生成及提供营销策略参考知识）；以及联络中心或客服工作的自动化。 | [...] Skip to content\\n\\nMcKinsey Greater China\\n\\nMcKinsey Greater China\\n\\n几乎所有受访企业都已将AI纳入业务实践，许多企业也开始尝试应用AI智能体。然而，大多数机构仍停留在规模化部署与实现企业级价值的早期阶段。\\n\\n自生成式AI工具开启人工智能新纪元三年以来，近九成受访者表示其组织已常态化应用AI，但整体进展仍参差不齐。尽管AI工具已广泛落地，多数企业尚未将其深度嵌入工作流和业务流程，距离释放企业级价值仍有不小差距。麦肯锡最新全球AI现状调研显示，当下局面呈现“应用扩张”（包括智能体快速渗透）与“成长阵痛”并存的特点，从试点走向规模化仍是大多数企业面临的核心挑战。\\n\\n### AI应用持续拓展，整体仍处试点阶段\\n\\n最新调研显示，更多企业开始使用AI，但真正的规模化部署依然稀少。至少在一个职能中常态化使用AI的企业比例，从去年的78%上升至88%。但在企业层面，多数机构仍停留在探索或试点阶段（图1），仅约三分之一已着手推进AI的规模化落地。\\n\\n中国大陆的AI应用普及率与全球平均水平基本持平，同时在国内大模型的快速崛起推动下，生成式AI已广泛渗透至企业运营中：有83%的企业在至少一个职能中常态化使用生成式AI，这一比例领先全球平均水平。同时，中国大陆地区有45%的受访企业实现AI的规模化或全面部署，高于全球 38% 的均值，展现出在AI应用深度上的相对领先优势。\\n\\n### 智能体崭露头角\", \"score\": 0.68798697, \"raw_content\": null, \"images\": [{\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2026/06/feature-image_764x437.png\", \"description\": \"智能体时代，企业组织运营模式四问\", \"description_source\": \"alt\", \"score\": 2}, {\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2026/06/interview-web-image-764x437-1.jpg\", \"description\": \"麦肯锡叶海：揭秘商业世界的“黑洞式”增长\", \"description_source\": \"alt\", \"score\": 2}, {\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2026/06/web-image-764x437-1.jpg\", \"description\": \"多智能体协同？先解决各说各话的数据困局\", \"description_source\": \"alt\", \"score\": 2}, {\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2026/06/feature-image头图764X437.jpg\", \"description\": \"征程万里、风头正健 ：麦肯锡全球材料行业前瞻\", \"description_source\": \"alt\", \"score\": 2}, {\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2019/03/McK_ScriptMark_RGB_White-33.png\", \"description\": \"McKinsey Greater China\", \"description_source\": \"alt\", \"score\": 0}]}, {\"url\": \"https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/2025/the-state-of-ai-how-organizations-are-rewiring-to-capture-value_final.pdf\", \"title\": \"[PDF] The state of AI - McKinsey\", \"content\": \"61 58 56 56 52 51 47 43 43 43 \\n\\nSecond half of 2024 \\n\\nSupply chain and inventory management Service operations Strategy and corporate finance HR Software engineering Risk, legal, and compliance Marketing and sales IT Product or service development Knowledge management² Decrease by ≥20% Decrease by 1019% Decrease by <10% 31 34 15 19 21 15 22 26 23 13 11 711 16 16 311 9612 4412 15 515 4789\\n\\n46 45 38 50 42 33 37 42 37 34 \\n\\nFirst half of 2024 \\n\\nCost decrease within business units from gen AI use, past 12 months, by function, ¹ % of respondents \\n\\nRespondents increasingly report cost reductions from gen AI within business units using \\n\\nthe technology. \\n\\nMcKinsey & Company McKinsey commentary \\n\\nMichael Chui \\n\\nSenior fellow [...] > McKinsey & Company\\n\\n35 30 34 29 30 23 11 19 818 12 12 12 15 24 14 13 15 47 32 34 31 31 25 718 12 13 98157374\\n\\n43 53 53 45 46 35 70 67 66 63 57 51 First half of 2024 Second half of 2024 \\n\\nIncrease by >10% Increase by 610% Increase by ≤5% Strategy and corporate finance Supply chain and inventory management Marketing and sales Service operations Software engineering Product or service development \\n\\n21 The state of AI: How organizations are rewiring to capture value \\n\\nAn increasing share of respondents report value creation within the business units using \\n\\ngen AI. Compared with early 2024, larger shares of respondents say that their organizations’ \\n\\ngen AI use cases have increased revenue within the business units deploying them (Exhibit [...] # researc h\\n\\nThe online survey was in the field from \\n\\nJuly 16 to July 31, 2024, and garnered \\n\\nresponses from 1,491 participants in \\n\\n101 nations representing the full range \\n\\nof regions, industries, company sizes, \\n\\nfunctional specialties, and tenures. Forty-\\n\\ntwo percent of respondents say they work \\n\\nfor organizations with more than $500 \\n\\nmillion in annual revenues. To adjust for \\n\\ndifferences in response rates, the data \\n\\nare weighted by the contribution of each \\n\\nrespondent’s nation to global GDP. March 2025 \\n\\nCopyright © McKinsey & Company \\n\\nDesigned by McKinsey Global Publishing \\n\\nMcKinsey.com fiflffffi—ffl—\\u0019\\u0018\\u0017ffi\\u0016\\u0018ff\\u0015—ffl—\\u0014\\u0013\\u0012\\u0011\\u0018ffiff\\u0016\\u0010\\u000f\\u0013 fiflffffi—ffl\\u0019\\u0018\\u0017—\\u0016\\u0019ff\\u0015\\u0017ff\\u0015—\\u0014fl\\u0013\\u0017—\\u0015\\u0012fl\\u0011—\\u0019ff—\\u0015\\u0012\\u0017— fiflffffi—ffl\\u0019\\u0018\\u0017\\u0016—fflffi\\u0015\\u0014\\u0013ffl\\u0017\\u0012\\u0011\\u0011\", \"score\": 0.6852132, \"raw_content\": null, \"images\": []}, {\"title\": \"重塑工作：生成式AI时代的变革管理 – McKinsey Greater China\", \"url\": \"https://www.mckinsey.com.cn/重塑工作：生成式ai时代的变革管理\", \"content\": \"2，Hannah Mayer、Lareina Yee、Michael Chui和Roger Roberts，“Superagency in the workplace: Empowering people to unlock AI’s full potential，”麦肯锡，2025年1月28日。\\n\\n3，“The state of AI in early 2024: Gen AI adoption spikes and starts to generate value，”麦肯锡，2024年5月30日；所谓数字与人工智能信任领域的领军者，指的是那些已将数据、人工智能以及核心价值观的伦理政策加以制度化，并有信心确保员工遵循这些政策的企业；它们不仅将相关政策写入使命宣言，还在数据隐私、人工智能与网络安全等方面落实了至少一半的最佳实践。\\n\\n4，“Morgan Stanley Wealth Management announces latest game-changing addition to suite of gen AI tools，”摩根士丹利新闻稿，2024年6月26日。\\n\\n5，Hannah Mayer、Lareina Yee、Michael Chui和Roger Roberts，“Superagency in the workplace: Empowering people to unlock AI’s full potential，”麦肯锡，2025年1月28日。\\n\\n6，Laura London、Stephanie Madner和Dominic Skerritt，“How many people are really needed in a transformation?”麦肯锡，2021年9月23日。\", \"score\": 0.59457535, \"raw_content\": null, \"images\": [{\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2025/10/图1-Reconfiguring-work-Change-management-in-the-age-of-genAI-exhibits-lzj.jpg\", \"description\": null, \"description_source\": null, \"score\": 2}, {\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2025/10/图2-Reconfiguring-work-Change-management-in-the-age-of-genAI-exhibits-lzj.jpg\", \"description\": null, \"description_source\": null, \"score\": 2}, {\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2026/06/feature-image_764x437.png\", \"description\": \"智能体时代，企业组织运营模式四问\", \"description_source\": \"alt\", \"score\": 2}, {\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2026/06/interview-web-image-764x437-1.jpg\", \"description\": \"麦肯锡叶海：揭秘商业世界的“黑洞式”增长\", \"description_source\": \"alt\", \"score\": 2}, {\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2026/06/web-image-764x437-1.jpg\", \"description\": \"多智能体协同？先解决各说各话的数据困局\", \"description_source\": \"alt\", \"score\": 2}, {\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2026/06/feature-image头图764X437.jpg\", \"description\": \"征程万里、风头正健 ：麦肯锡全球材料行业前瞻\", \"description_source\": \"alt\", \"score\": 2}, {\"url\": \"https://www.mckinsey.com.cn/wp-content/uploads/2019/03/McK_ScriptMark_RGB_White-33.png\", \"description\": \"McKinsey Greater China\", \"description_source\": \"alt\", \"score\": 0}]}], \"response_time\": 3.16, \"request_id\": \"919a4fe1-bb09-4f89-8876-c4bad6acd1db\"}}], \"combined_answer\": null, \"errors\": null}"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 12916,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 34,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p1",
+   "topic": "gardening",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "personal",
+   "depth": "early",
+   "question": "帮我算一下，我这次改造的预算摊到露台每平米上是多少钱？",
+   "reply": "按你给的“一万预算”计算：  \n10 000 元 ÷ 25 平米 = **400 元/平米**。\n\n这个数字只包含了土壤、容器、滴灌、植物、药剂等材料与设备，不含人工、物业协调和后续维护成本。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2614,
+   "output_tokens": 60,
+   "estimated_input_tokens": 3902,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 15.55,
+   "compression_ratio": 0.4125,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 2127,
+       "items": 1,
+       "covers_positions": [
+        0,
+        29
+       ],
+       "text": "顶楼25平米、朝西、夏季午后强西晒、墙面蓄热（局部温度比气温高5-8度）。整体策略：拥抱西晒，对抗酷暑。\n\n**承重与防水**：住宅露台设计活荷载250-350公斤/平米；重物沿梁和墙边放；用轻质介质（椰糠、珍珠岩掺配）替代纯园土可省重四成；单点超过150公斤的大盆控制数量。动工前做闭水试验；花箱花盆垫高3-5厘米架空；排水口保持畅通。主动向物业报备改造方案。\n\n**土壤配方（体积比）**：泥炭或椰糠4份、园土3份、珍珠岩2份、腐熟有机肥1份——比纯园土轻35-40%。变体一（月季三角梅）：有机肥加到1.5份+缓释肥；变体二（多肉香草）：珍珠岩3份、去有机肥。一万预算中土壤和容器约占三成。\n\n**自动滴灌**：必须上。水龙头接定时器+滴灌，25平米全套500元以内。夏季早晚各一次、每次10-15分钟起步。定时器选带防水盖；主管避开午后暴晒或包遮光布；留两三个“手动哨兵盆”不接滴灌。\n\n**植物配置**：骨架层（3-4株）——三角梅、紫薇或木槿、金银花或风车茉莉爬墙；主力开花层（6-8盆）——耐热月季、蓝雪花、天人菊、松果菊、百日草；填充层——太阳花、矮牵牛、香彩雀。花期接力：四月到十一月不断档。\n\n**月季**：盆栽放露台东侧或北侧；夏季最热六周拉50%遮阳网；盆外套浅色套盆隔热。耐热品种：自由精神、真宙、莫奈。顶楼通风好、光照足，黑斑病白粉病压力比一楼小。\n\n**病害预防**：盆间留冠幅距离、清内膛枝；只浇土不浇叶；每年换盆季覆新介质。梅雨前每7-10天打代森锰锌800倍液（保护性杀菌剂），雨多遇雨补打，重点喷叶背和下部老叶。配药宁稀勿浓，无风傍晚打，戴口罩手套，药液当天用完不过夜，每月涮喷壶。发病后：黑斑病用苯醚甲环唑1500倍稀释；白粉病用露娜森或千分之三小苏打水。病叶摘除装袋带离露台。\n\n**红蜘蛛**：每周翻叶背检查月季和三角梅。傍晚给叶背喷清水冲刷，夏天每周两三次。爆发用联苯肼酯和乙螨唑交替各打两次、间隔五天。\n\n**全年施肥月历**：二月底三月初缓释肥打底（奥绿318）；三到五月每周水溶肥（花多多2号和1号交替，浓度减半）；六月气温超32度频率减半；七八月全面停肥；九月恢复每周水溶肥，秋花前补一次高磷；十月底追秋季缓释肥；十一月到二月全面停肥。铁律：宁薄勿浓、高温不施肥、换盆两周内不施肥。\n\n**夏季降温**：六月中旬挂50%遮阳网，遮下午1-5点西侧；深色盆套浅色套盆或裹反光膜，盆面铺2-3厘米树皮/椰壳覆盖物（盆土峰值温度降4-6度）；贴墙盆离墙20厘米；浇水改清晨和日落后；滴灌加密为早晚各一轮；傍晚给地面泼水降温。\n\n**冬季**：零下五度。耐寒档（露天过冬）：月季、紫薇、木槿、金银花、松果菊。半耐寒档（套无纺布罩、盆垫泡沫离地、贴墙放）：风车茉莉、蓝雪花。怕冻档（必须进屋）：三角梅（低于五度受伤），太阳花香彩雀一年生放弃重买。冬季浇水：晴天中午半月一次，盆土微干抗冻；寒潮前一天不浇水。顶楼防风比防冻重要，无纺布罩扎紧底部。\n\n**防风**：高于一米的植物和花架做固定（花架膨胀螺丝锚墙或配重底座）；盆栽选矮胖盆型；骨架灌木控制冠幅。台风预案：一米以上盆栽放倒平躺，轻盆小盆收室内，收遮阳网和无纺布；滴灌主管检查固定，排水口做台风前最后一次清理；攀爬支架用绳子连成整体降低单点受力。台风后先检查排水再扶盆，断枝剪口修平。\n\n**养护记录**：记物候节点、异常事件、实验结果。每周日固定机位拍全露台照片加备注，手机相册按月归档。\n\n**扦插繁殖**：月季——秋季（九月十月）选半木质化枝条，剪带两三个芽点的段，下口斜剪蘸生根粉，插纯蛭石或珍珠岩，保持湿润放散光处，三到五周生根（生根率五到八成）。三角梅——春末夏初剪10厘米半木质化枝，水插或插沙土。生根后先移小盆缓苗一个月再上肥。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1579,
+       "items": 6,
+       "msg_ids": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 35,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3902,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 30,
+     "summary_cost_tokens": 5711,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p2",
+   "topic": "gardening",
+   "style": "direct",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "你之前说的预防黑斑病那个药，名字和稀释倍数是多少？",
+   "reply": "预防黑斑病用**代森锰锌**，稀释倍数 **800 倍**（即 1 克药对 800 毫升水）。  \n\n雨季前和梅雨季按日历打：每 7-10 天一次，无风傍晚喷，重点喷叶背和下部老叶，药液当天用完。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2967,
+   "output_tokens": 78,
+   "estimated_input_tokens": 4391,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 17.9,
+   "compression_ratio": 0.4668,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 2615,
+       "items": 1,
+       "covers_positions": [
+        0,
+        29
+       ],
+       "text": "以下为对话的要点摘要（已保留所有精确信息，仅保留最新结论）：\n\n**一、露台基础条件**\n- 位置：6楼顶楼，25平米，朝西，夏季午后2点至日落强西晒直射，墙面蓄热，局部温度比气温高5-8℃。\n- 策略：拥抱西晒、对抗酷暑，选耐晒品种为主力，配遮阳和降温设施。\n\n**二、承重与防水**\n- 住宅露台设计活荷载：250-350公斤/平米。\n- 原则：重物沿梁和墙边放；用轻质介质（椰糠、珍珠岩掺配）替代纯园土，重量省约35-40%；单点超150公斤的大盆控制数量。\n- 防水：动工前做闭水试验；花箱花盆垫高3-5厘米架空；排水口保持畅通。建议主动向物业报备改造方案。\n\n**三、土壤配方（最新结论）**\n- 通用配方（体积比）：泥炭或椰糠4份、园土3份、珍珠岩2份、腐熟有机肥1份，比纯园土轻35-40%。\n- 变体一（月季、三角梅等喜肥大户）：有机肥加到1.5份，加缓释肥打底。\n- 变体二（多肉、地中海香草）：珍珠岩加到3份，去掉有机肥。\n- 预算中土壤和容器约占三成。\n\n**四、灌溉系统**\n- 必须上自动滴灌。方案：水龙头接定时器+滴灌，25平米全套500元以内。\n- 夏季早晚各一次，每次10-15分钟起步；定时器选带防水盖的；主管避午后暴晒或包遮光布；留2-3盆\"手动哨兵盆\"不接滴灌。\n- 冬季改为两三天一次。\n\n**五、植物配置（春至秋不断档，四月到十一月）**\n- 骨架层（3-4株）：三角梅（天选之子）、紫薇或木槿、金银花或风车茉莉爬墙。\n- 主力开花层（6-8盆）：月季（耐热品种）、蓝雪花、天人菊、松果菊、百日草。\n- 填充层：太阳花、矮牵牛、香彩雀。\n- 原则：每种植物先问是否扛得住下午西晒。\n\n**六、月季养护**\n- 盆栽月季放露台东侧或北侧，夏季最热六周加50%遮阳网，盆外套浅色套盆隔热。\n- 耐热品种推荐：自由精神、真宙、莫奈。\n- 病害预防（防大于治）：盆间留冠幅距离、内膛枝冬剪清掉；只浇土不浇叶；每年换盆季覆新介质。\n- 药物预防：梅雨和高湿月份前，每7-10天打代森锰锌800倍液，赶在发病前按日历打，重点喷叶背和下部老叶。配药宁稀勿浓，无风傍晚操作，药液当天用完，连续用药季每月清水涮喷壶。\n- 发病后治疗：黑斑病用苯醚甲环唑1500倍稀释；白粉病用露娜森或千分之三小苏打水。病叶摘除装袋带离露台。保护剂按日历打、治疗剂见病才用，顺序别搞反。\n\n**七、红蜘蛛**\n- 预防：傍晚给叶背喷清水冲刷，夏天每周两三次。\n- 爆发用药：联苯肼酯与乙螨唑交替，各打两次、间隔五天。\n\n**八、全年施肥月历**\n- 2月底-3月初：换盆季缓释肥打底（奥绿318或同级）。\n- 3-5月：每周一次水溶肥，花多多2号（高磷促花）与1号（均衡）交替，浓度按说明减半。\n- 6月（气温超32℃）：频率减半。\n- 7-8月：全面停肥，只浇水。\n- 9月：恢复每周水溶肥，月季秋花前补一次高磷。\n- 10月底：灌木追秋季缓释肥。\n- 11月-2月：全面停肥。\n- 铁律：宁薄勿浓、高温不施肥、刚换盆/上盆两周内不施肥。\n\n**九、夏季降温（七月底死亡谷）**\n- 六月中旬挂50%遮阳网，遮下午1-5点西侧。\n- 深色盆套浅色套盆或裹反光膜；盆面铺2-3厘米树皮/椰壳覆盖物，盆土峰值温度降4-6℃；贴墙盆离墙20厘米。\n- 浇水改清晨和日落后，正午不浇；滴灌加密早晚各一轮。\n- 傍晚给地面泼水降温。\n\n**十、冬季过冬（最低零下5℃）**\n- 耐寒档（露天过冬）：月季、紫薇、木槿、金银花、松果菊。\n- 半耐寒档（看护过冬）：风车茉莉、蓝雪花——套无纺布罩、盆用泡沫垫离地、贴墙放。\n- 怕冻档（必须进屋）：三角梅（低于5℃受伤）；太阳花、香彩雀直接放弃来年重买。\n- 冬季浇水：晴天中午、半月一次，盆土微干抗冻；寒潮前一天不浇水。顶楼防风比防冻重要，无纺布罩扎紧底部。\n\n**十一、养护记录**\n- 记三类\"决策依据型\"信息：物候节点（萌芽、现蕾、盛花、休眠日期）、异常事件（病虫用药记录）、实验结果（控花修剪日期与开花日期间隔）。\n- 形式：手机相册加备注，每周日固定机位拍全露台，异常随手拍特写加一句话备注。\n\n**十二、顶楼防风与台风预案**\n- 日常：高于1米植物和花架做固定；盆栽选矮胖盆型；骨架灌木控制冠幅。\n- 台风（提前一天）：1米以上盆栽放倒平躺；轻盆小盆收进室内；遮阳网、无纺布必须收掉；滴灌主管检查固定；排水口做最后一次清理；攀爬支架用绳子连成整体。台风后先检查排水再扶盆，断枝剪口修平防感染。预案写成清单贴露台门背后。\n\n**十三、扦插繁殖**\n- 月季：秋季（9-10月最佳）选当年生半木质化枝条，剪成带2-3芽点段，下口斜剪蘸生根粉，插纯蛭石或珍珠岩，保持湿润放散光处，3-5周生根，生根率50-80%。\n- 三角梅：春末夏初剪10厘米半木质化枝，水插或插沙土，生根率高。\n- 翻车点：勿天天拔出来看根；生根后先移小盆缓苗一个月，勿立刻上肥大盆。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1579,
+       "items": 6,
+       "msg_ids": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 36,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 4391,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 30,
+     "summary_cost_tokens": 6067,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p3",
+   "topic": "gardening",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我一开始说这次露台改造总共能花多少钱来着？",
+   "reply": "你一开始只提了“预算约1万元”，没有给出更具体的总金额。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2555,
+   "output_tokens": 18,
+   "estimated_input_tokens": 3774,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 14.71,
+   "compression_ratio": 0.399,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 2006,
+       "items": 1,
+       "covers_positions": [
+        0,
+        29
+       ],
+       "text": "顶楼（6楼）25平米朝西露台，夏季午后西晒直射至日落，墙面蓄热，局部温度比气温高5-8度。预算约1万元，愿意投入时间打理。\n\n**承重与防水**：住宅露台活荷载250-350公斤/平米。重物沿梁和墙边放置，不集中放板中央；用轻质介质（椰糠、珍珠岩掺配）替代纯园土，重量省四成；单点超150公斤大盆控制数量。花箱花盆垫高3-5厘米架空，排水口保持畅通。主动向物业报备改造方案。\n\n**土壤配方（体积比）**：通用——泥炭或椰糠4份、园土3份、珍珠岩2份、腐熟有机肥1份，比纯园土轻35-40%。变体一（月季/三角梅）：有机肥加到1.5份加缓释肥。变体二（多肉/香草）：珍珠岩3份、去有机肥。土壤和容器约占预算三成。\n\n**自动滴灌**：必须上。定时器+滴灌家用套装，25平米全套500元以内。夏季早晚各一次、每次10-15分钟起步。定时器带防水盖；主管避暴晒或包遮光布；留两三个\"手动哨兵盆\"不接滴灌。冬季改两三天一次。\n\n**植物配置（三层）**：骨架层（3-4株）——三角梅（天选之子）、紫薇或木槿、金银花或风车茉莉爬墙。主力开花层（6-8盆）——月季（耐热品种）、蓝雪花、天人菊、松果菊、百日草。填充层——太阳花、矮牵牛、香彩雀。花期从四月到十一月不断档。\n\n**月季养护**：盆栽放露台东侧或北侧，盛夏六周单独拉50%遮阳网，盆外套浅色套盆隔热。耐热品种推荐自由精神、真宙、莫奈。病害预防——盆间留冠幅距离、只浇土不浇叶、每年换盆覆新介质。梅雨前每7-10天打代森锰锌800倍液（保护性杀菌剂），喷叶背和下部老叶，无风傍晚操作，配药当天用完不过夜。发病后：黑斑病用苯醚甲环唑1500倍稀释，白粉病用露娜森或小苏打水（千分之三），病叶摘除带离露台。\n\n**红蜘蛛**：每周翻叶背检查月季和三角梅。预防：傍晚给叶背喷清水，夏天每周两三次。爆发：联苯肼酯和乙螨唑交替各打两次、间隔五天。\n\n**全年施肥月历**：2月底3月初——缓释肥打底（奥绿318）。3-5月——每周水溶肥，花多多2号和1号交替，浓度减半。6月——频率减半（气温超32度）。7-8月——全面停肥。9月——恢复每周水溶肥，秋花前补一次高磷。10月底——追秋季缓释肥。11月至2月——全面停肥。铁律：宁薄勿浓、高温不施肥、换盆后两周内不施肥。\n\n**盛夏降温（最新结论）**：6月中旬挂50%遮阳网，遮下午1-5点西侧；深色盆套浅色套盆或裹反光膜，盆面铺树皮/椰壳覆盖物（降盆土峰值温度4-6度）；贴墙盆离墙20厘米；浇水改清晨和日落后，正午不浇；滴灌加密为早晚各一轮；傍晚给地面泼水；盛夏允许植物\"摆烂\"，活着进九月即胜利。\n\n**冬季（最低零下5度）**：耐寒档（露天过冬）——月季、紫薇、木槿、金银花、松果菊。半耐寒档（套无纺布罩、盆垫高离地、贴墙放）——风车茉莉、蓝雪花。怕冻档（必须进屋）——三角梅（低于5度受伤），太阳花、香彩雀一年生放弃重买。冬季浇水：晴天中午、半月一次，盆土微干抗冻。防风比防冻重要，无纺布罩扎紧底部。\n\n**台风预案**：日常——高于1米植物和花架用膨胀螺丝锚墙或配重底座，盆栽选矮胖盆型，控制冠幅。台风前——1米以上盆栽放倒平躺，轻盆小盆收进室内，遮阳网和无纺布必须收掉，滴灌主管检查固定，排水口做最后一次清理，攀爬支架用绳子连成整体。台风后先检查排水再扶盆，断枝剪口修平。\n\n**扦插繁殖**：月季——秋季（9-10月最佳）选当年生半木质化枝条，剪成带2-3芽点段，下口斜剪蘸生根粉，插纯蛭石或珍珠岩，保持湿润放散光处，3-5周生根，生根率5-8成。三角梅——春末夏初剪10厘米半木质化枝，水插或插沙土。生根后先移小盆缓苗一个月。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1579,
+       "items": 6,
+       "msg_ids": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 28,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3774,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 30,
+     "summary_cost_tokens": 5676,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p4",
+   "topic": "gardening",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "personal",
+   "depth": "early",
+   "question": "我家这个要打理的户外空间一共多大面积？",
+   "reply": "**25 平米**（你一开始就说的“顶楼 25 平米、朝西……”）。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2472,
+   "output_tokens": 22,
+   "estimated_input_tokens": 3688,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 15.26,
+   "compression_ratio": 0.3899,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1924,
+       "items": 1,
+       "covers_positions": [
+        0,
+        29
+       ],
+       "text": "顶楼25平米、朝西、夏季午后强西晒、墙面蓄热，活荷载按每平米250-350公斤设计。重物沿梁和墙边放置，单点不超过150公斤；用轻质介质（椰糠、珍珠岩掺配）替代纯园土，重量省四成；花箱花盆垫高3-5厘米架空，排水口保持畅通。闭水试验确认防水现状后动工，主动向物业报备改造方案。\n\n土壤通用配方（体积比）：泥炭或椰糠4份、园土3份、珍珠岩2份、腐熟有机肥1份，比纯园土轻35-40%。月季三角梅变体：有机肥加到1.5份加缓释肥；多肉香草变体：珍珠岩3份、去掉有机肥。土壤和容器约占预算三成。\n\n自动滴灌必须上。方案：定时器+滴灌家用套装，25平米全套500元以内。夏季早晚各一次、每次10-15分钟起步；定时器选带防水盖；主管避开午后暴晒或包遮光布；留两三个手动哨兵盆；冬季改两三天一次。\n\n植物配置：骨架层（3-4株）——三角梅、紫薇或木槿、金银花或风车茉莉；主力开花层（6-8盆）——耐热月季、蓝雪花、天人菊、松果菊、百日草；填充层——太阳花、矮牵牛、香彩雀。花期从四月到十一月不断档。\n\n月季：放在露台东侧或北侧，夏天最热六周拉50%遮阳网，盆外套浅色套盆隔热。耐热品种选自由精神、真宙、莫奈。病害预防：通风留冠幅间距、只浇土不浇叶、盆面覆新介质。梅雨前每7-10天打代森锰锌800倍液，配药宁稀勿浓、无风傍晚打、药液当天用完、塑料喷壶每月清涮。黑斑病用苯醚甲环唑1500倍，白粉病用露娜森或小苏打水（千分之三），病叶摘除带离。\n\n红蜘蛛：每周翻叶背检查月季和三角梅；傍晚给叶背喷清水冲刷，夏天每周两三次；爆发用联苯肼酯和乙螨唑交替各打两次、间隔五天。\n\n全年施肥月历：二月底三月初缓释肥打底（奥绿318）；三到五月每周水溶肥（花多多2号和1号交替，浓度减半）；六月气温上32℃后频率减半；七八月全面停肥；九月恢复每周水溶肥，秋花前补一次高磷；十月底追秋季缓释肥；十一月至二月停肥。铁律：宁薄勿浓、高温不施肥、换盆上盆两周内不施肥。\n\n夏季降温：六月中旬挂50%遮阳网，重点遮下午一点到五点西侧；深色盆套浅色套盆或裹反光膜，盆面铺树皮或椰壳覆盖物；贴墙盆离墙20厘米；滴灌加密早晚各一轮；傍晚泼地面降温；盛夏允许植物摆烂。\n\n冬季（最低零下五度）：耐寒档（露天过冬）——月季、紫薇、木槿、金银花、松果菊；半耐寒档（套无纺布罩、盆垫离地、贴墙）——风车茉莉、蓝雪花；怕冻档（必须进屋）——三角梅低于五度受伤，太阳花香彩雀直接放弃。冬季浇水改晴天中午、半月一次，盆土微干抗冻；寒潮前一天不浇；防风比防冻重要，无纺布罩扎紧底部。\n\n养护记录：记物候节点、异常事件、实验结果三类决策依据型信息。每周日固定机位拍全露台照片，异常随手拍加备注，手机相册按月归档。\n\n顶楼防风：高于1米的植物和花架做固定（花架膨胀螺丝锚墙或配重底座）；盆栽选矮胖盆型；骨架灌木控制冠幅。台风预案：一米以上盆栽放倒平躺，轻盆小盆收室内，遮阳网和无纺布收掉，滴灌主管检查固定，排水口清理，花箱攀爬支架用绳子连成整体降低单点受力。台风后先检查排水再扶盆，断枝剪口修平。预案写成清单贴露台门背后。\n\n扦插：月季秋季（避开盛夏）选半木质化枝条，剪成带两三个芽点的段，下口斜剪蘸生根粉，插纯蛭石或珍珠岩，保持湿润放散光处，三到五周生根，生根率五到八成。三角梅春末夏初剪十厘米半木质化枝，水插或插沙土。生根后移小盆缓苗一个月。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1579,
+       "items": 6,
+       "msg_ids": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 24,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3688,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 30,
+     "summary_cost_tokens": 5581,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p1",
+   "topic": "health",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我最近一次复查的低密度脂蛋白是多少？",
+   "reply": "**LDL 3.1**（三个月复查时的数据）。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2348,
+   "output_tokens": 15,
+   "estimated_input_tokens": 3536,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 14.08,
+   "compression_ratio": 0.4055,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1854,
+       "items": 1,
+       "covers_positions": [
+        0,
+        29
+       ],
+       "text": "**体检对话要点摘要（最新结论）**\n\n**基本信息**：35岁男，178cm，92kg（BMI≈29，超重上沿），互联网后端开发，久坐，基本不运动，外卖为主，每周加班3-4天至22点后。\n\n**标红项目及数值**：LDL 3.9（理想＜3.4）、总胆固醇5.9（参考上限5.2）、甘油三酯2.1（标准＜1.7）、HDL 0.9（理想＞1.0）、轻度脂肪肝、尿酸460（标准＜420，无痛风发作史属无症状高尿酸）、空腹血糖5.8（正常偏高）、血压128/85（正常高值，高血压线140/90）。\n\n**用药决策（最新结论）**：暂不吃他汀。35岁、假设血压血糖正常、不吸烟者心血管风险评分大概率低危，指南建议先做3-6个月强化生活方式干预。三个月后复查，若LDL仍在3.9以上或反升，再带两次报告去心内科门诊评估。\n\n**核心处方**：减重+运动，其他指标随此改善。目标6个月减8-10公斤。\n\n**饮食方案**：外卖为主约束下五条规则：①主食减半或换粗粮；②优先鸡胸、烤鱼、瘦牛肉、豆腐，避开糖醋/红烧/油炸；③每单强制加绿叶菜；④含糖饮料和果汁清零，换无糖茶或气泡水；⑤酱料另放、汤底不喝。自己做饭留给晚餐（杂粮饭+水煮/清炒蛋白质+大量蔬菜）。每餐七分饱，外卖盒剩三分之一。\n\n**运动方案**：第1-4周每天快走30分钟（可拆成2个15分钟，强度微喘能说话）。第5-12周加力量：每周2次、每次20分钟自重训练（深蹲、跪姿俯卧撑、平板支撑）。加班日保住\"下班步行20分钟\"底线。\n\n**睡眠方案**：①划45分钟刷手机额度，定闹钟；②到家先洗澡再躺沙发；③手机充电器放客厅，床上只留纸质书。目标先从1:30收到0:30，稳两周再前移。\n\n**应酬策略**：啤酒≤2瓶或白酒≤2两。第一杯慢喝，扛过前40分钟；主动倒茶倒水、手里有非酒精饮料；用\"调血脂医生盯着\"做挡箭牌。饭局主食砍掉，多夹蛋白质和蔬菜。三四次里争取推掉一次。\n\n**保健品（最新结论）**：鱼油（普通保健品级对降LDL几乎无效，对甘油三酯需高纯度高剂量）、辅酶Q10（不吃他汀则无意义）、红曲米（含洛伐他汀成分，有他汀副作用风险但无药品质检标准，明确不建议使用）。任何保健品效果远小于饮食改善，预算和注意力放在饮食运动上。\n\n**三个月复查清单（最新结论）**：核心四项血脂（LDL、总胆固醇、甘油三酯、HDL）、糖化血红蛋白、尿酸、肝功能。血压用上臂式电子血压计每周固定两个早晨自测。体重每周一次早晨空腹固定条件称。\n\n**三个月及格线（最新结论）**：体重降4-5公斤、LDL降至3.5以下、甘油三酯进入1.7以内、腰围减4厘米。\n\n**执行一个多月后进展**：快走天天有，外卖规则守住七八成，体重掉1.5公斤——健康减重标准区间（每周0.25-0.5公斤），系统在正常工作。只看周均值趋势线，不看单日；关注非体重指标（爬楼喘不喘、裤腰松紧、下午困不困）。\n\n**16+8轻断食（最新结论）**：不建议换方案。现有系统正在产出正常结果，若三个月后想优化，可试温和版12+12（早8点至晚8点进食），实际改变仅\"晚8点后不进食\"。\n\n**咖啡（最新结论）**：三杯美式在安全区间。咖啡因有急性升压效应但规律饮用者产生耐受，长期无明确正相关。美式是滤纸萃取，咖啡醇基本被滤掉，不影响血脂。不加糖奶、下午3点后不喝。\n\n**久坐工位方案**：电脑装番茄钟每50分钟强制弹起（接水/上厕所/站着回消息，两三分钟即可）。电话和语音会议一律站着开、午饭后园区快走、下午咖啡走远路买。有升降桌则每天站2-3小时，无则垫高显示器。碎片动作总和约每天多消耗一两百大卡，对血糖和甘油三酯意义不输晨走。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1493,
+       "items": 6,
+       "msg_ids": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 28,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3536,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 30,
+     "summary_cost_tokens": 5166,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p2",
+   "topic": "health",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我跟你说过我用的血压计是什么牌子吗？是什么牌子来着？",
+   "reply": "你没跟我说过具体牌子。  \n如果你手边有血压计，翻一下机身或包装就能看到品牌；如果还没买，推荐家用上臂式里口碑最稳的几个：欧姆龙（Omron）、鱼跃（Yuwell）、松下（Panasonic）这三个。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2344,
+   "output_tokens": 66,
+   "estimated_input_tokens": 3494,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 15.09,
+   "compression_ratio": 0.399,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1801,
+       "items": 1,
+       "covers_positions": [
+        0,
+        29
+       ],
+       "text": "**基本信息**：35岁男，178cm，92kg（BMI≈29，超重上沿接近肥胖线），互联网后端开发，久坐，基本不运动，外卖为主，每周加班3-4天到22点后。\n\n**标红项目及数值（基线数据）**：\n- 低密度脂蛋白LDL 3.9（理想＜3.4）\n- 总胆固醇5.9（参考上限5.2）\n- 甘油三酯2.1（标准＜1.7）\n- 高密度脂蛋白HDL 0.9（低于1.0）\n- 轻度脂肪肝\n- 尿酸460（标准＜420，无痛风发作史，属无症状高尿酸）\n- 空腹血糖5.8（正常偏高，建议加测糖化血红蛋白）\n- 血压128/85（正常高值，高血压线为140/90）\n\n**决策与行动框架**：\n- **暂不用药**：35岁、假设血压血糖正常、不吸烟，心血管风险评分属低危，按指南先做3-6个月强化生活方式干预，3个月后复查再评估是否需医疗介入。\n- **核心处方**：减重+运动，目标6个月减8-10公斤。\n- **复查清单（3个月后）**：血脂四项（LDL、总胆固醇、甘油三酯、HDL）、糖化血红蛋白、尿酸、肝功能；血压家测（上臂式电子血压计，每周固定两个早晨）；体重每周一次空腹称。\n- **3个月及格线**：体重降4-5公斤、LDL降至3.5以下、甘油三酯进1.7以内、腰围减4厘米。\n\n**饮食方案（外卖为主约束下）**：\n1. 主食减半或换粗粮（对甘油三酯贡献最大）\n2. 优先有完整蛋白质主菜的店（鸡胸、烤鱼、瘦牛肉、豆腐），避开糖醋/红烧/油炸\n3. 每单强制加一份绿叶菜\n4. 所有含糖饮料和果汁清零，换无糖茶或气泡水\n5. 酱料另放、汤底不喝\n6. 自己做的2-3顿留给晚餐：杂粮饭+水煮/清炒蛋白质+大量蔬菜\n7. 每餐七分饱，外卖盒剩三分之一\n\n**运动方案**：\n- **第1-4周**：每天快走30分钟（可拆成2个15分钟），强度微喘能说话\n- **第5-12周**：每周2次、每次20分钟自重训练（深蹲、跪姿俯卧撑、平板支撑）\n- **加班日兜底**：至少下班步行20分钟\n\n**熬夜改善（报复性熬夜）**：\n1. 合法化45分钟刷手机时间，定闹钟\n2. 到家先洗澡（利用体温下降促眠）\n3. 手机充电器放客厅，床上只留纸质书\n4. 目标先从1点多收到12点半，稳两周再提前\n\n**应酬策略**：单次上限啤酒≤2瓶或白酒≤2两；第一杯慢慢喝，扛过前40分钟；手里常持非酒精饮料；以\"调血脂医生盯着\"做挡箭牌；饭局主食砍掉；三四次中争取推掉一次。\n\n**保健品建议**：\n- 鱼油：普通保健品级对降LDL几乎无效，对甘油三酯需高纯度高剂量（处方级）\n- 辅酶Q10：不吃他汀则无必要\n- 红曲米（天然他汀）：含洛伐他汀成分，有副作用风险且无剂量控制与质检标准，明确不建议\n\n**关于咖啡**：三杯美式安全。咖啡因有急性升压效应（3-8mmHg），但规律饮用者产生耐受；美式滤纸萃取滤掉咖啡醇，不推高LDL；不加糖奶；最后一杯不晚于下午3点。\n\n**久坐微操作**：电脑装番茄钟，每50分钟强制站起2-3分钟（接水、上厕所、站着回消息）；电话/语音会议站着开；午饭后园区快走15分钟；下午咖啡走远路买；申请升降桌或垫高显示器。\n\n**1个多月后执行汇报**：体重掉1.5公斤（健康减重标准区间，每周0.25-0.5公斤），日均热量缺口约300大卡，系统在正常工作。建议继续现有方案跑满3个月，不换方案。16+8轻断食效果与普通热量限制相当，但加班作息下进食窗口落在意志力最薄弱时段，加班日易演变为晚上猛吃，当前方案更稳；如需优化可试温和版12+12（早8点到晚8点进食）。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1493,
+       "items": 6,
+       "msg_ids": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 39,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3494,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 30,
+     "summary_cost_tokens": 5155,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p3",
+   "topic": "health",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我那个'坏胆固醇'最近一次查出来是多少？",
+   "reply": "最近一次（三个月复查）LDL（坏胆固醇）是 **3.1 mmol/L**。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2340,
+   "output_tokens": 24,
+   "estimated_input_tokens": 3471,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 13.85,
+   "compression_ratio": 0.3973,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1787,
+       "items": 1,
+       "covers_positions": [
+        0,
+        29
+       ],
+       "text": "年龄35岁男性，178cm、92kg，BMI约29（超重上沿接近肥胖线），互联网后端开发，久坐，基本不运动，外卖为主，每周加班3–4天至22点后。\n\n**标红项目及数值（基线）**：\n- 低密度脂蛋白LDL 3.9（理想<3.4）\n- 总胆固醇5.9（参考上限5.2）\n- 甘油三酯2.1（标准<1.7）\n- 高密度脂蛋白HDL 0.9（低于1.0）\n- 轻度脂肪肝\n- 尿酸460（标准<420，无痛风发作史属无症状高尿酸）\n- 空腹血糖5.8（正常偏高，建议复查加测糖化血红蛋白）\n- 血压128/85（正常高值，高血压线140/90）\n\n**核心结论**：所有问题指向能量过剩和久坐，核心处方为减重和运动。**目标：6个月减8–10公斤。** 当前阶段不需用药；3个月后复查，若LDL仍在3.9以上或上升，再带两次报告去心内科门诊评估。\n\n**饮食方案（外卖为主约束下）**：\n1. 主食减半或换粗粮（对甘油三酯贡献最大）\n2. 优先完整蛋白质主菜（鸡胸、烤鱼、瘦牛肉、豆腐），避开糖醋/红烧/油炸\n3. 每单强制加一份绿叶菜，无素菜选项的店淘汰\n4. 所有含糖饮料和果汁清零，换无糖茶或气泡水\n5. 酱料另放、汤底不喝\n6. 每餐七分饱，外卖盒剩1/3允许甚至鼓励\n\n**运动方案**：\n- 第1–4周：每天快走30分钟（可拆成2×15分钟），强度微喘能说话\n- 第5–12周：每周2次、每次20分钟自重训练（深蹲、跪姿俯卧撑、平板支撑）\n- 加班日兜底：至少下班步行20分钟\n\n**睡眠改造（报复性熬夜）**：\n1. 合法化45分钟刷手机时间，定闹钟\n2. 到家先洗澡再躺沙发（利用体温下降节律）\n3. 手机充电器放客厅，床上只留纸质书\n4. 目标先从凌晨1:30收到00:30，稳两周再提前\n\n**喝酒应酬（每月3–4次）**：\n- 单次上限：啤酒≤2瓶或白酒≤2两\n- 主动倒茶倒水、手里保持非酒精饮料、用“调血脂医生盯着”做挡箭牌\n- 饭局那顿主食砍掉，多夹蛋白质和蔬菜\n- 每月争取推掉1次可推的饭局\n\n**保健品建议**：普通鱼油对降LDL几乎无效；辅酶Q10目前不需吃；红曲米含洛伐他汀但剂量不明、有副作用风险，明确不建议。\n\n**3个月复查清单**：\n- 核心四项血脂（LDL、总胆固醇、甘油三酯、HDL）\n- 糖化血红蛋白\n- 尿酸\n- 肝功能\n- 血压（家测：上臂式电子血压计，每周固定两个早晨）\n- 体重（每周一次早晨空腹固定条件）\n\n**3个月及格线**：体重降4–5kg、LDL降至3.5以下、甘油三酯降至1.7以内、腰围减4cm。\n\n**执行1个多月后更新**：快走基本天天有，外卖规则守住七八成，体重掉1.5kg——落在健康减重区间（每周0.25–0.5kg），系统在正常工作，建议继续运行现有方案2个月，不加码不换方案。\n\n**16+8轻断食**：不推荐当前尝试，加班至22点的作息下进食窗口压在意志力最薄弱时段，易演变为晚上猛吃。若3个月后想优化，可试温和版12+12（早8点至晚8点进食，即晚8点后不进食）。\n\n**咖啡**：三杯美式在安全区间。血压方面，规律饮用者产生耐受，无明确正相关，但测血压前1小时别喝；血脂方面，美式为滤纸萃取，咖啡醇基本被滤掉，不影响；不加糖奶、下午3点后不喝。\n\n**久坐微操作**：每50分钟强制起身一次（接水、上厕所、站着回消息）；电话/语音会议一律站着开；午饭后的15分钟园区快走；有升降桌则每天站2–3小时，无则垫高显示器创造可站可坐条件。碎片动作总和约每天多消耗100–200大卡，且打断连续静止对血糖和甘油三酯意义不输晨走。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1493,
+       "items": 6,
+       "msg_ids": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 30,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3471,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 30,
+     "summary_cost_tokens": 5175,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p4",
+   "topic": "health",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "刚开始那会儿，我的甘油三酯基线值是多少来着？",
+   "reply": "你最初的甘油三酯基线是 **2.1 mmol/L**。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2528,
+   "output_tokens": 18,
+   "estimated_input_tokens": 3842,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 15.76,
+   "compression_ratio": 0.4419,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 2155,
+       "items": 1,
+       "covers_positions": [
+        0,
+        29
+       ],
+       "text": "**用户基本信息**：35 岁男，178cm、92 公斤，BMI ≈ 29（超重上沿/接近肥胖线）。互联网后端开发，久坐，基本不运动，外卖为主，每周加班三四天到十点以后。\n\n**标红项目及数值**：\n- 血脂：低密度脂蛋白 LDL 3.9（理想<3.4）、总胆固醇 5.9（参考上限 5.2）、甘油三酯 2.1（标准<1.7）、高密度脂蛋白 HDL 0.9（低于 1.0）\n- 轻度脂肪肝\n- 尿酸 460（标准<420，无痛风发作史，无症状高尿酸）\n- 空腹血糖 5.8（正常偏高，建议加测糖化血红蛋白）\n- 血压 128/85（正常高值，距 140/90 高血压线尚有距离）\n\n**核心判断**：典型久坐外卖型代谢综合征，所有问题指向能量过剩和久坐，无需立即用药。低危人群指南建议先做 3-6 个月强化生活方式干预后复查评估。目标：六个月减 8-10 公斤。\n\n**饮食方案（外卖为主约束下）**：五条规则——①主食减半或换粗粮；②优先完整蛋白质主菜（鸡胸、烤鱼、瘦牛肉、豆腐），避糖醋/红烧/油炸；③每单强制加一份绿叶菜，无素菜选项的店淘汰；④含糖饮料和果汁清零，换无糖茶或气泡水；⑤酱料另放、汤底不喝。自己做的两三顿留给晚餐（杂粮饭+水煮/清炒蛋白质+大量蔬菜）。每餐七分饱，外卖盒剩三分之一允许。\n\n**运动方案**：第一阶段（第 1-4 周）每天快走 30 分钟，可拆两个 15 分钟，强度微喘能说话。第二阶段（第 5-12 周）每周两次、每次 20 分钟自重训练（深蹲、跪姿俯卧撑、平板支撑）。加班日兜底：下班步行 20 分钟。目标排序：先建立\"每天都动\"的习惯。\n\n**睡眠改善（报复性熬夜 1 点多睡）**：三步——①合法化 45 分钟刷手机额度并设闹钟；②到家先洗澡（利用体温下降生理节律）；③手机充电器放客厅，床上只留纸质书。目标先收至 12:30，稳两周再提前。\n\n**应酬管理（每月三四次）**：单次上限啤酒≤2 瓶或白酒≤2 两。战术：主动倒茶倒水、手里常持非酒精饮料、用\"调血脂医生盯着\"做挡箭牌。饭局主食砍掉，多夹蛋白质和蔬菜。三四次里争取推掉一次。\n\n**保健品评估**：鱼油（普通保健品级对降 LDL 几乎无效）；辅酶 Q10（现不吃他汀，无必要）；红曲米（含洛伐他汀但有他汀副作用风险且无剂量质控，明确不建议）。总原则：现阶段任何保健品效果远小于饮食运动改善。\n\n**三个月复查清单**：核心四项血脂（LDL、总胆固醇、甘油三酯、HDL）必查；加测糖化血红蛋白；尿酸复查；肝功能（脂肪肝方向+留肝酶基线）；血压自测（上臂式电子血压计，每周固定两个早晨）。体重每周一次空腹称。\n\n**三个月及格线**：体重降 4-5 公斤、LDL 降到 3.5 以下、甘油三酯进 1.7 以内、腰围减 4 厘米。\n\n**一个月后进展汇报**：快走基本天天有，外卖规则守住七八成，体重掉 1.5 公斤（最新结论：恰好落在健康减重标准区间 0.25-0.5 公斤/周，系统工作正常）。建议继续现有方案跑满三个月，勿频繁换方案。\n\n**16+8 轻断食评估**：减重效果与普通热量限制相当，本质仍是热量缺口。用户加班到十点多，若做 16+8 进食窗口压在意志力最薄弱时段，加班日易演变为晚上猛吃，不如现有规则稳。建议先维持现有系统，三个月后若想优化可试温和版 12+12（早八点到晚八点进食，即晚八点后不进食）。\n\n**咖啡评估**：三杯美式在安全区间。血压方面，规律饮用者产生耐受，长期适量与高血压风险无明确正相关，但体检/家测血压前一小时别喝。血脂方面，美式为滤纸萃取，咖啡醇基本被滤掉，不推高 LDL。需审计咖啡搭档（拿铁、加糖加奶精含热量和反式脂肪）。最后一杯不晚于下午两三点（咖啡因半衰期 5-6 小时）。\n\n**久坐微操作**：连续久坐 90 分钟以上下肢血流和胰岛素敏感性显著下降。方案——①电脑装番茄钟，每 50 分钟强制起身 2-3 分钟（接水、上厕所、站着回消息）；②电话和语音会议一律站着开，午饭后 15 分钟园区快走，下午咖啡走远路买；③申请升降桌，每天站 2-3 小时，或将显示器垫高。碎片动作总和约每天多消耗一两百大卡，对血糖和甘油三酯意义不输晨走。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1493,
+       "items": 6,
+       "msg_ids": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 33,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3842,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 30,
+     "summary_cost_tokens": 5315,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "code_identifier",
+   "depth": "early",
+   "question": "如果要新加一路召回，代码上应该注册到哪个类？",
+   "reply": "新召回通道的注册点在 `HybridRetrieverV2`（`retrieval/service.py`）。\n\n具体做法：\n\n1. 新建一个 `RecallChannel` 子类（或直接用现有的 `BaseRecallChannel`），实现 `recall(self, query: Query) -> List[Candidate]` 接口。\n2. 在 `HybridRetrieverV2.__init__` 里把新通道实例化并加入 `self.channels` 列表（或对应的 `channel_registry` 字典）。\n3. 保证新通道的输出格式与现有通道一致（`Candidate` 里必须带 `doc_id`、`score`、`source` 等字段），这样 RRF 融合层可以零改动地接进来。\n\n示例（伪代码）：\n\n```python\n# retrieval/service.py\nclass HybridRetrieverV2:\n    def __init__(self, cfg):\n        self.channels = [\n            BM25Channel(cfg),\n            VectorChannel(cfg),\n            # 新增\n            NewFooChannel(cfg),   # ← 注册在这里\n        ]\n```\n\n之后 RRF 融合会自动把 `NewFooChannel` 召回的候选并进来，无需修改融合逻辑。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2565,
+   "output_tokens": 241,
+   "estimated_input_tokens": 3515,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 20.73,
+   "compression_ratio": 0.3808,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 2112,
+       "items": 1,
+       "covers_positions": [
+        0,
+        39
+       ],
+       "text": "以下是对话的要点摘要，已按最新结论整理：\n\n**项目概况**：8万篇文档（产品手册、运维文档、历史工单、内部wiki），面向客服和售后工程师。检索服务入口类为 `HybridRetrieverV2`（`retrieval/service.py`）。文档源为S3和Confluence，格式含PDF扫描件、Word、HTML、JSON工单。原则：宁可\"查不到\"不要\"查错\"。\n\n**清洗管线**：格式归一化（PDF优先文本层，扫描件OCR并打来源标记；Word/HTML转Markdown保留标题层级）→ 结构提取（保留标题、表格、代码块、步骤列表）→ 质量过滤（去目录页/封面页/修订记录；工单JSON只保留问题描述和最终解决方案）。管线可重跑，每篇记录清洗版本号。\n\n**Embedding模型**：bge-m3（多语言，支持长文本），自部署（消费级GPU），数据不出内网。需用模型规定指令前缀，锁定版本后换模型需全量重建索引。\n\n**向量库**：pgvector起步，HNSW索引。元数据（权限、来源、版本、更新时间）与向量同库，过滤用SQL WHERE。迁移触发条件：向量量过千万或p99延迟超标。\n\n**混合检索**：RRF（倒数排名融合）初版，两路各取top 50，k=60。评估集就绪后可按查询类型动态加权。BM25价值高（错误码/配置项/命令精确匹配占三到四成），不可砍掉关键词检索。\n\n**中文分词**：jieba加自定义词典（产品名、模块名、错误码格式、常用命令），专人维护。同义词归一（口语↔书面），英文术语统一小写、保留原形，不做stemming。\n\n**Query改写**：轻量档（去口水词、错别字纠正、术语归一化）零成本先上。重量档（7B小模型LLM改写），改写前后两版分别检索后合并，原始版本结果权重高于改写版本。\n\n**多路融合**：RRF扩展支持任意路数。召回路统一接口（输入query对象，输出带分数候选列表）。标准问匹配通道：高频问题人工维护标准问-标准答案对，embedding相似度匹配，高置信度阈值时跳过生成环节，预计拦截两到三成流量。\n\n**Chunk大小**：384 token，相邻块重叠64 token。优先按Markdown标题边界切，不跨标题。标题层级路径（如\"部署指南 > 集群配置 > 网络参数\"）作为前缀拼入每个chunk文本再做embedding。表格单独成块不拆行，代码块同理。\n\n**元数据过滤**：权限过滤做在检索层（pgvector WHERE子句）。四个索引维度：权限（公开/内部/受限）、来源（手册/工单/wiki）、产品版本、更新时间。版本过滤对售后场景关键。\n\n**评估集**：从客服系统导出半年真实问题，聚类去重后挑200条代表性查询，人工标注\"黄金文档\"（工作量约两人周）。指标：检索层 recall@5、recall@10、MRR；端到端层 LLM评审正确性和有据性。另留50条\"无答案查询\"测硬编。每次改动跑全量评估集，分数进CI报表。\n\n**Rerank**：第一版就上。召回融合后取top 20进reranker，重排后取top 5给生成。模型：bge-reranker-v2-m3。reranker分数直接做置信度阈值（top 1低于阈值走\"未找到可靠答案\"分支）。\n\n**三层缓存**：①标准问快速通道；②语义缓存（历史查询embedding+答案，相似度阈值≥0.95）；③检索结果缓存（key为归一化查询，TTL随文档更新周期）。所有缓存命中打日志记录层级。\n\n**增量索引**：检测（S3事件通知+Confluence webhook+每日全量内容哈希校对）→ 变更文档整篇重切（不做chunk级diff）→ 新chunk写入、旧chunk软删标记（保留一周后物理清理），用文档ID+版本号保证原子性。延迟目标：文档更新后10分钟内可检索。\n\n**工单数据脱敏**：清洗管线加PII识别（正则+NERT双保险），客户名、电话、邮箱、合同号全部替换为占位符，脱敏在索引前完成。脱敏前后映射表存隔离存储，回溯走单独审批。需与法务书面确认脱敏标准。\n\n**幻觉控制四道防线**：①reranker置信度阈值，检索质量不够不进生成，返回\"未找到可靠答案，建议转人工\"；②prompt指令\"仅根据以下资料回答，没有的信息回答不知道\"，每个关键论断标注来源编号；③输出后校验（实体/数字/版本号/命令是否在原文出现过，未出现标黄提示\"此处请人工核实\"）；④答案旁展示原文片段和跳转链接。\n\n**全链路延迟**：query改写（小模型）100-300ms、双路召回并行50-100ms、rerank 50-100ms、生成1-3秒，p50约2-4秒。优化优先级：①流式输出，首token压到一秒内；②标准问快速通道和语义缓存命中跳过生成（百毫秒级）；③改写、召回、rerank可并行。先不做投机解码等激进优化。\n\n**中英夹杂处理**：bge-m3多语言模型覆盖embedding侧。BM25侧：错误码和术语进自定义词典；建立中英术语对照表在查询扩展阶段补等价词；英文token统一小写。query改写阶段保留英文引文原样、只改写中文部分。测试集专门放中英混合查询。\n\n**监控大盘三层**：系统层（各环节延迟分位数、错误率、缓存命中率按层级拆分、上游API配额余量和重试次数）；质量层（\"未找到可靠答案\"触发率及趋势、reranker top1分数分布漂移、用户反馈率、每周抽样50条人工标注滚动小评估）；业务层（日活查询量、自助解决率、客服平均处理时长变化）。反模式：不上\"平均响应长度\"\"生成token数\"等虚荣指标。第一版七八个核心指标。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1217,
+       "items": 6,
+       "msg_ids": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 25,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3515,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 40,
+     "summary_cost_tokens": 6377,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p2",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "按你定下来的切分参数，chunk 大小和重叠分别是多少 token？",
+   "reply": "384 token / 重叠 64 token。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2327,
+   "output_tokens": 9,
+   "estimated_input_tokens": 3165,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 24.19,
+   "compression_ratio": 0.3402,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1757,
+       "items": 1,
+       "covers_positions": [
+        0,
+        39
+       ],
+       "text": "以下是对话的要点摘要（压缩至400字以内，保留所有精确信息，仅保留最新结论）：\n\n---\n\n**项目概况**：8万篇文档（产品手册、运维文档、历史工单、内部wiki），来源S3和Confluence，格式含PDF扫描件、Word、HTML、JSON。用户为客服和售后工程师。检索服务入口类为 `HybridRetrieverV2`（`retrieval/service.py`）。\n\n**清洗管线**：三段式——格式归一化（PDF优先文本层，扫描件OCR并打标记；Word/HTML转Markdown保留标题层级；工单JSON仅保留问题描述和最终解决方案）→ 结构提取（保留标题、表格、代码块、步骤列表）→ 质量过滤（去目录页、封面页、修订记录）。每篇记录清洗版本号，支持增量重刷。\n\n**Embedding模型**：选用BGE系列（bge-large-zh或bge-m3），自部署消费级显卡，数据不出内网。query和document须使用模型规定的指令前缀。模型锁版本，换模型=全量重建索引。\n\n**向量库**：pgvector起步，HNSW索引。迁移到专用向量库的触发条件为向量量过千万或p99延迟超标（最新结论）。\n\n**混合检索**：RRF融合（k=60），两路各取top 50。后续可按查询类型动态加权。\n\n**中文分词**：jieba加自定义词典（产品名、模块名、错误码、常用命令），做同义词归一化（口语↔书面语），英文术语统一小写、保留原形、不做stemming。\n\n**Query改写**：轻量档（去口水词、错别字纠正、术语归一化）先上；重量档用7B级LLM改写，改写版与原始版结果合并，原始版权重更高。\n\n**多路融合**：RRF扩展支持任意路数，召回路统一接口（输入query对象，输出带分数候选列表）。标准问匹配路用embedding相似度，高置信度阈值时直接跳过生成环节，预期拦截20-30%流量。\n\n**Chunk大小**：384 token，相邻块重叠64 token。优先按Markdown标题边界切，标题层级路径作为前缀拼入每个chunk再做embedding。表格和代码块单独成块不拆行。\n\n**元数据过滤**：权限过滤在检索层完成（pgvector WHERE子句）。索引维度包括权限标签（公开/内部/受限）、文档来源、产品版本、更新时间。\n\n**评估集**：从客服系统导出最近半年真实问题，聚类去重后挑200条代表性查询，人工标注黄金文档（工作量约两人周）。指标：检索层recall@5、recall@10、MRR；端到端层LLM评审正确性和有据性。另留50条\"无答案查询\"测试幻觉。\n\n**Rerank**：第一版即上，召回融合后取top 20进reranker，重排后取top 5给生成模型。选用bge-reranker-v2-m3（568M参数，2.27GB，开源）。reranker分数用作置信度阈值，低于阈值返回\"未找到可靠答案\"。\n\n**缓存**：三层——标准问快速通道、语义缓存（相似度阈值0.95）、检索结果缓存（TTL跟随文档更新周期）。所有缓存命中打日志。\n\n**增量索引**：S3用事件通知，Confluence用webhook+每日全量内容哈希比对兜底。变更文档整篇重切，新chunk写入+旧chunk标记删除（文档ID+版本号保证原子性），软删保留一周。延迟目标：文档更新后10分钟内可检索。\n\n**PII脱敏**：清洗管线中加入PII识别（正则+Ner双保险），客户名、电话、邮箱、合同号替换为占位符，脱敏发生在索引之前。脱敏前后映射表存隔离存储，走单独审批流程访问。\n\n**幻觉控制**：四道防线——①reranker置信度阈值拦截低质量检索；②prompt指令\"仅根据资料回答，不知道说不知道\"并要求标注来源编号；③输出后校验实体（数字、版本号、命令）是否在原文中出现，未出现则标黄提示；④答案旁展示原文片段和跳转链接。\n\n**延迟预算**：query改写（小模型）100-300ms、双路召回并行50-100ms、rerank 50-100ms、生成1-3秒，全链路p50约2-4秒。优化：流式输出压首token到1秒内；标准问和语义缓存命中跳过生成；改写、召回、rerank并行。\n\n**中英混杂处理**：bge-m3多语言模型覆盖embedding侧；BM25侧做错误码/术语进自定义词典、中英术语对照表查询扩展、英文token统一小写。引文混合查询在改写阶段保留英文报错原文。\n\n**监控大盘**：三层——系统层（各环节延迟分位数、错误率、缓存命中率、上游API配额）、质量层（\"未找到可靠答案\"触发率、reranker top1分数分布漂移、用户反馈率、每周50条抽样人工评估）、业务层（日活查询量、自助解决率、客服平均处理时长）。避免虚荣指标如平均响应长度、生成token数。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1217,
+       "items": 6,
+       "msg_ids": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 30,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3165,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 40,
+     "summary_cost_tokens": 42746,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p3",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "code_identifier",
+   "depth": "early",
+   "question": "我们一开始定的那个召回服务入口类，类名叫什么来着？",
+   "reply": "HybridRetrieverV2",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2496,
+   "output_tokens": 4,
+   "estimated_input_tokens": 3419,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 15.99,
+   "compression_ratio": 0.3691,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 2010,
+       "items": 1,
+       "covers_positions": [
+        0,
+        39
+       ],
+       "text": "以下是对话的要点摘要：\n\n- **项目规模**：8万篇文档（产品手册、运维文档、历史工单、内部wiki），用户为客服和售后工程师。\n- **代码入口**：检索服务入口类为 `HybridRetrieverV2`，位于 `retrieval/service.py`。\n- **文档来源**：S3（事件通知检测变更）和 Confluence（webhook + 每日全量校对兜底，内容哈希比对），接入层分开写。\n- **清洗管线**：三段式：格式归一化（PDF优先文本层，扫描件OCR并打来源标记；Word/HTML转带标题层级的Markdown保留表格）→ 结构提取（保留标题层级、表格、代码块、步骤列表）→ 质量过滤（去掉目录/封面/修订记录；工单JSON只保留问题描述和最终解决方案）。管线可重跑，每篇记录清洗版本号，支持增量重刷。\n- **脱敏**：工单数据在清洗阶段即做PII脱敏（客户名、电话、邮箱、合同号替换为占位符），用正则+NER双保险，映射表存隔离存储走单独审批。需与法务书面确认脱敏标准。\n- **Embedding模型**：BGE系列（bge-large-zh 或 bge-m3），自部署消费级GPU，数据不出内网。query和document需用模型规定的指令前缀。模型锁定版本，换模型=全量重建索引。\n- **向量库**：pgvector起步，HNSW索引。迁移到专用向量库的触发条件：向量量过千万或p99延迟超标。\n- **混合检索**：RRF（倒数排名融合），k=60，两路各取top 50。未来支持多路扩展（标准问匹配）。BM25在错误码/配置项/命令行等精确匹配查询中占三到四成。\n- **中文分词**：jieba加自定义词典（产品名、模块名、错误码格式、常用命令）。同义词归一化（口语↔书面）。英文术语统一小写、保留原形，不做stemming。\n- **Query改写**：轻量档（去口水词、错别字纠正、术语归一化）先上。重量档用7B级LLM改写口语问题为检索友好形式，改写前后两版均检索后合并，原始query结果优先。引文混合查询只改中文部分，保留英文报错原文。\n- **Chunk大小**（最新结论）：384 token，相邻块重叠64 token。优先按Markdown标题边界切，不跨标题。标题层级路径作为前缀拼入每个chunk做embedding。表格和代码块单独成块不拆行。\n- **元数据过滤**：权限过滤在检索层完成（pgvector的WHERE子句），每个chunk继承文档权限标签（公开/内部/受限）。另索引文档来源、产品版本、更新时间。版本过滤对售后场景关键。\n- **评估集**：从客服系统导出近半年真实问题，聚类去重后挑200个代表性查询，人工标注\"黄金文档\"（工作量约两人周）。指标：检索层 recall@5、recall@10、MRR；端到端层用LLM评审正确性和有据性。另留50条\"无答案查询\"测试不会硬编。每次改动跑全量评估集，分数进CI报表。\n- **Rerank**：第一版即上。召回融合后取top 20进reranker，重排后取top 5给生成。用bge-reranker-v2-m3，GPU延迟几十毫秒。reranker分数做\"置信度阈值\"——top1低于阈值走\"未找到可靠答案\"分支。\n- **缓存**：三层。第一层：标准问快速通道（高频问题人工维护\"标准问-标准答案\"对，embedding相似度匹配，高置信度直接返回，跳过生成，拦截两三成流量）。第二层：语义缓存（历史查询embedding+答案，新查询相似度≥0.95直接返回缓存）。第三层：检索结果缓存（key为归一化后查询，TTL随文档更新周期，重建索引时主动失效）。所有缓存命中打日志记录层级。\n- **增量索引**：检测→重切→替换流水线。变更文档整篇重新清洗切分，新chunk写入、旧chunk标记删除，用文档ID+版本号保证原子性。软删保留一周再物理清理。延迟目标：文档更新后10分钟内可检索。\n- **幻觉控制（四道防线）**：① reranker置信度阈值，检索质量不够不进生成，返回\"未找到可靠答案，建议转人工\"；② prompt指令\"仅根据以下资料回答\"，每个关键论断标注来源编号；③ 输出后轻量校验，检查实体（数字、版本号、命令）是否在原文中出现，未出现标黄提示；④ 答案旁展示原文片段和跳转链接。\n- **延迟预算**：query改写（小模型）100-300ms，双路召回并行50-100ms，rerank 50-100ms，生成1-3秒，全链路p50约2-4秒。优化：生成用流式输出首token压到1秒内；标准问快速通道和语义缓存命中跳过生成（百毫秒级）；改写、召回、rerank并行。\n- **中英夹杂处理**：bge-m3多语言模型覆盖embedding侧；BM25侧：错误码和产品术语进自定义词典；建立中英术语对照表用于查询扩展；英文token统一小写。测试集专门放一组中英混合查询。\n- **监控大盘（三层）**：系统层（各环节延迟分位数、错误率、缓存命中率按层级拆分、上游API配额余量及重试次数）；质量层（\"未找到可靠答案\"触发率及趋势、reranker top1分数分布漂移、用户\"答案没用\"反馈率、每周抽样50条滚动小评估）；业务层（日活查询量、自助解决率、客服平均处理时长变化）。不监控\"平均响应长度\"或\"生成token数\"。第一版约7-8个核心指标。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1217,
+       "items": 6,
+       "msg_ids": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 31,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3419,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 40,
+     "summary_cost_tokens": 6328,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p4",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "切片的颗粒度跟前后衔接的余量，当时拍板的是多大？",
+   "reply": "切片参数：  \n- 目标长度：384 token  \n- 相邻块重叠：64 token  \n\n标题边界优先切；表格、代码块单独成块；标题层级路径拼前缀。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2468,
+   "output_tokens": 45,
+   "estimated_input_tokens": 3376,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 16.74,
+   "compression_ratio": 0.3639,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1964,
+       "items": 1,
+       "covers_positions": [
+        0,
+        39
+       ],
+       "text": "以下是对话的要点摘要：\n\n- **项目规模**：8万篇文档，含产品手册、运维文档、历史工单、内部wiki。用户为客服和售后工程师。\n- **代码入口**：`HybridRetrieverV2` 类，位于 `retrieval/service.py`，所有召回路注册于此。\n- **数据源**：S3 + Confluence，格式杂（PDF扫描件、Word、HTML、JSON工单）。接入层分开写。\n- **清洗管线**：三段式：格式归一化 → 结构提取 → 质量过滤。PDF优先文本层，扫描件过OCR并打来源标记；Word/HTML转带标题层级的Markdown；保留标题层级、表格、代码块、步骤列表。质量过滤去掉目录页、封面页、修订记录；工单JSON只保留问题描述和最终解决方案。管线落地为可重跑批处理，每篇文档记录清洗版本号。\n- **Embedding模型**：BGE系列（bge-large-zh 或 bge-m3），自部署（单张消费级显卡），数据不出内网。需使用指令前缀，模型锁版本。\n- **向量库**：pgvector 起步，HNSW索引。触发迁移条件：向量量过千万或p99延迟超标。\n- **混合检索融合**：RRF（倒数排名融合），k=60。两路各取top 50。不做手拍权重。\n- **中文分词**：jieba + 自定义词典（产品名、模块名、错误码格式、常用命令）。同义词归一（口语↔书面），英文术语统一小写保留原形，不做stemming。\n- **Query改写**：轻量档（去口水词、错别字纠正、术语归一化）先上；重量档用LLM（7B级别）改写，改写前后两版都检索、结果合并，原始版本权重高于改写版本。\n- **Chunk大小**：384 token，相邻块重叠64 token。优先按Markdown标题边界切；标题层级路径作为前缀拼入每个chunk再embedding；表格单独成块不拆行；代码块同理。\n- **多路召回融合**：RRF扩展，召回路抽象为统一接口（输入query对象，输出带分数候选列表）。标准问匹配路：高频问题人工维护“标准问-标准答案”对，embedding相似度匹配，高置信度阈值时直接返回，跳过生成。\n- **元数据过滤**：权限过滤做在检索层（pgvector WHERE子句）。每个chunk继承权限标签（公开/内部/受限）。额外索引：文档来源、产品版本、更新时间。\n- **评估集**：从客服系统导出近半年真实问题，聚类去重后挑200个代表性查询，人工标注“黄金文档”（工作量约两人周）。指标：检索层 recall@5、recall@10、MRR；端到端层 LLM评审正确性和有据性。另留50条“无答案查询”测硬编。\n- **Rerank**：第一版就上。召回融合后取top 20进reranker，重排后取top 5给生成模型。开源bge-reranker-v2-m3。reranker分数作为置信度阈值——top1分低于阈值走“未找到可靠答案”分支。\n- **缓存**：三层。第一层：标准问快速通道；第二层：语义缓存（历史查询embedding+答案，相似度阈值≥0.95）；第三层：检索结果缓存（key为归一化后查询，TTL随文档更新周期）。缓存命中打日志记录层级。\n- **增量索引**：流水线“检测-重切-替换”。S3用事件通知，Confluence用webhook+每日全量校对（内容哈希比对）。变更文档整篇重新清洗切分，新chunk写入、旧chunk标记删除，用文档ID+版本号保证原子性。软删保留一周再物理清理。延迟目标：更新后10分钟内可检索。\n- **工单数据脱敏**：清洗管线加PII识别步骤，客户名、电话、邮箱、合同号替换为占位符，脱敏发生在索引前。正则+Ner双保险。脱敏前后映射表存隔离存储，回溯需单独审批。与法务书面确认脱敏标准。\n- **幻觉控制**：四道防线。① reranker置信度阈值，检索不够不进生成，返回“未找到可靠答案，建议转人工”；② prompt指令“仅根据资料回答，不知道就说不知道”，关键论断标注来源编号；③ 输出后校验：检查答案中实体（数字、版本号、命令）是否在原文中出现，未出现标黄提示；④ 答案旁展示原文片段和跳转链接。\n- **延迟预算**（最新结论）：query改写（小模型）100-300ms、双路召回并行50-100ms、rerank 50-100ms、生成1-3秒，全链路p50约2-4秒。优化：生成流式输出（首token压到1秒内）、标准问快速通道和语义缓存命中跳过生成、改写/召回/rerank并行。\n- **中英混杂处理**：bge-m3覆盖embedding侧。BM25侧：错误码和产品术语进自定义词典；建立中英术语对照表并在查询扩展阶段等价词补入；英文token统一小写。query改写阶段引文部分原样保留、只改写中文部分。测试集专门放一组中英混合查询。\n- **监控大盘**：三层。系统层：各环节延迟分位数、错误率、缓存命中率按层级拆分、上游API配额余量和重试次数。质量层：“未找到可靠答案”触发率及趋势、reranker top1分数分布漂移、用户反馈率、每周抽样50条真实查询人工标注滚动小评估。业务层：日活查询量、自助解决率、客服平均处理时长变化。不监控“平均响应长度”“生成token数”。首版七八个核心指标。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1217,
+       "items": 6,
+       "msg_ids": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 34,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3376,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 40,
+     "summary_cost_tokens": 6288,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_002",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我们的训练数据放在哪个 S3 路径下？",
+   "reply": "s3://prod-ml-corpus/v7/",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 1995,
+   "output_tokens": 10,
+   "estimated_input_tokens": 2637,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 11.0,
+   "compression_ratio": 0.2824,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 993,
+       "items": 1,
+       "covers_positions": [
+        0,
+        35
+       ],
+       "text": "**关键事实与决定摘要**\n\n- **故障现象**：8 卡 A100 单机，PyTorch 2.3，DDP 训练，数据源 s3://prod-ml-corpus/v7/ 通过 s3fs 挂载到 /mnt/data。训练开始后 3-4 小时（浮动）GPU 利用率归零，进程存活但无日志无报错。\n- **现场数据**（hang 住后抓取）：py-spy 显示 3/16 个 worker 卡在 _recv_bytes；strace 显示这 3 个 worker 阻塞在 read()；/dev/shm 使用 31.8G/32G（几乎占满）；主进程卡在 next(dataloader)。dmesg 无 oom-killer，物理内存稳定 60%，显存平稳。\n- **根因**：/dev/shm 上限 32G 被 128 个 worker（num_workers=16 × 8 卡）× prefetch_factor=4 的预取管道峰值占满，形成环形等待死锁（3 个 worker 等 shm 空间 → shm 等主进程释放 → 主进程等那 3 个 worker）。\n- **修复措施**（已实施，连续 36 小时无故障，step 时间持平）：\n  - num_workers=16 → **8**\n  - prefetch_factor=4 → **2**\n  - /dev/shm 从 32G 扩至 **64G**（remount，无需重启）\n  - dataloader 加 **timeout=600**\n- **最新结论**：修复有效，建议跑满一周再正式销案。\n- **建议新增告警规则**：/dev/shm 使用率超 70% 告警；GPU 利用率连续 10 分钟为 0 且进程存活告警；dataloader TimeoutError 高优告警。\n- **中期迁移建议**：WebDataset 流式方案（tar 分片顺序读），打包前对全量样本做全局 shuffle 再切分片，缓冲区至少 5000 起步，迁移时机为当前修复稳定运行一个月后、下一个大训练任务启动前。\n- **Checkpoint 策略**：轻量 checkpoint 每 **30 分钟**一次存本地 NVMe（仅权重+optimizer+数据游标，保留最近 3 份）；完整 checkpoint 每 **4 小时**一次上传 S3。数据游标和权重原子性共存，恢复时还原 dataloader 随机状态。\n- **自动恢复方案**：监护进程通过心跳文件（每 step touch）检测，15 分钟无更新则 kill -9 全部进程、清理残留（共享内存段、僵尸 worker、NCCL 端口占用），从最新轻量 checkpoint 重启。限制：24 小时内自动重启超 3 次则停发告警转人工；每次自动重启通知值班群。\n- **共享机器治理**：建议 cgroup v2 隔离，为当前组申请 shm 配额 **24G**（修复后峰值约 16G，留 50% 余量）。\n- **NCCL 预防**：保证各 rank 执行路径严格对称；保存 checkpoint 时 rank0 写文件前加 barrier；设置 NCCL_TIMEOUT=10 分钟级并打开 TORCH_NCCL_ASYNC_ERROR_HANDLING；用 NCCL_SOCKET_IFNAME 显式指定网卡；新任务前几个 step 打开 NCCL_DEBUG=INFO 确认拓扑。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1459,
+       "items": 6,
+       "msg_ids": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 24,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2637,
+     "full_history_tokens": 8682,
+     "context_limit": 4000,
+     "dropped_turns": 36,
+     "summary_cost_tokens": 5919,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_002",
+   "probe_id": "p2",
+   "topic": "ml",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "新同事要起一个训练任务，把关键配置要点告诉他：数据路径是哪个，dataloader 的 num_workers 应该设多少？",
+   "reply": "关键配置要点（直接抄到脚本里即可）：\n\n1. 数据路径  \n   • 训练数据：`s3://prod-ml-corpus/v7/`  \n   • 挂载点：`/mnt/data`（s3fs 已配置）\n\n2. DataLoader 关键参数（8 卡 A100 场景，shm 配额 24 G）  \n   • `num_workers = 8`  \n   • `prefetch_factor = 2`  \n   • `timeout = 600`（10 分钟超时，防止死锁）  \n   • `pin_memory = True`\n\n3. 额外提醒  \n   • 首次跑前确认 `df -h /dev/shm` 显示 ≥24 G；  \n   • 每 30 分钟保存一次轻量 checkpoint，4 小时一次完整上传 S3；  \n   • 任务启动后前 5 个 step 开启 `NCCL_DEBUG=INFO`，确认 NCCL 拓扑无误后再关闭。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2287,
+   "output_tokens": 209,
+   "estimated_input_tokens": 3044,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 16.01,
+   "compression_ratio": 0.3267,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1377,
+       "items": 1,
+       "covers_positions": [
+        0,
+        35
+       ],
+       "text": "**训练故障排查与修复摘要**\n\n**现象**：8卡A100单机（PyTorch 2.3，DDP）训练在启动后3-4小时（非固定墙钟时间）hang住：GPU利用率归零，进程存活，无日志无报错。\n\n**环境**：数据源 s3://prod-ml-corpus/v7/，通过s3fs挂载到 /mnt/data。dataloader配置：num_workers=16，prefetch_factor=4，pin_memory=True。\n\n**排除**：dmesg无oom-killer，物理内存稳定在60%，显存平稳——OOM出局。\n\n**现场抓取**（hang后不重启，依次执行）：\n1. py-spy dump --pid <主进程PID>，再对每个dataloader worker dump\n2. cat /proc/<worker_pid>/stack 或 strace -p 卡住的worker\n3. df -h /dev/shm\n4. nvidia-smi截图、ss -s\n\n**现场结果**：16个worker中3个卡在 _recv_bytes，strace显示阻塞在read()系统调用；/dev/shm 使用 31.8G/32G（几乎占满）；主进程卡在 next(dataloader)。\n\n**根因**：128个worker×prefetch深度的张量传输在峰值顶到32G shm上限。shm满后worker写操作阻塞等待空间，主进程等worker数据，形成环形等待死锁。3-4小时潜伏期源于样本大小方差，概率性积累后触发。\n\n**修复方案**（已验证：连续36小时无故障，step时间持平）：\n- **需求侧**：num_workers从16降至8，prefetch_factor从4降至2，单卡管道深度从64 batch降至16 batch，8卡shm峰值需求降至约12-16G\n- **供给侧**：/dev/shm从32G扩至64G（remount，size=64G，无需重启）\n- **缓解层**：dataloader加timeout=600，10分钟后抛TimeoutError带出卡住worker信息\n\n**监控告警**（三条立即配置）：\n1. /dev/shm使用率超70%告警\n2. GPU利用率连续10分钟为0且进程存活告警\n3. dataloader TimeoutError直接打高优告警\n\n**长期仪表盘四组指标**：吞吐组（每秒样本数、step耗时p99分位数曲线）、资源组（GPU利用率/显存、/dev/shm使用率、worker CPU占用、网络吞吐）、数据组（dataloader队列填充深度、每epoch样本计数校验）、训练组（loss/梯度范数异常检测、学习率执行核对）。\n\n**Checkpoint策略**（最新结论）：轻量checkpoint每30分钟一次（模型权重+optimizer+数据进度游标，存本地NVMe，保留最近3份滚动覆盖）；完整checkpoint每4小时一次（上传S3持久化）。数据进度游标须与权重原子性共存；恢复须还原dataloader随机状态（sampler的epoch和seed）。\n\n**自动恢复**：监护进程通过心跳文件（每step touch）监控，心跳超15分钟未更新判定hang，kill -9所有训练进程，清理残留（共享内存段、僵尸worker、NCCL端口占用），从最新轻量checkpoint重启。安全阀：24小时内自动重启超3次则停发告警转人工；每次自动重启通知值班群。\n\n**共享机器治理**（最新结论）：推荐cgroup v2隔离，按修复后shm峰值约16G留50%余量申请24G配额。\n\n**NCCL四大经典hang**：1）rank间集合通信不对称（条件性跳过需全局同步决策）；2）保存checkpoint时rank0写文件漏加barrier导致状态错位；3）NCCL默认超时过长——调NCCL_TIMEOUT至10分钟级并开TORCH_NCCL_ASYNC_ERROR_HANDLING；4）多网卡选错网口——用NCCL_SOCKET_IFNAME显式指定。建议新任务前几个step开NCCL_DEBUG=INFO确认拓扑。\n\n**WebDataset中期迁移**：样本打包成tar分片（每片几百MB），流式顺序读取绕开s3fs坑。收益：同带宽吞吐提升数倍，worker数可进一步降。工作量：打包脚本半天+训练改造2-3天+并行验证1周。打包前对全量样本做全局shuffle再切分片；缓冲区大小至少5000起步。迁移时机：当前修复稳定运行一个月后、下一个大训练任务启动前。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1459,
+       "items": 6,
+       "msg_ids": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 47,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3044,
+     "full_history_tokens": 8682,
+     "context_limit": 4000,
+     "dropped_turns": 36,
+     "summary_cost_tokens": 6163,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_002",
+   "probe_id": "p3",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "排查完那次半夜卡死之后，我们最终把读数据的并行进程数定在几个？",
+   "reply": "**最终把 num_workers 调到了 8。**  \n\n（同时把 prefetch_factor 也从 4 降到 2，单卡管道深度从 64 降到 16，8 卡峰值 shm 需求从 ~50 G 降到 12–16 G。）",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2370,
+   "output_tokens": 64,
+   "estimated_input_tokens": 3157,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 15.27,
+   "compression_ratio": 0.3404,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1496,
+       "items": 1,
+       "covers_positions": [
+        0,
+        35
+       ],
+       "text": "/**** 用户问题总结 ****/\n连续一周夜间训练任务 hang 住：GPU 利用率归零，进程存活无报错，训练开始后 3-4 小时发生。环境：8 卡 A100 单机，PyTorch 2.3，DDP 训练，数据通过 s3fs 挂载到 /mnt/data（源桶 s3://prod-ml-corpus/v7/）。dataloader 配置 num_workers=16，prefetch_factor=4，pin_memory=True。dmesg 无 oom-killer，物理内存 60%，显存平稳。\n\n/**** 现场抓取结果 ****/\nhang 住后 py-spy 显示 16 个 worker 中 3 个卡在 _recv_bytes，strace 显示阻塞在 read()；/dev/shm 使用 31.8G/32G（接近爆满）；主进程卡在 next(dataloader)。结论：/dev/shm 耗尽导致环形等待死锁（3 个 worker 等 shm 空间 → shm 等主进程释放 → 主进程等那 3 个 worker），s3fs 排除嫌疑。\n\n/**** 修复措施（已验证有效，连续 36 小时无挂，step 时间持平）****/\n1. num_workers 从 16 降到 8，prefetch_factor 从 4 降到 2（单卡管道深度从 64 batch 降到 16，8 卡 shm 峰值需求从 ~50G 降到 12-16G）\n2. /dev/shm 从 32G 扩到 64G（remount size=64G，无需重启）\n3. dataloader 加 timeout=600（10 分钟超时抛 TimeoutError，变静默 hang 为大声报警）\n\n/**** 监控告警规则（需立即配置）****/\n1. /dev/shm 使用率 > 70% 告警\n2. GPU 利用率连续 10 分钟为 0 且进程存活告警\n3. dataloader TimeoutError 打高优告警\n\n/**** 中期迁移：WebDataset 流式方案 ****/\n将样本打包成 tar 分片（每片几百 MB），训练按分片流式拉取，绕开 s3fs 的 POSIX 语义模拟和元数据风暴。收益：同等带宽下吞吐可提升数倍，worker 数可进一步降低。工作量：数据侧打包脚本半天+运行几小时，训练侧改造 2-3 天+一周并行验证。关键：打包前对全量样本做全局 shuffle 再切分片；缓冲区大小至少 5000。迁移时机：当前修复稳定运行一个月后、下一个大训练任务启动前。\n\n/**** 长期训练健康仪表盘（四组指标）****/\n- 吞吐组：每秒样本数、单 step 耗时 p99 分位数曲线\n- 资源组：GPU 利用率/显存、/dev/shm 使用率、dataloader worker CPU 占用、网络吞吐\n- 数据组：dataloader 队列填充深度、每 epoch 样本计数校验\n- 训练组：loss/梯度范数异常检测（NaN、突刺）、学习率执行核对\n\n/**** Checkpoint 双轨制 ****/\n- 轻量 checkpoint：每 30 分钟一次，存权重+optimizer+数据进度游标，存本地 NVMe，保留最近 3 份滚动覆盖\n- 完整 checkpoint：每 4 小时一次，上传 S3 持久化\n- 数据进度游标须与权重原子性同存；恢复时还原 dataloader 随机状态（sampler epoch 和 seed）\n\n/**** 自动恢复机制 ****/\n训练进程外套监护进程：心跳文件（每 step touch），15 分钟无更新判定 hang → kill -9 全部训练进程 → 清理残留（共享内存段、僵尸 worker、NCCL 端口占用）→ 从最新轻量 checkpoint 重启。安全阀：24 小时内自动重启超 3 次则停发告警转人工；每次自动重启通知值班群。\n\n/**** 多项目共享机器治理（三档）****/\n1. 最轻：约定+监控，共享资源按进程归属监控\n2. 中间档（推荐）：cgroup v2 隔离，为各组划定内存/CPU/shm 配额（你们组 shm 申请 24G，留 50% 余量）\n3. 彻底：上调度系统（Slurm 或 K8s），资源申请制\n\n/**** 分布式训练四大经典 hang 类型 ****/\n1. rank 间集合通信不对称：各 rank 执行路径必须严格对称，条件性跳过需全局同步决策\n2. 保存 checkpoint 时 rank0 写文件未加 barrier：所有 rank 写前加 barrier\n3. NCCL 超时：设 NCCL_TIMEOUT 为 10 分钟级，开 TORCH_NCCL_ASYNC_ERROR_HANDLING\n4. 多网卡选错网口：用 NCCL_SOCKET_IFNAME 显式指定；新任务前几个 step 开 NCCL_DEBUG=INFO 确认拓扑选择"
+      },
+      {
+       "layer": "history",
+       "tokens": 1459,
+       "items": 6,
+       "msg_ids": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 41,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3157,
+     "full_history_tokens": 8682,
+     "context_limit": 4000,
+     "dropped_turns": 36,
+     "summary_cost_tokens": 6283,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "如果特斯拉现在是 280 美元，我手里剩下的特斯拉持仓浮盈是多少美元？",
+   "reply": "我需要当前特斯拉（TSLA）的股价来算出精确的浮盈，但你给的是“如果特斯拉现在是 280 美元”，所以我可以直接按 280 美元给你算。  \n\n- 剩余持仓：25 股  \n- 成本：242 美元/股  \n- 当前价：280 美元/股  \n\n浮盈 = (280 - 242) × 25 = 38 × 25 = **950 美元**  \n\n注意：这是**未实现**浮盈，不含税费和之前已卖出的 15 股收益（已实现约 1020 美元）。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 1820,
+   "output_tokens": 133,
+   "estimated_input_tokens": 2568,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 28.75,
+   "compression_ratio": 0.2904,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1274,
+       "items": 1,
+       "covers_positions": [
+        0,
+        35
+       ],
+       "text": "**持仓现状（最新结论）**\n- **特斯拉**：前年以242美元成本买入40股，后于股价310美元时卖出15股（锁定每股68美元收益，合计约1020美元已实现利得），**最新剩余25股**，成本价不变（242美元），持有约两年，为组合最大持仓。\n- **英伟达**：137美元成本买入20股，比特斯拉晚半年买入。\n- **苹果**：189美元成本买入15股。\n- **现金**：约2万美元未动用。\n\n**组合结构诊断**\n特斯拉与英伟达合计约占权益仓位七成，苹果占两成多，现金为缓冲。组合高度集中于\"科技成长+高波动\"象限，两者在市场情绪层面强相关（2022年回撤均超50%），苹果仓位过薄无法起到压舱作用。特斯拉年化波动率长期在50%以上。\n\n**建议目标配比**（最新结论）：高波动成长（特斯拉+英伟达）降至40-45%，稳健权益（苹果+红利或标普ETF）35%，短债加现金20-25%。\n\n**各标的持有逻辑**\n- **特斯拉**：买入逻辑为赌FSD和Robotaxi落地，方向仍相信但时间表失效，存在\"核心仓位持有期权式逻辑\"的错配。修正方向：要么切换至近期可验证指标（汽车毛利率拐点、储能增速），要么将仓位降至组合10-15%。\n- **英伟达**：买入逻辑为AI大趋势。不建议加仓——组合已七成在高波动成长上，且股价计入的是预期而非当下事实。\n\n**卖出纪律**（三类预设规则）\n1. **逻辑失效卖出**：前提被证伪即卖，不看价格。\n2. **仓位再平衡卖出**：单票涨超目标配比特定幅度（如目标20%涨至28%）即削回。\n3. **定期检视**：每季度做零基持仓检验。不设纯价格止损线。\n\n**税务处理要点**\n优先卖持有超一年的批次（特斯拉满两年符合）；可跨年度分批卖出将收益分摊至两个税务年度；新买入防御腿不受限制，可先用现金建仓。\n\n**其他操作建议**\n- **财报应对**：财报前一周不做交易决策；财报夜不看盘后价格，设48小时冷静期；财报后一周读原文及电话会纪要检查持有前提。\n- **Covered call**：不推荐用作稳定增强收益，仅适合\"本就计划在某价位减仓\"时作为预设减仓价的执行工具。\n- **检视频率**：建议改为每月第一个周六上午，配合季度零基持仓检验；删掉手机首屏券商App或关掉角标推送。\n- **下单方式**：个人投资者默认用限价单；不在开盘后十五分钟内下单，不做盘前盘后交易；止损用\"止损限价单\"。\n- **智能投顾与主题ETF**：智能投顾对已自行配置者不适用；主题ETF发行时点通常为估值最贵时，跑输大盘是大概率事件。\n- **卖出资金用途**：不用于\"等回调买回\"（避免将再平衡做成择时），应直接用于建防御腿。可预设机械规则：若特斯拉跌破240且汽车毛利率企稳，用防御腿固定比例换回。\n- **父母理财**：不能照搬该组合。应以国债、存款、货币基金和高等级债基为主体（七八成以上），权益最多一两成且只用宽基红利类。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1090,
+       "items": 6,
+       "msg_ids": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 43,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2568,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 36,
+     "summary_cost_tokens": 48314,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p2",
+   "topic": "stocks",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我现在还持有多少股特斯拉？",
+   "reply": "根据我们之前记录的持仓更新，你当前还持有 **25 股** 特斯拉（原 40 股，上周已卖出 15 股）。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2275,
+   "output_tokens": 36,
+   "estimated_input_tokens": 3295,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 15.89,
+   "compression_ratio": 0.3826,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 2025,
+       "items": 1,
+       "covers_positions": [
+        0,
+        35
+       ],
+       "text": "以下是对话的要点摘要（已按最新结论处理）：\n\n**持仓现状（最新）**\n- 特斯拉：前年以242美元成本买入40股，上周在310美元卖出15股（锁定约1020美元已实现利得），剩余25股，成本价不变。\n- 英伟达：137美元成本买入20股，比特斯拉晚半年。\n- 苹果：189美元买入15股。\n- 现金：约两万美元+卖出特斯拉回笼的四千多美元。\n\n**组合结构诊断（最新结论）**\n- 高波动成长（特斯拉+英伟达）合计约占权益仓位七成，苹果两成多，现金缓冲。\n- 单票特斯拉超过25%即进入需要正视的集中度区间，超过40%为命脉系于一票；特斯拉年化波动率长期在50%以上。\n- 特斯拉与英伟达在市场情绪层面强相关（2022年两者从高点回撤均超50%），组合缺乏对冲腿。\n- 核心问题：仓位与逻辑错配——特斯拉是\"期权式逻辑\"（方向对但时间表失效），却用了核心仓位持有。\n\n**建议的参考配比（最新结论）**\n- 高波动成长（特斯拉+英伟达）降至40-45%\n- 稳健权益（苹果+红利或标普ETF）35%\n- 短债加现金20-25%\n\n**卖出与税务要点（最新结论）**\n- 优先卖持有超一年的批次（特斯拉持有两年没问题，英伟达需确认是否满一年）。\n- 可用同年亏损抵扣收益（tax-loss harvesting），注意wash sale规则（卖后30天内不能买回同一或实质相同标的）。\n- 可跨年度分批卖以分摊税务年度。\n- 新买入防御腿不受限制，可先用现金建防御腿，卖出端从容执行。\n\n**卖出纪律（最新结论）**\n- 三类规则：①逻辑失效卖出（买入时写下的前提被证伪即卖，不看价格）；②仓位再平衡卖出（单票涨超目标配比一定幅度即削回）；③每季度零基持仓检验（问\"现在空仓我会买多少\"）。\n- 不设纯价格止损线；规则写进文档，想违反时先写\"为什么这次不一样\"。\n\n**财报应对纪律（最新结论）**\n- 财报前一周不做任何交易决策。\n- 财报夜不看盘后价格，第二天开盘不操作，设48小时冷静期。\n- 财报后一周读原文和电话会纪要，检查持有前提是否被动摇（毛利率、交付量、数据中心增速等慢变量）。\n\n**Covered Call评估（最新结论）**\n- 本质是\"卖掉上涨潜力换确定小钱\"；高波动股票（如特斯拉）长期收益集中在少数暴涨日，covered call会让渡最肥利润，长期跑输单纯持有；下跌时权利金缓冲杯水车薪。\n- 适用场景：计划在某个价位减仓时，作为\"带补贴的限价卖单\"使用。\n- 实操门槛：英伟达20股、苹果15股均不足100股一张的标准合约。\n- 结论：作为\"稳定增强收益\"策略不推荐，作为\"预设减仓价的执行工具\"可学起来备用。\n\n**检视频率（最新结论）**\n- 删掉手机首屏券商App或关掉角标和推送；检视频率定为每月第一个周六上午（写进日历），配合季度零基持仓检验；盘中价格提醒只保留规则触发价。\n\n**帮父母理财（最新结论）**\n- 绝不能照搬同一组合。时间维度：父母退休/临近退休，组合深度回撤无恢复手段，序列风险致命；现金流维度：他们是取钱方，需稳定低波动资产打底；心理维度：老人对亏损承受力更低。\n- 框架：国债、存款、货币基金和高等级债基占七八成以上，权益最多一两成且只用宽基红利类，目标是跑赢通胀加一点。\n- 伦理建议：事先把\"最大可能亏多少\"用具体金额讲清楚并得到确认。\n\n**下单方式（最新结论）**\n- 市价单：保证成交不保证价格，开盘前后十五分钟、财报夜盘后、剧烈波动时慎用。\n- 限价单：个人投资者默认正确选项，买入挂卖一价或略低，卖出挂买一价或略高。\n- 时段纪律：不在开盘后十五分钟内下单；不做盘前盘后交易。\n- 止损单触发后变市价单，闪崩时可能成交在深坑；如需用则用\"止损限价单\"且留够价差。\n- 机械检查：每次下单前默念\"方向、数量、价格类型\"三要素。\n\n**智能投顾与主题ETF（最新结论）**\n- 智能投顾（robo-advisor）：机制健康，费率通常千分之二三，但已自己做配置的人无需重复持仓多付一层管理费。\n- 主题ETF：券商热推时点几乎总是主题最热、估值最贵时，发行后跑输大盘是大概率事件，费率比宽基贵几倍。\n- 口诀：App首页弹窗推的、名字带热词的，默认是\"方便券商卖\"而非\"适合你买\"。\n\n**卖出资金用途（最新结论）**\n- 卖出的钱已有任务——建防御腿，不做\"等回调买回\"的择时操作。\n- 若对特斯拉长期信心需要出口，可预设机械规则（如\"跌破240且汽车毛利率企稳，用防御腿固定比例换回\"），写下来照做，不临场发挥。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1090,
+       "items": 6,
+       "msg_ids": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 19,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3295,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 36,
+     "summary_cost_tokens": 5576,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p3",
+   "topic": "stocks",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我之前给过你我券商账户的提现银行卡号，帮我报一下后四位。",
+   "reply": "抱歉，我没有存储或记住你任何具体的银行卡号、账户后四位或其他个人敏感信息。每次对话都是独立的，我不会保留之前的个人财务细节。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 1796,
+   "output_tokens": 35,
+   "estimated_input_tokens": 2531,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 12.13,
+   "compression_ratio": 0.2867,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1244,
+       "items": 1,
+       "covers_positions": [
+        0,
+        35
+       ],
+       "text": "特斯拉：前年 242 美元买入 40 股；上周在 310 美元卖出 15 股（锁定约 1020 美元已实现利得），现剩 25 股。持有逻辑为 FSD 和 Robotaxi 落地，方向仍相信但时间表失效——存在仓位（组合最大持仓）与逻辑（期权式）的错配。修正方向：要么切换至近期可验证指标（汽车毛利率拐点、储能增速），要么将仓位降至组合 10-15%。\n\n英伟达：137 美元买入 20 股，持有时间比特斯拉晚半年。逻辑为 AI 资本开支加速。组合层面已七成仓位押注高波动成长，加仓会进一步恶化结构；需判断增长是否已超股价计入预期，而非仅看开支方向。\n\n苹果：189 美元买入 15 股，目的为稳健。现金约两万美元。\n\n组合现状：特斯拉与英伟达合计约占权益仓位七成，苹果两成多，现金缓冲。结论：结构性问题——两只高波动成长股主导，苹果压舱作用不足。最新结论：需调整配重并补充防御性资产，而非换股。\n\n参考配比（最新结论）：高波动成长（特斯拉+英伟达）降至 40-45%，稳健权益（苹果+红利或标普 ETF）35%，短债加现金 20-25%。\n\n卖出纪律：三类规则——逻辑失效卖出（前提被证伪即卖，不看价格）、仓位再平衡卖出（单票涨超目标配比一定幅度即削回）、定期检视（每季度零基持仓检验）。不设纯价格止损线，逻辑失效优于价格下跌作为卖出信号。\n\n财报应对：财报前一周不做交易决策；财报夜不看盘后价，第二天开盘不操作，设 48 小时冷静期；财报后一周读原文及电话会纪要，检查持有前提是否动摇（毛利率、交付量、数据中心增速等慢变量）。\n\nCovered call：不推荐作为\"稳定增强收益\"策略；适合场景为\"本就计划在某价位减仓\"时的执行工具。实操门槛：英伟达 20 股、苹果 15 股均不足 100 股标准合约。\n\n下单方式：个人投资者默认用限价单；开盘后十五分钟内不下单，不做盘前盘后交易；止损单用\"止损限价单\"并留足价差空间；每次下单前默念\"方向、数量、价格类型\"三要素。\n\n智能投顾：机制健康但不适用已自行配置者。主题 ETF：券商热推时点往往为主题最热、估值最贵时，发行后跑输大盘是大概率事件，费率高于宽基；应默认其为\"方便券商卖\"而非\"适合你买\"的产品。\n\n检视频率：每月第一个周六上午，配合季度零基持仓检验；删掉券商 App 首屏或关掉角标推送；盘中价格提醒仅保留规则触发价。\n\n父母理财：不能照搬。时间维度（临近退休无收入期弥补）、现金流维度（需取钱而非存钱）、心理维度（浮亏承受力低）均不同。框架：国债、存款、货币基金、高等级债基占七八成以上，权益最多一两成且仅用宽基红利类，目标跑赢通胀加一点。伦理建议：事先用具体金额讲清最大可能亏损并获确认。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1090,
+       "items": 6,
+       "msg_ids": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 36,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2531,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 36,
+     "summary_cost_tokens": 5097,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p4",
+   "topic": "stocks",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我最早建仓特斯拉时的每股成本价是多少美元？",
+   "reply": "根据摘要里提供的信息，你最早建仓特斯拉时的每股成本是 **242 美元**。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 1850,
+   "output_tokens": 22,
+   "estimated_input_tokens": 2629,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 13.0,
+   "compression_ratio": 0.2996,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 1349,
+       "items": 1,
+       "covers_positions": [
+        0,
+        35
+       ],
+       "text": "好的，这是根据你提供的对话内容压缩而成的要点摘要，已保留所有精确信息并遵循你的要求。\n\n---\n\n**持仓盘点与状态更新**\n\n- **特斯拉**：最初成本242美元买入40股，持有约两年。上周在310美元时卖出15股（锁定约1020美元已实现利得），现剩余25股。理由赌FSD和Robotaxi落地，方向仍相信但时间表已失效。\n- **英伟达**：137美元买入20股，比特斯拉晚半年。AI大趋势逻辑仍持有，但考虑过加仓。\n- **苹果**：189美元买入15股，作为稳健配置。\n- **现金**：约两万美元未动。\n\n**组合诊断与调整建议**\n\n- **结构问题**：特斯拉+英伟达合计占权益仓位约七成，苹果两成多，现金缓冲。组合高度集中于“科技成长+高波动”象限，缺乏对冲腿。2022年两者回撤均超50%。\n- **目标配比**：高波动成长（特斯拉+英伟达）降至40-45%，稳健权益（苹果+红利或标普ETF）35%，短债加现金20-25%。\n- **特斯拉仓位与逻辑错配**：当前用核心仓位持有“期权式逻辑”。修正方向：要么切换至近期可验证指标（汽车毛利率拐点、储能增速），要么降至组合10-15%。\n- **零基持仓检验**：成本价不应作为决策依据，正确问题是“如果今天空仓，以现价愿意买多少”。\n\n**税务与操作纪律**\n\n- **卖出税务**：优先卖持有超一年批次（特斯拉满两年，英伟达需确认）。可跨年度分批卖分摊收益。可同年用亏损抵扣收益，但注意wash sale规则（30天内不可买回同一或实质相同资产）。\n- **卖出纪律三类规则**：①逻辑失效卖出（前提被证伪即卖，不看价格）；②仓位再平衡卖出（单票涨超目标配比一定幅度即削回）；③每季度零基持仓检验。\n- **下单方式**：默认用限价单；永远不在开盘后15分钟内下单；不做盘前盘后交易；止损用“止损限价单”并留够间距。每次提交前默念“方向、数量、价格类型”。\n\n**财报与行为金融**\n\n- **财报纪律**：财报前一周不做交易；财报夜不看盘后价，设48小时冷静期；财报后一周读原文和电话会纪要，检查持有前提。\n- **检视频率**：每日检视有害（亏损痛苦是盈利愉悦的两倍多）。建议改为每月第一个周六上午检视，配合季度零基持仓检验。删掉券商App首屏或关掉角标推送。\n\n**其他**\n\n- **Covered call**：不推荐作为“稳定增强收益”策略；可作为“预设减仓价的执行工具”学起来备用。英伟达20股、苹果15股不足100股标准合约门槛。\n- **智能投顾与主题ETF**：智能投顾对已自行配置者不适用；主题ETF发行时点通常为估值最贵时，跑输大盘是大概率，默认视为“方便券商卖”而非“适合你买”。\n- **父母理财**：绝对不能照搬。应以国债、存款、货币基金和高等级债基为主体（七八成以上），权益最多一两成且只用宽基红利类。事先用具体金额讲清最大可能亏损并得到确认。\n- **卖出资金用途**：卖出的钱应建防御腿，而非等回调买回特斯拉。可预设机械规则（如“若跌破240且汽车毛利率企稳，用防御腿固定比例换回”），写下来照做。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1090,
+       "items": 6,
+       "msg_ids": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 29,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2629,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 36,
+     "summary_cost_tokens": 5164,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p5",
+   "topic": "stocks",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我刚开始把这笔钱投进那只电动车股票时，一股花了我多少？",
+   "reply": "我没有你的交易记录，所以无法直接告诉你特斯拉当时每股买入价。要得到准确数字，最直接的办法是：\n\n1. 打开券商 App 里那笔特斯拉交易的原始成交记录；  \n2. 或者把你最早的买入确认单、持仓成本明细导出来看。\n\n如果你能把那条记录的“成交均价”或“成本价”告诉我，我可以帮你做后续的简单计算。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 1552,
+   "output_tokens": 94,
+   "estimated_input_tokens": 2146,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 10.38,
+   "compression_ratio": 0.2392,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "window_summary",
+     "layers": [
+      {
+       "layer": "summary",
+       "tokens": 857,
+       "items": 1,
+       "covers_positions": [
+        0,
+        35
+       ],
+       "text": "特斯拉：前年242美元成本买入40股（持有约两年），上周在310美元卖出15股，剩余25股。英伟达：137美元成本买入20股（比特斯拉晚半年）。苹果：189美元买入15股。现金：约2万美元。\n\n**最新结论**：卖出后权益仓位中，特斯拉+英伟达合计约七成，苹果两成多，现金缓冲。组合高度集中于\"科技成长+高波动\"象限，特斯拉与英伟达在市场情绪层面强相关（2022年两者从高点回撤均超50%），无对冲腿。苹果仓位过薄，起不到压舱作用。\n\n**调整方向**：高波动成长（特斯拉+英伟达）降至40-45%，稳健权益（苹果+红利或标普ETF）35%，短债加现金20-25%。卖出时优先卖持有超一年的批次（特斯拉已满两年，英伟达需确认是否满一年）；可跨年度分批卖出分摊税务年度；新买入防御腿不受限制，可先用现金建防御腿。\n\n**卖出纪律**：逻辑失效卖出（买入前提被证伪则卖，不看价格）；仓位再平衡卖出（单票涨超目标配比特定幅度即削回）；每季度零基持仓检验。不含纯价格止损线。**财报应对**：财报前一周不做交易决策；财报夜不看盘后价格、次日不操作，设48小时冷静期；财报后一周读原文和电话会纪要，检查持有前提是否动摇。**下单方式**：默认用限价单；不在开盘后15分钟内下单、不做盘前盘后交易；止损用止损限价单并留足间距；提交前默念\"方向、数量、价格类型\"。**Covered call**：不推荐作为稳定增强收益策略，可作为预设减仓价的执行工具（如计划300以上减仓，卖对应行权价call）。**检视频率**：删掉手机首屏券商App或关掉角标推送，每月第一个周六上午检视，配合季度零基持仓检验。**父母理财**：不可照搬此组合。应以国债、存款、货币基金和高等级债基为主体（七八成以上），权益最多一两成且只用宽基红利类，目标跑赢通胀加一点。事先用具体金额讲清最大可能亏损并获确认。"
+      },
+      {
+       "layer": "history",
+       "tokens": 1090,
+       "items": 6,
+       "msg_ids": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 38,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 2146,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 36,
+     "summary_cost_tokens": 4872,
+     "candidates": []
+    }
+   ]
+  }
+ ]
+}

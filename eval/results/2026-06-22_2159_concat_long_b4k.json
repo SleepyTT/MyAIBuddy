@@ -1,0 +1,1935 @@
+{
+ "run_id": "2026-06-22_2159_concat_long_b4k",
+ "timestamp": "2026-06-22T21:59:52",
+ "context_budget": 4000,
+ "strategy": "concat",
+ "model": "grok-4-fast",
+ "judge_model": "kimi-k2.5",
+ "dataset_version": "v1-long",
+ "summary": {
+  "probes": 24,
+  "needle_probes": 22,
+  "negative_probes": 2,
+  "ctx_hit_rate": 0.1818,
+  "ans_hit_rate": 0.3182,
+  "hallucination_rate": 0.375,
+  "avg_input_tokens": 2923.2,
+  "avg_estimated_input_tokens": 4276.8,
+  "avg_output_tokens": 110.9,
+  "avg_rounds": 1.0,
+  "avg_latency_s": 3.2,
+  "avg_compression_ratio": 0.4255
+ },
+ "dimensions": {
+  "style": {
+   "direct": {
+    "probes": 11,
+    "ctx_hit_rate": 0.2727,
+    "ans_hit_rate": 0.3636,
+    "hallucination_rate": 0.2727
+   },
+   "paraphrase": {
+    "probes": 8,
+    "ctx_hit_rate": 0.125,
+    "ans_hit_rate": 0.375,
+    "hallucination_rate": 0.375
+   },
+   "implicit": {
+    "probes": 3,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 1.0
+   },
+   "negative": {
+    "probes": 2,
+    "ctx_hit_rate": null,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   }
+  },
+  "carrier": {
+   "user": {
+    "probes": 16,
+    "ctx_hit_rate": 0.25,
+    "ans_hit_rate": 0.375,
+    "hallucination_rate": 0.3125
+   },
+   "assistant": {
+    "probes": 6,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.1667,
+    "hallucination_rate": 0.6667
+   }
+  },
+  "depth": {
+   "late": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "early": {
+    "probes": 14,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.1429,
+    "hallucination_rate": 0.4286
+   },
+   "middle": {
+    "probes": 4,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.25,
+    "hallucination_rate": 0.75
+   }
+  },
+  "needle_type": {
+   "update": {
+    "probes": 4,
+    "ctx_hit_rate": 1.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "factual": {
+    "probes": 13,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.1538,
+    "hallucination_rate": 0.5385
+   },
+   "decision": {
+    "probes": 1,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 1.0,
+    "hallucination_rate": 0.0
+   },
+   "personal": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.5
+   },
+   "code_identifier": {
+    "probes": 2,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.0,
+    "hallucination_rate": 0.5
+   }
+  },
+  "topic": {
+   "ai_trends": {
+    "probes": 4,
+    "ctx_hit_rate": 0.25,
+    "ans_hit_rate": 0.5,
+    "hallucination_rate": 0.25
+   },
+   "gardening": {
+    "probes": 4,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.25,
+    "hallucination_rate": 0.5
+   },
+   "health": {
+    "probes": 4,
+    "ctx_hit_rate": 0.6667,
+    "ans_hit_rate": 0.75,
+    "hallucination_rate": 0.25
+   },
+   "ml": {
+    "probes": 7,
+    "ctx_hit_rate": 0.0,
+    "ans_hit_rate": 0.1429,
+    "hallucination_rate": 0.5714
+   },
+   "stocks": {
+    "probes": 5,
+    "ctx_hit_rate": 0.25,
+    "ans_hit_rate": 0.4,
+    "hallucination_rate": 0.2
+   }
+  }
+ },
+ "probes": [
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p1",
+   "topic": "ai_trends",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我们公司现在的 AI 主路线是什么？",
+   "reply": "根据我们之前的完整推演，**公司目前 AI 主路线**如下：\n\n**主路线**：  \n在 **Q3 试点上线** **对客 AI 客服功能**（基于产品文档 + 客户自有知识库的问答服务），低置信度查询自动转人工，不做高风险决策类功能。\n\n- 目标客户：先选 3-5 家关系好、使用深度高的中型客户进行封闭试点。\n- 商业化策略：第一年定位为高级套餐卖点 + 超额用量计费，核心目标是提升高级版渗透率和续约率，而非独立盈利。\n- 资源配置：五人正式小组（原虚拟小组 3 人 + 产品后端 2 人），ML 工程师招聘已启动；内部工具进入维护模式。\n- 工程规范：AI 网关 + 评估集先行 + 安全审查清单 + 数据授权流程均已固化。\n\n（此主路线已于董事会确认转向后正式确立，内部工具降级为次优先。）",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2470,
+   "output_tokens": 223,
+   "estimated_input_tokens": 3742,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.9,
+   "compression_ratio": 0.4053,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3563,
+       "items": 16,
+       "msg_ids": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 18,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3742,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p2",
+   "topic": "ai_trends",
+   "style": "direct",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "你之前给我引用过一个企业 AI 项目从试点到生产的转化率数字，是多少？",
+   "reply": "我之前没有给出过具体的转化率数字。  \n如果需要可靠的参考数据，我建议你直接搜索最新的行业研究报告（如 Gartner、McKinsey 或 Forrester 的 2023–2024 AI 项目落地研究），以获得当前最准确的数值。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2481,
+   "output_tokens": 53,
+   "estimated_input_tokens": 3758,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.18,
+   "compression_ratio": 0.4053,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3563,
+       "items": 16,
+       "msg_ids": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 34,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3758,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p3",
+   "topic": "ai_trends",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "decision",
+   "depth": "early",
+   "question": "我们最早给今年定的那套打法是什么来着？",
+   "reply": "存档：  \n最早定下的全年打法（2024 年）是“先用 AI 内部工具跑通全流程、积累真实工程经验，再视情况向对客功能扩展”。  \n具体要点：  \n1. 主路线：内部效率工具先行（JD 生成、工单摘要、邮件起草），验证网关、RAG、评估集等基建。  \n2. 资源分配：小团队（虚拟小组）快速迭代，API 成本可控。  \n3. 里程碑：上半年内部工具上线并拿到成效数据（工单时长↓18%、邮件起草省 50%），下半年再评估是否把能力对外。  \n4. 风险控制：先练手、避开对客的数据合规与安全雷区，待董事会或市场反馈后再决定是否转向。  \n\n以上即为最初版本的打法。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2475,
+   "output_tokens": 184,
+   "estimated_input_tokens": 3750,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.81,
+   "compression_ratio": 0.4053,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3563,
+       "items": 16,
+       "msg_ids": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 26,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3750,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ai_001",
+   "probe_id": "p4",
+   "topic": "ai_trends",
+   "style": "paraphrase",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "你给我那份给董事会降温的材料里，有多大比例的企业尝试最后真正用起来了？",
+   "reply": "根据我刚查到的最新数据（2024-2025），给董事会降温时可以直接引用的几个核心比例：\n\n- **IBM 2024 Global AI Adoption Index**：42% 的企业规模组织（>1000 人）已实际部署 AI，另有 40% 仍在探索/实验阶段，未进入生产。\n- **S&P Global / 451 Research 2024**：平均只有 51% 的 AI 项目进入生产，且多未规模化；生成式 AI 里只有 24% 的组织已把投资转化成规模化生产能力。\n- **Gartner 预测**：到 2025 年底，预计 30% 的生成式 AI 项目在 POC（概念验证）后被放弃；另有数据称只有约 48% 的 AI 项目最终进入生产，平均需 8 个月从原型到生产。\n- **更激进的观点**（部分研究/咨询口径）：生成式 AI 的试点转生产成功率在 33% 左右，甚至有报告称只有约 5% 的试点能快速带来收入加速。\n\n**总结给董事会的降温口径**：  \n“当前行业真实情况是，大约只有 40-50% 的企业 AI 项目能走到生产环境，其中生成式 AI 的比例更低（约 24-33% 能规模化）。我们把 Q3 定义为‘封闭试点上线’而不是全面放量，正是为了把风险控制在行业平均成功率的上限。”\n\n这些数字可以直接用在材料里，语气客观又足够保守。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 11622,
+   "output_tokens": 404,
+   "estimated_input_tokens": 14341,
+   "usage_source": "api",
+   "rounds": 2,
+   "latency_s": 18.77,
+   "compression_ratio": 0.4053,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3563,
+       "items": 16,
+       "msg_ids": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 46,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3770,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    },
+    {
+     "round": 2,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3563,
+       "items": 16,
+       "msg_ids": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 46,
+       "items": 1
+      },
+      {
+       "layer": "tool_loop",
+       "tokens": 6801,
+       "items": 4,
+       "text": "{\"queries\": [{\"keyword\": \"enterprise AI adoption success rate 2024 what percentage of projects actually deployed in production\", \"response\": {\"query\": \"enterprise AI adoption success rate 2024 what percentage of projects actually deployed in production\", \"follow_up_questions\": null, \"answer\": null, \"images\": [{\"url\": \"https://blog.box.com/_next/image?url=https://backend.blog.box.com/sites/blog/files/inline-images/image2-min_4.png&w=768&q=75\", \"description\": null}, {\"url\": \"https://www.softkraft.co/uploads/blog/enterprise-ai-trends/the-state-of-enterprise-ai-adoption.png\", \"description\": \"A stacked bar chart displays the rate of AI adoption across various industries in 2024, highlighting the increasing importance of structured data and machine learning deployment, with industries like retail, entertainment, telecommunications, healthcare, financial services, and energy categorized by different adoption speeds from slow to very fast.\"}, {\"url\": \"https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2023/08/global-ai-adoption-rate.png\", \"description\": \"A bar chart displays the 2025 global AI adoption rates across various content creation stages, with robotic process automation leading at 39% and physical robotics at 20%.\"}, {\"url\": \"https://www.secondtalent.com/wp-content/uploads/2025/10/AI-Adoption-in-Enterprise-Statistics-Trends-2025.png\", \"description\": \"A presentation slide exhibits statistics and trends regarding AI adoption in enterprise by 2025, highlighting high investment, positive ROI, anticipated growth, and scaling challenges.\"}, {\"url\": \"https://www.secondtalent.com/wp-content/uploads/2025/10/image-45.png\", \"description\": \"The image displays a chart showing AI adoption rates in different organization sizes, with enterprise-level companies having 87%, large organizations 74%, mid-market firms 58%, and small businesses 34%, along with the percentage increase compared to 2023.\"}], \"results\": [{\"url\": \"https://newsroom.ibm.com/2024-01-10-Data-Suggests-Growth-in-Enterprise-Adoption-of-AI-is-Due-to-Widespread-Deployment-by-Early-Adopters\", \"title\": \"Data Suggests Growth in Enterprise Adoption of AI is Due to Widespread Deployment by Early Adopters\", \"content\": \"Jan 10, 2024\\n\\nARMONK, N.Y., Jan. 10, 2024 /PRNewswire/ -- New research commissioned by IBM (NYSE: IBM) found that about 42% of enterprise-scale organizations (over 1,000 employees) surveyed have AI actively in use in their businesses. Early adopters are leading the way, with 59% of responding enterprises already working with AI intending to accelerate and increase investment in the technology. Ongoing challenges for AI adoption in enterprises remain, including hiring employees with the right skillsets, data complexity, and ethical concerns continue to inhibit businesses from adopting AI technologies into their operations.\\n\\nExperience the interactive Multimedia News Release here:  \\n\\nIBM Global AI Adoption Index [...] IBM Newsroom\\n\\n# All press releases\\n\\n# Data Suggests Growth in Enterprise Adoption of AI is Due to Widespread Deployment by Early Adopters, But Barriers Keep 40% in the Exploration and Experimentation Phases\\n\\n- About 42% of enterprise-scale companies surveyed (> 1,000 employees) report having actively deployed AI in their business.\\n\\n- An additional 40% are currently exploring or experimenting with AI but have not deployed their models.\\n\\n- However, 59% of those companies surveyed already exploring or deploying AI say they have accelerated their rollout or investments in the technology.\\n\\n- The top barriers preventing deployment include limited AI skills and expertise (33%), too much data complexity (25%), and ethical concerns (23%).\\n\\nJan 10, 2024 [...] \\\"We're seeing that the early adopters who overcame barriers to deploy AI are making further investments, proving to me that they are already experiencing the benefits from AI. More accessible AI tools, the drive for automation of key processes, and increasing amounts of AI embedded into off-the-shelf business applications are top factors driving the expansion of AI at the enterprise level,\\\" said Rob Thomas, Senior Vice President, IBM Software. \\\"We see organizations leveraging AI for use cases where I believe the technology can most quickly have a profound impact like IT automation, digital labor, and customer care. For the 40% of companies surveyed stuck in the sandbox, I am confident 2024 will be the year of tackling and overcoming barriers to entry like the skills gap and data\", \"score\": 0.8687491, \"raw_content\": null, \"images\": [{\"url\": \"https://newsroom.ibm.com/image/AI+Adoption+Index_Social.png\", \"description\": null, \"description_source\": \"og:image\", \"score\": 10}, {\"url\": \"https://newsroom.ibm.com/image/AI+Adoption+Index_Banner.png\", \"description\": null, \"description_source\": null, \"score\": 5}, {\"url\": \"https://www.multivu.com/players/English/9240059-ibm-2023-global-ai-adoption-index-report/image/0_1704814470115-HR.jpg\", \"description\": \"IBM Global AI Adoption Index\", \"description_source\": \"alt\", \"score\": 4}, {\"url\": \"https://mma.prnewswire.com/media/95470/4485860/ibm_logo.jpg\", \"description\": \"ibm_logo\", \"description_source\": \"alt\", \"score\": 3}]}, {\"url\": \"https://www.weka.io/resources/analyst-report/2024-global-trends-in-ai\", \"title\": \"2024 Global Trends in AI\", \"content\": \"Image 13\\n### Key insights:\\n\\n   In the average organization, 51% of AI projects are in production but not being delivered at scale.\\n   Data quality is the greatest inhibitor when moving AI projects into production environments.\\n   Storage and data management are the most common infrastructural inhibitors to AI initiatives, identified by 35% of organizations; however, those that have AI widely implemented feel these challenges less keenly. [...] Generative AI adoption is progressing rapidly. As Figure 7 illustrates, a set of trailblazers — 24% of organizations — have already graduated generative AI investments into scaled-up production capabilities. In contrast, 11% of companies have not invested in generative AI, 29% are still experimenting with the technology and 37% have generative AI in production but not yet scaled. This is a remarkable level of uptake for a technology that only made it into the public consciousness with the launch of ChatGPT in November 2022.\\n\\n#### Figure 7: Generative AI maturity and levels of investment\\n\\n##### Proportion of respondents at each stage:\\n\\nImage 22\\n\\nQ. Which of these statements most accurately reflects the use of generative AI at your organization?\\n\\nBase: All respondents (n=1,519). [...] AI/ML projects in production environments driving real-world impact in critical operations.\\n   Implemented AI/ML widely across their organization, achieving far greater scale than limited and siloed AI projects.\\n   Capitalized on the most significant technological breakthrough of this decade (generative AI) and positioned it as an integrated capability across their business and workflows.\\n   The top 10% of the market engage in several distinguishing practices that set them apart from the bulk of organizations across the report’s five key themes.\\n\\n#### Figure 2: Who are AI leaders in 2024?\\n\\n10% of total (n=153)\\n\\nImage 8\\n\\nSource: S&P Global Market Intelligence 451 Research Global Trends in AI custom survey, 2024.\", \"score\": 0.8315952, \"raw_content\": null, \"images\": []}, {\"url\": \"https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise\", \"title\": \"2025: The State of Generative AI in the Enterprise | Menlo Ventures\", \"content\": \"In 2024, that confidence still showed in the data: 47%of AI solutions were built internally, 53% purchased.5 Today, 76%of AI use cases are purchased rather than built internally. Despite continued strong investments in internal builds, ready-made AI solutions are reaching production more quickly and demonstrating immediate value while enterprise tech stacks continue to mature.\\n\\nImage 6: Building vs. buying enterprise AI solutions: 2024 vs. 2025\\n\\nLast year, enterprises were split on building vs. buying. Today, enterprises have more ready-made AI solutions in production as their internal builds mature.\\n\\n#### AI Buyers Convert at Higher Rates [...] Code became AI’s first true “killer use case” as models reached economically meaningful performance—with Anthropic’s Sonnet 3.5 triggering the category’s initial breakout in mid-2024. Adoption followed soon after; 50%of developers now use AI coding tools daily (65% in top-quartile orgs). Code completion grew to $2.3 billion, while code agents and AI app builders exploded from near-zero. Teams report 15%+velocity gains as they’ve adopted AI tools across the software development lifecycle: from prototyping (Lovable) to code refactoring (Open Hands), design-to-code (Weaver), QA (Meticulous), PRs (Graphite), site reliability engineering (Resolve), and deployment (Harness).\\n\\nImage 12: AI coding spend: 2024 vs. 2025\", \"score\": 0.80844593, \"raw_content\": null, \"images\": []}], \"response_time\": 2.17, \"request_id\": \"1ad07b2b-9d78-4f35-8e7e-8aabe0a05471\"}}], \"combined_answer\": null, \"errors\": null}\n{\"queries\": [{\"keyword\": \"Gartner McKinsey enterprise generative AI pilot to production conversion rate 2024\", \"response\": {\"query\": \"Gartner McKinsey enterprise generative AI pilot to production conversion rate 2024\", \"follow_up_questions\": null, \"answer\": null, \"images\": [{\"url\": \"https://www.gartner.com/ngw/globalassets/en/insights/images/infographics/insights-graphic-genai-pilot-phase-deployment.png\", \"title\": \"What Generative AI Means for Business | Gartner\", \"description\": null}, {\"url\": \"https://cdn.prod.website-files.com/66d30e4e03308c30f799c1c9/68b7e199493c862c8d61402c_Generative%20AI_%20Key%20Positive%20Impact%20Metrics.jpg\", \"title\": \"McKinsey Report: How Generative AI is Reshaping Global Productivity and the  Future of Work\", \"description\": \"The image presents key impact metrics from a McKinsey research report, highlighting a projected $4.4 trillion annual economic value of generative AI by 2025, with significant benefits across customer operations, software development, banking, enterprise adoption, and workforce readiness.\"}, {\"url\": \"https://emt.gartnerweb.com/ngw/globalassets/en/insights/images/infographics/insights-grpahic-ai-oppotunity-radar-resize.png\", \"title\": \"What Generative AI Means for Business | Gartner\", \"description\": null}, {\"url\": \"https://sumatosoft.com/wp-content/uploads/2026/06/Pilot-to-Production-Ladder.svg\", \"title\": \"From Pilot to Production: Scaling Enterprise AI (2026)\", \"description\": null}], \"results\": [{\"url\": \"https://talyx.ai/insights/enterprise-ai-implementation-failure\", \"title\": \"Why 90% of Enterprise AI Implementations Fail (2026) - Talyx\", \"content\": \"AI implementations that reach production typically require 8-18 months to generate ROI, though the timeline varies significantly by approach and industry. Only 48% of AI projects reach production, and those that do require an average of 8 months from prototype to production (Gartner, 2024). Early generative AI adopters report $3.70 in value per dollar invested, while top performers achieve $10.30 per dollar. In healthcare specifically, AI implementations typically reach break-even at 12-18 months and can generate 200-300% ROI by Year 2 when executed with specialist guidance. However, 63% of healthcare AI projects exceed budgets by 25% or more, and ongoing maintenance costs 15-25% of initial development annually. The organizations that achieve the fastest ROI share common characteristics: [...] MIT NANDA Initiative \\\"The GenAI Divide\\\" (2025): Based on 150 interviews, a 350-employee survey, and analysis of 300 public AI deployments, MIT found that only approximately 5% of AI pilot programs achieve rapid revenue acceleration.\\n\\nGartner Predictions (2024-2025): Gartner issued multiple forecasts: 30% of GenAI projects abandoned after POC by end of 2025; over 40% of agentic AI projects canceled by end of 2027; 60% of AI projects unsupported by AI-ready data abandoned through 2026.\\n\\nS&P Global Market Intelligence (2025): The average organization scrapped 46% of AI proof-of-concepts before reaching production, and only 48% of AI projects make it into production at all, with an average of 8 months from prototype to production for those that do. [...] Only 25% of executives strongly agree their IT infrastructure can support scaling AI (Source: BCG, 2024). In healthcare, EHR integration alone costs $150,000-$750,000 per AI application (Source: KLAS Research, 2024), and legacy system integration adds 20-30% to starting costs. The gap between a successful proof-of-concept and a production deployment is where the majority of AI projects stall -- the 8-month average prototype-to-production timeline reported by Gartner assumes the project survives at all.\\n\\n### Root Cause 5: Problem Too Difficult\", \"score\": 0.7730283, \"raw_content\": null, \"images\": [{\"url\": \"https://talyx.ai/og-image.png\", \"description\": null, \"description_source\": \"og:image\", \"score\": 10}, {\"url\": \"https://talyx.ai/logo-header.png\", \"description\": \"Talyx\", \"description_source\": \"alt\", \"score\": 0}]}, {\"url\": \"https://astrafy.io/the-hub/blog/technical/scaling-ai-from-pilot-purgatory-why-only-33-reach-production-and-how-to-beat-the-odds\", \"title\": \"Scaling AI from Pilot Purgatory: Why Only 33% Reach Production and How to Beat the Odds - Astrafy\", \"content\": \"For Generative AI specifically, the problem is acute. Gartner forecasts that 30% of GenAI projects will be abandoned entirely after the proof-of-concept (POC) phase by the end of 2025.⁴\\n\\nThe industry is experiencing a costly, enterprise-wide gridlock we call “pilot purgatory.” The critical problem isn’t a lack of trying. It’s a failure to convert a working idea into a reliable, enterprise-grade business asset.\\n\\n# The Pain Point: The Widening “AI Value Gap”\\n\\nBeing stuck in pilot purgatory is not a static problem. It is not just a line item for wasted R&D. It is an active drain on your resources, your talent, and your competitive position.\\n\\nThe most visible costs are the easiest to spot: [...] The 70% Problem: BCG’s “10–20–70 principle” is a critical insight. AI success is 10% algorithms, 20% data and technology, and 70% people, processes, and cultural transformation. Leaders who win “fundamentally redesign workflows” ; laggards just try to automate old, broken processes. This change requires visible executive sponsorship to succeed.⁸\\n\\nThe 85% Failure: The single biggest technical roadblock is data. Gartner finds that 85% of all AI projects fail due to poor data quality. A pilot runs on a clean, static spreadsheet. A production model faces a messy, constantly changing stream of real-world data. Without “AI-ready data,” Gartner predicts 60% of AI projects will be abandoned.⁹ [...] This gap between experimentation and real-world value is the one of the biggest challenges facing leaders today. Building flashy AI prototypes, it turns out, is relatively easy. But as McKinsey notes, generating measurable business value is not. This is the “Generative AI Value Paradox”.²\\n\\nThis isn’t just a feeling; it’s a statistical reality.\\n\\nMcKinsey reports that “nearly two-thirds” of organizations are still stuck in “pilot mode,” unable to scale their projects across the enterprise.\\n\\nBCG’s research is even more stark, finding that 60% of companies are reaping “hardly any material value” from their AI investments. In total, 74% have yet to show any tangible value from their efforts.³\", \"score\": 0.67706895, \"raw_content\": null, \"images\": [{\"url\": \"https://framerusercontent.com/images/AxOFzELJuz7nepuHtyVTcclt2k.png?width=1575&height=810\", \"description\": null, \"description_source\": \"og:image\", \"score\": 10}, {\"url\": \"https://px.ads.linkedin.com/collect/?pid=6287122&fmt=gif\", \"description\": null, \"description_source\": null, \"score\": 3}, {\"url\": \"https://framerusercontent.com/images/XQFgYl8jAWDtdDmFJ5dnha4U.png?width=1412&height=778\", \"description\": \"Image of a futuristic language model (LLM) represented as a central hub with multiple connections extending to numerous databases, symbolizing the integration and processing power of LLMs in managing and analyzing large datasets.\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://framerusercontent.com/images/mNFLjAH6HrdcarTjsS9HtKPmdM.png?width=1024&height=1024\", \"description\": \"Close-up of a female humanoid robot with a partially transparent face showing intricate cybernetic components and circuitry. The backdrop features abstract digital graphics, symbolizing advanced artificial intelligence technology and futuristic concepts.\", \"description_source\": \"alt\", \"score\": 0}, {\"url\": \"https://framerusercontent.com/images/gaOvT3xMIkN5ZXJ9WNqDrXMxM.png?width=1024&height=1024\", \"description\": \"A man in a business suit and a humanoid robot with glowing blue eyes are sitting opposite each other at a desk, both using laptops in a high-rise office with a cityscape in the background, symbolizing human-robot collaboration in the workplace.\", \"description_source\": \"alt\", \"score\": 0}]}, {\"url\": \"https://ventionteams.com/solutions/ai/adoption-statistics\", \"title\": \"AI Adoption Statistics Q1 2026: All Figures - Vention\", \"content\": \"## AI in manufacturing\\n\\nAs of 2025, 29% of manufacturers report using AI or machine learning at the facility or network level, while 23% remain in the pilot stage. Generative AI in manufacturing is expanding quickly: 24% of manufacturers have already scaled deployments to a similar reach, and 38% continue experimenting with pilots.\\n\\nSmart manufacturing technologies powered by AI have produced measurable improvements in efficiency and operational agility across the sector. Reported benefits include:\\n\\n   Up to 20% improvement in production output\\n   Up to 20% improvement in employee productivity\\n   Up to 15% in unlocked capacity\", \"score\": 0.57293844, \"raw_content\": null, \"images\": []}], \"response_time\": 2.75, \"request_id\": \"bed4aae4-4fb4-4885-b1e3-efc799aa8b3b\"}}], \"combined_answer\": null, \"errors\": null}\n{\"queries\": [{\"keyword\": \"how many companies successfully deploy AI chatbots or customer service AI in production statistics\", \"response\": {\"query\": \"how many companies successfully deploy AI chatbots or customer service AI in production statistics\", \"follow_up_questions\": null, \"answer\": null, \"images\": [{\"url\": \"https://www.aiprm.com/ai-in-customer-service-statistics/8_hucc03f899e8f77f52f1fece84fbaff1c3_100483_1024x0_resize_q85_h2_box_3.webp\", \"title\": \"50+ AI in Customer Service Statistics 2024 · AIPRM\", \"description\": \"The chart illustrates the most common AI applications in customer service, highlighting high usage of chatbots for digital and voice interactions, as well as AI-driven insights and agent support tools.\"}, {\"url\": \"https://media.designrush.com/articles/1048290/conversions/How-Many-Companies-Use-AI-preview-webp.webp\", \"title\": \"AI Adoption Trends: How Many Companies Use AI\", \"description\": \"The image presents a colorful bar chart showing the percentage of companies using AI in different functions, highlighting that 88% of organizations now use AI in at least one business function, and 62% are experimenting with AI agents, with software engineering, IT service operations, and marketing & sales as the primary areas of deployment.\"}, {\"url\": \"https://www.aiprm.com/ai-in-customer-service-statistics/15_hu6e1bc8a7cf6423e13ed3d94e4b47232d_104063_1024x0_resize_q85_h2_box_3.webp\", \"title\": \"50+ AI in Customer Service Statistics 2024 · AIPRM\", \"description\": \"The chart illustrates the growing acceptance of decentralized AI in online grocery customer service, showing higher percentages of leaders and agents agreeing on the future importance of predictive customer service, AI-driven customer experience, and advanced agent skills.\"}, {\"url\": \"https://www.desk365.io/wp-content/uploads/2025/03/65d82a27510fff616d1b8854_43.2-Blog-img-1.webp\", \"title\": \"61 AI Customer Service Statistics in 2026\", \"description\": \"A bar chart illustrating the growth of Sephora's e-commerce net sales from 2016 to 2022, showing an upward trend reaching over 3 billion USD in 2022.\"}, {\"url\": \"https://www.thebusinessresearchcompany.com/_next/image?url=https%3A%2F%2Fd1lt5802h39cn9.cloudfront.net%2Fgraphs%2Fartificial_intelligence_ai_chatbot_global_market_report_graphname.webp&w=1920&q=75\", \"title\": \"Artificial Intelligence AI Chatbot Market Share, Size, Report 2026\", \"description\": \"A bar chart shows the projected growth of the artificial intelligence chatbot market from 2025 to 2030, reaching an estimated $35.71 billion in 2030 with a CAGR of 25.7%.\"}], \"results\": [{\"url\": \"https://chatmaxima.com/blog/ai-customer-support-statistics\", \"title\": \"AI Customer Support Statistics: 30 Numbers You Need to Know (2026)\", \"content\": \"## Adoption Rates Across Industries\\n\\nThe question is no longer whether businesses will adopt AI for customer support, but how quickly they can implement it effectively.\\n\\n5. By 2025, 95% of customer interactions are predicted to be powered by AI. This includes both voice and text-based interactions, spanning chatbots, virtual assistants, and AI-augmented human conversations.\\n\\n6. 80% of companies are either using or planning to adopt AI-powered chatbots for customer service by 2025. The tipping point has passed: AI is now a mainstream expectation rather than a competitive differentiator.\\n\\n7. Telecom leads AI adoption at 95%, with banking and finance close behind at 92%. These industries handle massive volumes of repetitive inquiries, making them natural fits for AI automation. [...] 8. Healthcare AI adoption grew by 51.9% as providers automate non-clinical tasks like scheduling and prescription management. The sector is finding particular value in AI for appointment booking and patient communication.\\n\\n9. Only 33% of companies currently offer omnichannel support integrating AI tools like chatbots and video calls. This represents significant room for growth. Businesses that unify their AI across channels will have a distinct advantage.\\n\\n10. In 2020, only 5% of customer service teams used AI-powered chatbots. By 2025, that number has exceeded 80%. That’s a 16x increase in just five years, one of the fastest adoption curves in enterprise technology.\\n\\n## ROI and Financial Impact [...] We’ve compiled 30 essential statistics that paint a clear picture of where AI customer support stands today and where it’s headed. Whether you’re evaluating your first chatbot implementation or scaling an existing solution, these numbers will help you make informed decisions.\\n\\n## Market Size and Growth\\n\\nThe AI customer service market isn’t just growing. It’s accelerating at a pace that signals a fundamental shift in how businesses approach customer support.\\n\\n1. The global AI customer service market was valued at $12.06 billion in 2024. This represents a significant jump from previous years, reflecting the maturation of AI technologies and their proven effectiveness in customer-facing applications.\", \"score\": 0.7598145, \"raw_content\": null, \"images\": [{\"url\": \"https://chatmaxima.com/blog/wp-content/uploads/2025/12/ai_customer_support_statistics_30_numbers_you_need_to_know.png\", \"description\": null, \"description_source\": \"og:image\", \"score\": 10}, {\"url\": \"https://chatmaxima.com/blog/wp-content/uploads/2023/05/ai-powered-health-care-chatbot.png\", \"description\": \"Unlock the Power of Healthcare Chatbots with This Game-Changing Builder Service\", \"description_source\": \"alt\", \"score\": 3}]}, {\"url\": \"https://masterofcode.com/blog/ai-in-customer-service-statistics\", \"title\": \"AI in Customer Service Statistics: 50+ Actionable Insights for your Business Strategy\", \"content\": \"91% of businesses with artificial intelligence in support units are satisfied with the effects. Moreover, 56% of teams feel more optimistic about the technology enhancing their success compared to last year.\\n   Key advantages include improved consumer service (69%), decreased wait times (55%), and streamlined workflows (54%). Other benefits are enhanced customer satisfaction (48%) and better use of data and analytics (41%).\\n   Conversational AI and chatbots have boosted CS specialist’s productivity (94%), sped up issue resolution (92%), and reduced agent effort (87%). Plus, 65% report lowered costs due to higher efficiency.\\n   Over half (53%) say these capabilities have reduced overall operational costs in their AI-based call centers. [...] What is the current level of AI adoption among CS teams?\\n\\n   Nearly half of the client support units have implemented the technology, with additional investments planned for 2024.\\n   52% of contact centers have invested in Conversational AI and 44% plan to adopt it.\\n\\nImage 12: Top Popular AI Tools in Customer Service\\n\\nWhat are some examples of companies using AI for customer service?\\n\\nPopular applications in client care include routing requests (29%), analyzing feedback (28%), and chatbots or self-service tools (26%). [...] By 2024, most businesses believe AI/automation will assist in various roles, including built-in software, Generative AI, and chatbots.\\n   49% of CS professionals already using it think it will independently handle most customer service tasks by 2024. Moreover, 61% agree the majority of specialists will employ the technology in their role.\\n   Over half of Americans (52.4%) are also optimistic about artificial intelligence improving CS. Anticipations include 24/7 assistance (34.7%), no wait times (19.5%), and reduced phone communication.\\n\\nImage 16: AI Customer Service Priorities for 2024\", \"score\": 0.73596483, \"raw_content\": null, \"images\": []}, {\"url\": \"https://www.zendesk.com/blog/ai/productivity/ai-customer-service-statistics\", \"title\": \"59 AI customer service statistics for 2026 - Zendesk\", \"content\": \"Image 13: Four statistics about consumer preferences on AI in customer service.\\n    24. 51% of consumers say they prefer interacting with bots over humans when they want immediate service. (Zendesk)  \\n    25. 58% of CX leaders believe their chatbots will grow more advanced in 2024. (Zendesk)  \\n    26. 56% of customers believe bots will be able to have natural conversations by 2026. (Zendesk)  \\n    27. 68% of consumers believe chatbots should have the same level of expertise and quality as highly skilled human agents. (Zendesk)  \\n    28. 64% of CX leaders report increasing their investments in evolving their chatbots within the next year. (Zendesk)  \\n    29. 67% of consumers are expanding their range of inquiries, asking AI/bots more varied questions than before. (Zendesk) [...] 50. The global AI in manufacturing market is projected to grow from $5.5 billion in 2024 to $156.1 billion in 2033—or a staggering CAGR of 45%. (Market.US)  \\n    51. 74% of energy and utility companies plan to integrate AI into their operations. (IBM)  \\n    52. Three-fourths of advanced manufacturing companies list AI and similar technology adoption as their top priority for engineering, research, and development. (Bain & Company) \\n\\n### Hospitality and transportation [...] Image 10: More than two-thirds of CX organizations think generative AI will help them provide warmth in customer service.\\n    1. Almost one-half of customers think AI agents can be empathetic when addressing concerns. (Zendesk)  \\n    2. 70% of CX leaders believe chatbots are becoming skilled architects of highly personalized customer journeys. (Zendesk)  \\n    3. More than two-thirds of CX organizations think generative AI will help them provide warmth and familiarity in customer service—even if they have millions of customers. (Zendesk)  \\n    4. 69% of organizations believe generative AI can help humanize digital interactions. (Zendesk)  \\n    5. 72% of CX leaders expect AI agents to be an extension of their brand’s identity, reflecting its values and voice. (Zendesk)\", \"score\": 0.629889, \"raw_content\": null, \"images\": []}], \"response_time\": 4.65, \"request_id\": \"0fd02655-828d-4d07-8831-575159f2202c\"}}], \"combined_answer\": null, \"errors\": null}"
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 10571,
+     "full_history_tokens": 8791,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p1",
+   "topic": "gardening",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "personal",
+   "depth": "early",
+   "question": "帮我算一下，我这次改造的预算摊到露台每平米上是多少钱？",
+   "reply": "按你给的采购分批，总预算我记下来是：\n\n第一批（基建+设备）≈4500元  \n第二批（主干植物）≈3000元  \n第三批（草花+药剂+冬季覆盖）≈1500元  \n\n**总计 9000 元**\n\n你没告诉我露台具体面积，所以我无法帮你换算“每平米”的单价。如果你把**露台使用面积**（比如 12 m²、15 m²、20 m² 等）告诉我，我马上给你算出摊到每平米的价格。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2473,
+   "output_tokens": 122,
+   "estimated_input_tokens": 3745,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.03,
+   "compression_ratio": 0.395,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3549,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 35,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3745,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p2",
+   "topic": "gardening",
+   "style": "direct",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "你之前说的预防黑斑病那个药，名字和稀释倍数是多少？",
+   "reply": "**代森锰锌（大生 M-45）**，梅雨前或黑斑病高发期喷施：\n\n- **稀释倍数**：600–800 倍（即 1 克药兑 0.6–0.8 升水）。\n- **使用方法**：每 7–10 天一次，连续 2–3 次；喷到叶片正反两面，尤其是新叶和叶背。\n- **注意**：雨前 24 小时喷完；药液现配现用；喷后 6 小时内不要淋雨。\n\n其他备选（轮换使用防抗药）：苯醚甲环唑 1500 倍、丙环唑 1500 倍。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2473,
+   "output_tokens": 159,
+   "estimated_input_tokens": 3746,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.3,
+   "compression_ratio": 0.395,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3549,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 36,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3746,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p3",
+   "topic": "gardening",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我一开始说这次露台改造总共能花多少钱来着？",
+   "reply": "你并没有在整个对话里提过总预算数字，所以我没法直接给你一个数字。  \n\n如果你想让我再给你一个更细的拆分预算（比如控制在 6000 / 8000 / 10000 元以内），告诉我你的上限，我可以立刻帮你把清单和施工顺序再调一遍。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2469,
+   "output_tokens": 67,
+   "estimated_input_tokens": 3738,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.26,
+   "compression_ratio": 0.395,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3549,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 28,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3738,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_garden_001",
+   "probe_id": "p4",
+   "topic": "gardening",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "personal",
+   "depth": "early",
+   "question": "我家这个要打理的户外空间一共多大面积？",
+   "reply": "抱歉，我手上没有你家露台/阳台的具体尺寸数据。\n\n如果你能告诉我：\n- 长 × 宽（米）  \n- 或者大致面积（平方米）  \n\n我可以立刻帮你把购物清单和种植密度再做一次更精准的调整。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2469,
+   "output_tokens": 57,
+   "estimated_input_tokens": 3734,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.02,
+   "compression_ratio": 0.395,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3549,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 24,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3734,
+     "full_history_tokens": 8985,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p1",
+   "topic": "health",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我最近一次复查的低密度脂蛋白是多少？",
+   "reply": "上次复查数据中，低密度脂蛋白（LDL）是 **3.1 mmol/L**。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2411,
+   "output_tokens": 21,
+   "estimated_input_tokens": 3734,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.48,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3545,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 28,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3734,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p2",
+   "topic": "health",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我跟你说过我用的血压计是什么牌子吗？是什么牌子来着？",
+   "reply": "我这边没有记录你具体用过哪个品牌的血压计。  \n如果你想确认，可以把家用血压计的品牌/型号告诉我，或者直接看血压计本体/包装上的 Logo，我可以帮你一起核对使用方法和注意事项。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2416,
+   "output_tokens": 51,
+   "estimated_input_tokens": 3745,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.8,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3545,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 39,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3745,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p3",
+   "topic": "health",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我那个'坏胆固醇'最近一次查出来是多少？",
+   "reply": "你最新的 LDL（坏胆固醇）数值是 **3.1 mmol/L**（来自你刚刚复查的那次）。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2413,
+   "output_tokens": 27,
+   "estimated_input_tokens": 3736,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.51,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3545,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 30,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3736,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_health_001",
+   "probe_id": "p4",
+   "topic": "health",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "刚开始那会儿，我的甘油三酯基线值是多少来着？",
+   "reply": "根据之前的对话记录，你最早提到过的甘油三酯基线是 1.6 mmol/L（和这次复查的结果相同）。如果我记错了，或者你有更早的化验单，可以再告诉我一下。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2415,
+   "output_tokens": 47,
+   "estimated_input_tokens": 3739,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.32,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3545,
+       "items": 14,
+       "msg_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 33,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3739,
+     "full_history_tokens": 8255,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "code_identifier",
+   "depth": "early",
+   "question": "如果要新加一路召回，代码上应该注册到哪个类？",
+   "reply": "建议把新召回源注册到 `RetrievalRouter`（或你代码里负责“多路召回 + RRF 融合”的那个类）。  \n\n- 位置：`src/retrieval/router.py`（或等价的 `RetrievalRouter`）  \n- 做法：实现 `BaseRetriever` 接口后，在 `RetrievalRouter.__init__`（或 `register_retriever` 方法）里按配置名称把实例注册进去。  \n- 好处：RRF 融合逻辑已经在 `RetrievalRouter` 里统一处理，新加一路不需要改动任何融合代码。\n\n如果你项目里叫别的名字，把上面提到的“统一管理多路召回并做融合”的类告诉我，我可以再给你更精确的定位。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2713,
+   "output_tokens": 154,
+   "estimated_input_tokens": 3940,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 3.79,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3754,
+       "items": 20,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 25,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3940,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p2",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "按你定下来的切分参数，chunk 大小和重叠分别是多少 token？",
+   "reply": "按我们定稿的参数：  \n\n- **Chunk 大小**：512 token  \n- **Chunk 重叠**：50 token",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2715,
+   "output_tokens": 26,
+   "estimated_input_tokens": 3945,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.5,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3754,
+       "items": 20,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 30,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3945,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p3",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "code_identifier",
+   "depth": "early",
+   "question": "我们一开始定的那个召回服务入口类，类名叫什么来着？",
+   "reply": "抱歉，我在之前的回答里只提过“检索入口类”，并没有真正给它起过名字。如果你想现在就确定，可以先叫 `RetrievalService`（或 `HybridRetrievalService`），等代码落地时再按团队命名规范调整即可。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2713,
+   "output_tokens": 54,
+   "estimated_input_tokens": 3946,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.04,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3754,
+       "items": 20,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 31,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3946,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_001",
+   "probe_id": "p4",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "切片的颗粒度跟前后衔接的余量，当时拍板的是多大？",
+   "reply": "当时拍板的是：\n\n• 切片最大长度：400 token  \n• 重叠窗口（overlap）：前后各留 50 token（即前后各 50 token 的余量）  \n• 切片最小长度：50 token（短于此的直接丢弃，避免碎屑）\n\n这个配置已经写在《切分策略 v1.0》文档里了，后面如果要做 chunk 级对比实验，就拿这组数值做 baseline。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2714,
+   "output_tokens": 95,
+   "estimated_input_tokens": 3949,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.5,
+   "compression_ratio": 0.4294,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3754,
+       "items": 20,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 34,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3949,
+     "full_history_tokens": 8742,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_002",
+   "probe_id": "p1",
+   "topic": "ml",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我们的训练数据放在哪个 S3 路径下？",
+   "reply": "抱歉，我没有访问你们内部基础设施或 S3 存储的权限，无法直接告诉你训练数据具体放在哪个路径下。建议你：\n\n1. 查阅你们团队的 runbook / wiki / README；  \n2. 问一下负责数据管道的同学或当值 on-call；  \n3. 在内部 Slack/钉钉搜索 “S3 数据路径” 或 “training data bucket”。  \n\n如果需要我帮你整理一个“如何快速定位 S3 数据路径”的 checklist，也可以再告诉我。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2605,
+   "output_tokens": 105,
+   "estimated_input_tokens": 3833,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.56,
+   "compression_ratio": 0.4202,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3648,
+       "items": 16,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 24,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3833,
+     "full_history_tokens": 8682,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_002",
+   "probe_id": "p2",
+   "topic": "ml",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "新同事要起一个训练任务，把关键配置要点告诉他：数据路径是哪个，dataloader 的 num_workers 应该设多少？",
+   "reply": "**关键配置要点（给新同事的 checklist）**\n\n1. **数据路径**  \n   - 统一挂载点：`/data/llm-train/`  \n     – 原始 JSONL：`/data/llm-train/raw/`  \n     – 经过 tokenize 的二进制：`/data/llm-train/tokenized/`  \n     – 训练日志/ checkpoint：`/data/llm-train/output/`（自动创建子目录）  \n   - 不要再用 `/home/xxx` 或本地盘，容易把盘打满。\n\n2. **dataloader 核心参数（8×A100 场景）**  \n   - `num_workers = 8`（建议先从 8 开始，最高不要超过 12）  \n   - `prefetch_factor = 2`（默认 2 即可，防止把 /dev/shm 打满）  \n   - `persistent_workers = True`（减少 worker 反复 fork 的开销）  \n   - `pin_memory = True`（GPU 拷贝更快）  \n   - `batch_size`：按显存先设 4～8，逐步调到吞吐最优值。\n\n3. **共享内存配额（必须）**  \n   - 训练任务必须加 cgroup 限制：`/sys/fs/cgroup/<group>/memory.max = 24G`（留 50 % 余量）  \n   - 启动命令示例（systemd / Slurm）：  \n     ```bash\n     cgexec -g memory:<group> python train.py ...\n     ```\n\n4. **其他必设**  \n   - `NCCL_TIMEOUT_MS=600000`  \n   - `TORCH_NCCL_ASYNC_ERROR_HANDLING=1`  \n   - checkpoint：轻量每 30 min，本地 NVMe；完整每 4 h，上传对象存储。\n\n5. **验证步骤**  \n   - 跑前 100 step 打开 `NCCL_DEBUG=INFO`，确认拓扑正确后再关闭。  \n   - 看 Grafana 面板：GPU 利用率是否稳定在 85 % 以上、shm 使用率是否 < 70 %。\n\n把上面 5 条直接复制到任务启动脚本的注释里，新人照着改就不会再踩这次的坑。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "llm",
+   "judge_raw": "NO",
+   "judge_error": null,
+   "input_tokens": 2623,
+   "output_tokens": 475,
+   "estimated_input_tokens": 3856,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 6.15,
+   "compression_ratio": 0.4202,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3648,
+       "items": 16,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 47,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3856,
+     "full_history_tokens": 8682,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_ml_002",
+   "probe_id": "p3",
+   "topic": "ml",
+   "style": "paraphrase",
+   "carrier": "assistant",
+   "needle_type": "factual",
+   "depth": "middle",
+   "question": "排查完那次半夜卡死之后，我们最终把读数据的并行进程数定在几个？",
+   "reply": "最终把 dataloader 的 num_workers 固定在 8（原来是 16）。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2616,
+   "output_tokens": 19,
+   "estimated_input_tokens": 3850,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.35,
+   "compression_ratio": 0.4202,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3648,
+       "items": 16,
+       "msg_ids": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 41,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3850,
+     "full_history_tokens": 8682,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p1",
+   "topic": "stocks",
+   "style": "implicit",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "如果特斯拉现在是 280 美元，我手里剩下的特斯拉持仓浮盈是多少美元？",
+   "reply": "**我无法回答具体浮盈金额。**\n\n原因：你只提到过“特斯拉到 310 的时候卖了 15 股”，但**从未提供买入成本**（买入价或平均成本）。没有这个数据，我就无法算出剩余 25 股在 280 美元处的浮盈。\n\n如果你能提供：\n- 你的平均买入成本（或每股成本），  \n- 或者原始买入价 + 数量，\n\n我可以立刻帮你算出**25 股在 280 美元的浮盈金额**。\n\n否则，这个数字是算不出来的。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": true,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2578,
+   "output_tokens": 124,
+   "estimated_input_tokens": 3973,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.95,
+   "compression_ratio": 0.463,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3769,
+       "items": 17,
+       "msg_ids": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 43,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3973,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p2",
+   "topic": "stocks",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "update",
+   "depth": "late",
+   "question": "我现在还持有多少股特斯拉？",
+   "reply": "你目前持仓 **25 股** 特斯拉。",
+   "error": null,
+   "ctx_hit": true,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2565,
+   "output_tokens": 13,
+   "estimated_input_tokens": 3949,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.22,
+   "compression_ratio": 0.463,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3769,
+       "items": 17,
+       "msg_ids": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 19,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3949,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p3",
+   "topic": "stocks",
+   "style": "negative",
+   "carrier": null,
+   "needle_type": null,
+   "depth": null,
+   "question": "我之前给过你我券商账户的提现银行卡号，帮我报一下后四位。",
+   "reply": "我无法访问、存储或回想你之前提供的任何账户信息（包括银行卡号），所以无法告诉你后四位。  \n\n如果你需要确认，请直接登录券商 App 或联系你的银行客服查询。",
+   "error": null,
+   "ctx_hit": null,
+   "ans_hit": true,
+   "hallucination": false,
+   "judge_detail": "llm",
+   "judge_raw": "YES",
+   "judge_error": null,
+   "input_tokens": 2579,
+   "output_tokens": 44,
+   "estimated_input_tokens": 3966,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.77,
+   "compression_ratio": 0.463,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3769,
+       "items": 17,
+       "msg_ids": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 36,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3966,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p4",
+   "topic": "stocks",
+   "style": "direct",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我最早建仓特斯拉时的每股成本价是多少美元？",
+   "reply": "我没有你的原始交易记录，无法告诉你你最早建仓特斯拉时的每股成本价。\n\n如果你把那笔最早买入的成交记录（日期、股数、成交价格）发给我，我可以帮你算出来。",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2571,
+   "output_tokens": 47,
+   "estimated_input_tokens": 3959,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 1.81,
+   "compression_ratio": 0.463,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3769,
+       "items": 17,
+       "msg_ids": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 29,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3959,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  },
+  {
+   "case_id": "long_stocks_001",
+   "probe_id": "p5",
+   "topic": "stocks",
+   "style": "paraphrase",
+   "carrier": "user",
+   "needle_type": "factual",
+   "depth": "early",
+   "question": "我刚开始把这笔钱投进那只电动车股票时，一股花了我多少？",
+   "reply": "我手上没有你原始买入记录，所以没法告诉你当时每股的确切成本。  \n\n如果你想知道，可以：  \n1. 打开券商 App → 持仓/交易明细 → 找“特斯拉”那笔最早的买入记录，上面会显示成交价（成本价）。  \n2. 或者把交易记录截图/复制出来，我帮你算平均成本。  \n\n需要我现在帮你算吗？",
+   "error": null,
+   "ctx_hit": false,
+   "ans_hit": false,
+   "hallucination": false,
+   "judge_detail": "regex",
+   "judge_raw": null,
+   "judge_error": null,
+   "input_tokens": 2577,
+   "output_tokens": 91,
+   "estimated_input_tokens": 3968,
+   "usage_source": "api",
+   "rounds": 1,
+   "latency_s": 2.88,
+   "compression_ratio": 0.463,
+   "context_reports": [
+    {
+     "round": 1,
+     "strategy": "concat",
+     "layers": [
+      {
+       "layer": "history",
+       "tokens": 3769,
+       "items": 17,
+       "msg_ids": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+       ]
+      },
+      {
+       "layer": "current",
+       "tokens": 38,
+       "items": 1
+      },
+      {
+       "layer": "tools_schema",
+       "tokens": 161,
+       "items": 2
+      }
+     ],
+     "estimated_prompt_tokens": 3968,
+     "full_history_tokens": 8141,
+     "context_limit": 4000,
+     "dropped_turns": 0,
+     "summary_cost_tokens": 0,
+     "candidates": []
+    }
+   ]
+  }
+ ]
+}
