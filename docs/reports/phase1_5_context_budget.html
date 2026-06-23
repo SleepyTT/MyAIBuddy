@@ -82,7 +82,7 @@
 <tr><td>window_summary · <b>tool-medium</b></td><td class="num">1.0/1.0/0</td><td class="num">1.0/1.0/0</td><td class="num">1.0/1.0/0</td><td class="num"><span class="bad">.50/.67/.12</span></td><td class="num"><span class="bad">.17/.17/.38</span></td></tr>
 </tbody>
 </table>
-<p style="color:var(--muted);font-size:13px;margin-top:0">avg input(tok):concat·long 5.5k→2.9k;window_summary·long 稳定 ~2.3–2.7k;concat·tool-medium 8.7k→3.5k;window_summary·tool-medium 8.1k→2.4k。128k/32k/16k 对我们的数据基本不咬(都装得下),所以前三列大多持平,差异从 8k/4k 出现。</p>
+<blockquote class="warn"><b>读这张表的前提:很多格子里"预算根本没咬上"。</b>所谓<b>咬(binding)</b> = 预算 B 小于策略<b>本来就会发送的大小</b>,才逼它多丢东西。我们的数据下:<code>window_summary</code> 靠 <code>WINDOW_TURNS=6</code> 已经压到 ~3.4k,所以它在 8k–128k 这几档<b>预算全没咬</b>(发送量几乎不变),这几格是<b>同一配置的噪声重复采样</b>,不是预算效应;<code>tool-medium</code> 全量也才 ~16k,所以 32k 以上对它也不咬。<br><br>再叠三个噪声源——<b>单次跑</b>(没重复平均)、window_summary 每轮<b>实时摘要</b>(文本每次不同)、ctx/ans 的 <b>LLM 裁判</b>(非确定)——加上<b>样本小</b>(tool-medium 只 6 个针探针,翻 1 个就是 .17),非咬格子的上下浮动<b>就是这个噪声底,不是趋势</b>。<b>直接证据:</b>同一个 <code>(concat, tool-medium, 128k)</code> 配置我们恰好跑了两次,一次 ans 1.0、一次 .83——同样输入、不同结果。所以「window_summary·long 4k 反而最高」「concat·tool-medium 128k 比 32k 低」都是噪声,不是"预算越少越好"。<br><br><b>只把"咬上了"的格子当信号读</b>(粗体那些):<code>concat·long</code> 8k/4k、<code>concat·tool-medium</code> 8k/4k、<code>window_summary·tool-medium</code> 8k/4k——那里预算真把信息逼丢了,趋势单调清晰。要给非咬区也得到干净结论,得<b>每格重复跑 N 次取均值±区间</b>,或把预算压到各策略自然大小以下(window_summary 要 &lt;3k 才咬)。</blockquote>
 
 <h2>4. 三个发现</h2>
 <h3>① 溢出 regime 被激活,幻觉指标第一次有信号</h3>
