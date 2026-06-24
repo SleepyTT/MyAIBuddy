@@ -129,32 +129,28 @@
 
 ## 12. Sweep 结果(2026-06-22,model=grok-4-fast,judge=kimi-k2.5)
 
-> ⚠️ **这批结果来自重设计前的实现**(旧版:WINDOW_TURNS=6 + 工具结果按动态剩余预算压)。2026-06-23 已按工业界做法重写 assemble_budgeted(纯 token 历史 + 固定工具配额 + 主动省钱旋钮,见 §2/§4/§6),**下面的数字尤其是 tool-medium 那两行会变**(新版工具配额固定 1k,concat 会几乎恒 ctx≈0、window 也大概率丢针)。待重跑后替换。三个**定性发现**(溢出 regime 激活、历史维度 window>concat、盲压缩对工具针都不行)预计仍成立。
+redesign 后(纯 token 历史 + 固定 1k 工具配额)重跑,12 格(2 策略 × 2 tier × **4k/8k/16k**);judge 重试加固后 0 个 judge_error。**32k/128k 未跑**——long 在 16k 已全装下(ctx 1.0),tool 配额固定,这两档只是非咬的平顶、无新信号。结果文件:`eval/results/phase1_5/`。
 
-完整 20 格(2 策略 × 2 tier × 5 budget);judge 重试加固后本轮 0 个 judge_error。
-
-| 策略 / tier | 128k | 32k | 16k | 8k | 4k |
-|---|---|---|---|---|---|
-| concat · long(ctx/ans/幻觉) | 1.0 / .95 / 0 | 1.0 / .95 / 0 | 1.0 / .95 / 0 | **.55 / .59 / .17** | **.18 / .32 / .38** |
-| window_summary · long | .86 / .86 / .04 | .95 / .95 / 0 | .91 / .82 / .04 | .91 / .95 / 0 | **1.0 / .95 / 0** |
-| concat · tool-medium | 1.0 / .83 / 0 | 1.0 / 1.0 / 0 | 1.0 / 1.0 / 0 | .83 / .83 / 0 | **.67 / .50 / 0** |
-| window_summary · tool-medium | 1.0 / 1.0 / 0 | 1.0 / 1.0 / 0 | 1.0 / 1.0 / 0 | **.50 / .67 / .12** | **.17 / .17 / .38** |
-
-avg input(tok):concat long 5.5k→2.9k、window_summary long 稳定 ~2.3–2.7k;concat tool-medium 8.7k→3.5k、window_summary tool-medium 8.1k→2.4k。
+| 策略 / tier(ctx/ans/幻觉) | 16k | 8k | 4k |
+|---|---|---|---|
+| concat · long | 1.0 / .91 / 0 | **.55 / .68 / .12** | **.18 / .32 / .21** |
+| window_summary · long | 1.0 / .95 / 0 | **.82 / .82 / .08** | **.91 / .91 / .08** |
+| concat · tool-medium | **0 / 0 / .25** | **0 / 0 / .5** | **0 / 0 / .25** |
+| window_summary · tool-medium | **0 / .17 / .38** | **0 / .33 / .38** | **0 / .17 / .25** |
 
 ### 三个核心发现
 
-1. **"溢出 regime" 成功激活,幻觉指标第一次有信号。** concat·long 随预算收紧:128k–16k 全装下(ctx 1.0、幻觉 0)→ 8k 丢历史(ctx .55、幻觉 **.17**)→ 4k 重截(ctx .18、幻觉 **.38**)。正是预判的因果链——预算不足 → 被迫丢信息 → 模型编造。此前所有 tier 幻觉恒为 0,现在量出来了。
+1. **"溢出 regime" 激活,幻觉指标在两个 tier 都有信号。** concat·long 随预算收紧:16k 全装下(ctx 1.0、幻觉 0)→ 8k 丢历史(ctx .55、幻觉 **.12**)→ 4k 重截(ctx .18、幻觉 **.21**)。预判的因果链坐实——预算不足 → 被迫丢信息 → 模型编造。
 
-2. **历史维度:window_summary 完胜 concat(验证假设)。** 紧预算下 long,concat 崩(ctx .55→.18、幻觉冲到 .38),window_summary 全程 ctx .91–1.0、幻觉 ~0,且 token 只有 concat 的一半(~2.5k vs 5k+)。摘要把挤出窗口的历史压缩保留,concat 直接丢整轮。
+2. **历史维度:window_summary 完胜 concat(假设验证)。** 紧预算下 long,concat 崩(ctx .55→.18、幻觉 .21),window_summary 全程 ctx .82–1.0、幻觉 ~0。摘要把挤出窗口的历史压缩保留,concat 直接丢整轮。**佐证 redesign 生效:16k 两者都 ctx 1.0、input 都正好 5539(完全相同)——预算装得下时 window_summary ≡ concat,不再自愿压缩。**
 
-3. **工具结果维度:反而 concat > window_summary(推翻简单假设,且更要紧)。** tool-medium 紧预算下,concat(头截断)8k ctx .83 / 4k .67;window_summary(对工具结果做 **query 盲**摘要)8k ctx **.50** / 4k **.17**——更差。原因:针是页面里一个**具体事实**(版本号/函数名/数字),query 盲的摘要把它当噪音压掉,而头截断只要预算够到针位(中段)就保住。**对"大工具结果里的具体针",盲压缩比截断还糟。**
+3. **工具结果维度:两种盲压缩都 ctx≈0,且对预算平。** 固定 1k 配额下,concat 头截断把中段针(~45%)切掉、window_summary 盲摘要(30k → ~50 tok)把具体针压没——**两者 ctx 都恒为 0,跨预算不变**(配额固定)。这是设计预告的"盲压缩两条路都不行 → 留给 RAG"的结果。
 
-### 推论(注意边界:本轮没测 RAG)
+### 两个测量注意
 
-**本轮只跑了 concat 和 window_summary,RAG 还没实现、零数据点。** 所以分两层:
+- **tool-medium 里 ans > ctx**(window 的 ans .17–.33 而 ctx 0):针被压掉后模型靠**训练先验**蒙对了一些——有几个针是真实世界事实(`scaled_dot_product_attention`、2300mg 钠)模型本来就知道。所以 **ctx(确定性)才是"信息有没有真进 context"的真信号,ans 会被先验高估**——这正是留两个指标的价值。
+- **tool-medium 当前不区分 concat vs window**(都 ctx≈0、都失败),它现在是"两种盲压缩都不行"的**演示 + RAG 动机**,不是策略判别器;等 Phase 2 RAG 做 query 感知检索接管工具结果才会拉开。
 
-- **测到的(有数据)**:历史维度 window_summary > concat;工具结果维度 concat > window_summary。合起来——我们试过的**两种 query 盲压缩(截断 / 摘要),对"大工具结果里的具体针"都救不了**(一个截掉、一个压没)。
-- **推断的(假设,待 Phase 2 验证)**:既然盲压缩不行,一个**看问题**的方法(按相关度挑 chunk)原理上应能保住针,RAG 是这样的方法。但 §5 那条 "RAG > window_summary > concat" 始终是**未验证假设**——RAG 行不行、是否真的更优,**得等 Phase 2 真跑出数才算数**,本轮不下结论。sweep 只是把"想试 RAG"从随口一说升级成"有数据支撑的假设"。
+### 推论(边界:RAG 还没实现、零数据点)
 
-**测量注意(重要):很多格子里预算"没咬上"(non-binding)。** 预算 B 只有小于策略本来就会发送的大小时才起约束作用。`window_summary` 靠 `WINDOW_TURNS=6` 已压到 ~3.4k,所以 8k–128k 对它全没咬——那几格是同一配置的**噪声重复采样**;`tool-medium` 全量 ~16k,32k 以上对它也不咬。叠加单次跑 + 实时摘要 + LLM 裁判的非确定性 + 小样本(tool-medium 仅 6 针探针,翻 1 个 = .17),非咬格子的上下浮动就是**噪声底,不是趋势**——直接证据:同一 `(concat,tool-medium,128k)` 跑两次得 1.0 与 .83。因此 **window_summary·long 的非单调、concat·tool-medium 128k 偏低都是噪声**,只有"咬上"的格子(concat·long 8k/4k、concat/window_summary·tool-medium 8k/4k)才是信号。要让非咬区也有干净结论,需每格重复 N 次取均值±区间,或把预算压到各策略自然大小以下(window_summary 要 <3k 才咬)。结果文件:`eval/results/2026-06-22_*_{concat,window_summary}_{long,tool-medium}[_bNk].json`。
+**测到的**:历史维度 window_summary > concat;工具结果维度两种盲压缩(截断/摘要)都救不了具体针。**推断的(假设,待 Phase 2 验证)**:既然盲压缩不行,一个 query 感知的方法(按相关度挑 chunk)原理上应能保住针——RAG 是候选。但 §5 那条 "RAG > window_summary > concat" 始终是**未验证假设**,得等 Phase 2 真跑出数才算数。这个 sweep 把"为什么要 RAG"从随口一说升级成有数据支撑的动机。

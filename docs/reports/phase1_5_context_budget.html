@@ -71,31 +71,30 @@
 </table>
 <blockquote><b>关键不变量与方法。</b>① 预算是<b>横切 eval 参数</b>,不是新 tier——复用现有 long / tool-medium 在 5 个预算下跑,区分度从预算里来,不必造新数据。② <b>默认 B=128k → 行为与改造前逐字节一致</b>(已验证:concat 默认 == 旧 <code>assemble_context</code>),旧基线不受影响。结果带 <code>context_budget</code> 字段 + <code>run_id</code> 后缀(<code>_b8k</code>),同数据集不同预算可并排比。</blockquote>
 
-<h2>3. 结果:20 格网格</h2>
-<blockquote class="warn"><b>⚠️ 这批数字来自重设计前的实现。</b>2026-06-23 已按工业界做法重写组装层(历史纯 token 驱动、去掉 6 轮硬帽子;工具结果改为固定 1k 配额;新增主动省钱旋钮)。<b>tool-medium 那两行尤其会变</b>(新版 concat 头截断到 1k 几乎恒丢中段针 ctx≈0、window 盲摘要也大概率丢针),待重跑后替换。下面三个**定性发现**(溢出 regime 激活、历史维度 window&gt;concat、盲压缩对工具针都不行)预计仍成立。</blockquote>
-<p>model=grok-4-fast,judge=kimi-k2.5,2 策略 × 2 tier × 5 预算。格内为 <b>ctx 命中 / ans 命中 / 幻觉</b>:</p>
+<h2>3. 结果:12 格网格(redesign 后)</h2>
+<p>model=grok-4-fast,judge=kimi-k2.5,2 策略 × 2 tier × <b>4k/8k/16k</b>(0 个 judge_error)。<b>32k/128k 未跑</b>:long 在 16k 已全装下(ctx 1.0)、工具配额固定,这两档只是非咬平顶、无新信号。格内 <b>ctx 命中 / ans 命中 / 幻觉</b>:</p>
 <table>
-<thead><tr><th>策略 · tier</th><th class="num">128k</th><th class="num">32k</th><th class="num">16k</th><th class="num">8k</th><th class="num">4k</th></tr></thead>
+<thead><tr><th>策略 · tier</th><th class="num">16k</th><th class="num">8k</th><th class="num">4k</th></tr></thead>
 <tbody>
-<tr><td>concat · <b>long</b></td><td class="num">1.0/.95/0</td><td class="num">1.0/.95/0</td><td class="num">1.0/.95/0</td><td class="num"><span class="bad">.55/.59/.17</span></td><td class="num"><span class="bad">.18/.32/.38</span></td></tr>
-<tr><td>window_summary · <b>long</b></td><td class="num">.86/.86/0</td><td class="num">.95/.95/0</td><td class="num">.91/.82/0</td><td class="num"><span class="good">.91/.95/0</span></td><td class="num"><span class="good">1.0/.95/0</span></td></tr>
-<tr><td>concat · <b>tool-medium</b></td><td class="num">1.0/.83/0</td><td class="num">1.0/1.0/0</td><td class="num">1.0/1.0/0</td><td class="num">.83/.83/0</td><td class="num">.67/.50/0</td></tr>
-<tr><td>window_summary · <b>tool-medium</b></td><td class="num">1.0/1.0/0</td><td class="num">1.0/1.0/0</td><td class="num">1.0/1.0/0</td><td class="num"><span class="bad">.50/.67/.12</span></td><td class="num"><span class="bad">.17/.17/.38</span></td></tr>
+<tr><td>concat · <b>long</b></td><td class="num">1.0/.91/0</td><td class="num"><span class="bad">.55/.68/.12</span></td><td class="num"><span class="bad">.18/.32/.21</span></td></tr>
+<tr><td>window_summary · <b>long</b></td><td class="num">1.0/.95/0</td><td class="num"><span class="good">.82/.82/.08</span></td><td class="num"><span class="good">.91/.91/.08</span></td></tr>
+<tr><td>concat · <b>tool-medium</b></td><td class="num"><span class="bad">0/0/.25</span></td><td class="num"><span class="bad">0/0/.50</span></td><td class="num"><span class="bad">0/0/.25</span></td></tr>
+<tr><td>window_summary · <b>tool-medium</b></td><td class="num"><span class="bad">0/.17/.38</span></td><td class="num"><span class="bad">0/.33/.38</span></td><td class="num"><span class="bad">0/.17/.25</span></td></tr>
 </tbody>
 </table>
-<blockquote class="warn"><b>读这张表的前提:很多格子里"预算根本没咬上"。</b>所谓<b>咬(binding)</b> = 预算 B 小于策略<b>本来就会发送的大小</b>,才逼它多丢东西。我们的数据下:<code>window_summary</code> 靠 <code>WINDOW_TURNS=6</code> 已经压到 ~3.4k,所以它在 8k–128k 这几档<b>预算全没咬</b>(发送量几乎不变),这几格是<b>同一配置的噪声重复采样</b>,不是预算效应;<code>tool-medium</code> 全量也才 ~16k,所以 32k 以上对它也不咬。<br><br>再叠三个噪声源——<b>单次跑</b>(没重复平均)、window_summary 每轮<b>实时摘要</b>(文本每次不同)、ctx/ans 的 <b>LLM 裁判</b>(非确定)——加上<b>样本小</b>(tool-medium 只 6 个针探针,翻 1 个就是 .17),非咬格子的上下浮动<b>就是这个噪声底,不是趋势</b>。<b>直接证据:</b>同一个 <code>(concat, tool-medium, 128k)</code> 配置我们恰好跑了两次,一次 ans 1.0、一次 .83——同样输入、不同结果。所以「window_summary·long 4k 反而最高」「concat·tool-medium 128k 比 32k 低」都是噪声,不是"预算越少越好"。<br><br><b>只把"咬上了"的格子当信号读</b>(粗体那些):<code>concat·long</code> 8k/4k、<code>concat·tool-medium</code> 8k/4k、<code>window_summary·tool-medium</code> 8k/4k——那里预算真把信息逼丢了,趋势单调清晰。要给非咬区也得到干净结论,得<b>每格重复跑 N 次取均值±区间</b>,或把预算压到各策略自然大小以下(window_summary 要 &lt;3k 才咬)。</blockquote>
+<blockquote><b>读表注意。</b>① <b>long 在 16k 还没咬</b>(8.7k 历史装得下,两策略都 ctx 1.0、input 都正好 5539——直接证明 redesign 生效:装得下时 window_summary ≡ concat,不自愿压缩);8k/4k 才咬上、出现差异。② <b>tool-medium 跨预算是平的</b>——工具配额固定 1k,与总预算无关,所以它测的是"策略间"而非"跨预算"。③ 样本小(long ~22 针探针、tool-medium 6),单点有 LLM 裁判 + 实时摘要噪声;看趋势别抠单格。</blockquote>
 
 <h2>4. 三个发现</h2>
 <h3>① 溢出 regime 被激活,幻觉指标第一次有信号</h3>
-<p><code>concat·long</code> 随预算收紧一路崩:128k–16k 全装下(ctx 1.0、幻觉 0)→ 8k 开始丢历史(ctx .55、幻觉 <b>.17</b>)→ 4k 重截(ctx .18、幻觉 <b>.38</b>)。这正是预判的因果链——<b>预算不足 → 被迫丢信息 → 模型编造</b>。此前所有 tier 幻觉恒为 0,现在终于量出来了。</p>
-<h3>② 历史维度:window_summary 完胜 concat(验证假设)</h3>
-<p>紧预算下的 long:concat 崩(ctx .55→.18、幻觉冲到 .38),而 window_summary <b>全程 ctx .91–1.0、幻觉 ~0</b>,且 token 只有 concat 的一半(~2.5k vs 5k+)。因为摘要把挤出窗口的历史<b>压缩保留</b>了,concat 直接<b>丢整轮</b>。</p>
-<h3>③ 工具结果维度:反而 concat > window_summary(反直觉,且更要紧)</h3>
-<blockquote class="warn">tool-medium 紧预算下,<b>concat(头截断)8k ctx .83 / 4k .67;window_summary(对工具结果做 query 盲摘要)8k ctx <b class="bad">.50</b> / 4k <b class="bad">.17</b></b>——明显更差。<br><br>原因:针是页面里一个<b>具体事实</b>(版本号 / 函数名 / 数字)。query 盲的摘要不知道哪句重要,<b>把它当噪音压掉了</b>;而 concat 的头截断只要预算够到针的位置(我们故意把针埋在中段),就<b>原样保住</b>。<b>对"大工具结果里的具体针",盲压缩比笨截断还糟。</b></blockquote>
+<p><code>concat·long</code> 随预算收紧一路崩:16k 全装下(ctx 1.0、幻觉 0)→ 8k 开始丢历史(ctx .55、幻觉 <b>.12</b>)→ 4k 重截(ctx .18、幻觉 <b>.21</b>)。这正是预判的因果链——<b>预算不足 → 被迫丢信息 → 模型编造</b>。此前所有 tier 幻觉恒为 0,现在终于量出来了。</p>
+<h3>② 历史维度:window_summary 完胜 concat(假设验证)</h3>
+<p>紧预算下的 long:concat 崩(ctx .55→.18、幻觉 .21),而 window_summary <b>全程 ctx .82–1.0、幻觉 ~0</b>。因为摘要把挤出窗口的历史<b>压缩保留</b>了,concat 直接<b>丢整轮</b>。佐证 redesign 生效:<b>16k 两者都 ctx 1.0、input 都正好 5539(完全相同)——预算装得下时 window_summary ≡ concat,不再自愿压缩。</b></p>
+<h3>③ 工具结果维度:两种盲压缩都丢针(ctx≈0),且对预算平</h3>
+<blockquote class="warn">固定 1k 工具配额下,<b>concat(头截断到配额)和 window_summary(对工具结果做 query 盲摘要到配额)在 tool-medium 上 <b class="bad">ctx 全程为 0</b></b>,跨 4k/8k/16k 不变(配额固定、与总预算无关)。<br><br>针是页面里一个<b>具体事实</b>(版本号 / 函数名 / 数字),埋在结果<b>中段(~45%)</b>。1k 配额 ≈ 头部 ~13%:concat 头截断把它切掉;window_summary 把 30k 盲摘要成 ~50 tok 短摘要、也把它当噪音压没——<b>实测两条盲压缩路都救不了具体针。</b><br><br><b>注意 ans &gt; ctx</b>(window 的 ans .17–.33 而 ctx 0):针被压掉后模型靠<b>训练先验</b>蒙对了一些(<code>scaled_dot_product_attention</code>、2300mg 这类真实世界事实模型本就知道)。所以 <b>ctx(确定性)才是"信息有没有真进 context"的真信号,ans 会被先验高估</b>。</blockquote>
 
 <h2>5. 推论(注意:不是结论):盲压缩到头了,指向待验证的 query 感知检索</h2>
 <p><b>先说清楚边界:本轮只跑了 concat 和 window_summary,RAG 还没实现、没测过。</b>所以下面分两层——<b>测到的</b>和<b>推断的</b>,别混。</p>
-<p><b>测到的(有数据):</b>① 历史维度,window_summary &gt; concat(摘要保留 vs 截断丢轮);② 工具结果维度,concat &gt; window_summary(头截断保住中段针 vs query 盲摘要把具体针压没)。两条合起来:<b>我们试过的两种 query 盲压缩,在不同维度各有失手——对"大工具结果里的具体针",两种盲压缩都救不了。</b></p>
+<p><b>测到的(有数据):</b>① 历史维度,window_summary &gt; concat(摘要保留挤出的历史 vs 截断丢整轮);② 工具结果维度,<b>concat 和 window_summary 都 ctx≈0</b>——头截断把中段针切掉、query 盲摘要把具体针压没,<b>两种 query 盲压缩都救不了"大工具结果里的具体针"</b>(注意它俩在工具上不分高下,都失败,所以 tool-medium 当前不区分这两个策略)。</p>
 <p><b>推断的(假设,待 Phase 2 验证):</b>既然盲压缩(不看问题)在工具结果上不行,一个<b>看问题</b>的方法(按相关度挑 chunk)原理上应该能保住针。RAG 就是这样的方法。<b>但这只是把"为什么想试 RAG"从随口一说升级成"有数据支撑的假设"——RAG 到底行不行、是不是真的 &gt; window_summary,得等 Phase 2 真跑出数才算数。</b>设计阶段那条"RAG &gt; window_summary &gt; concat"始终是<b>未验证假设</b>,本轮一个 RAG 数据点都没有。</p>
 <blockquote class="warn"><b>一句话(校准过的):</b>历史可以靠盲摘要救;工具结果里的具体针,两种盲压缩都救不了。<b>是不是 query 感知的检索就能救——这是 Phase 2 要回答的问题,本轮没测 RAG,不下结论。</b></blockquote>
 
